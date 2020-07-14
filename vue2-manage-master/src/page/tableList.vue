@@ -4,10 +4,10 @@
         <div class="my_container">
             <div class="my_main">
                 <PiSearchBar
-                    @handleSearch="getMainList"
+                    @handleSearch="searchMain"
                     :search-items="searchItem"
                     :query.sync="mainQuery">
-                    <el-button type="success">添加</el-button>
+                    <el-button type="success" @click="redirect">添加</el-button>
                 </PiSearchBar>
 
                 <pi-table
@@ -57,9 +57,15 @@ export default {
         this.getMainList()
     },
     methods: {
+        redirect(){
+            this.$router.push('/tableForm')
+        },
+        searchMain(){
+            this.mainQuery.page=1
+            this.getMainList()
+        },
         getMainList(){
             getCompanyList(this.mainQuery).then(res=>{
-                console.log(res)
                 if(res.resultCode=='0'){
                     this.mainList=res.payload.content
                     this.mainQuery.total=res.payload.totalElements

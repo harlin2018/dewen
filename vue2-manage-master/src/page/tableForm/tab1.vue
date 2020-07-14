@@ -2,7 +2,7 @@
     <el-form class="main_form" :model="mainForm" ref="mainForm">
         <table class="my_table_form">
             <tr>
-                <td>单位名称</td>
+                <td>单位名称010</td>
                 <td colspan="3">
                     <el-form-item prop="name" :rules="[rule.required]">
                         <el-input v-model="mainForm.name"></el-input>

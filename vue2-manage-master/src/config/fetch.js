@@ -1,8 +1,11 @@
 import { baseUrl } from './env'
+import {deepClone} from '@/utils'
 
 export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 	type = type.toUpperCase();
 	url = baseUrl + url;
+
+    data=deepClone(data)
 
 	if (type == 'GET') {
 		let dataStr = ''; //数据拼接字符串

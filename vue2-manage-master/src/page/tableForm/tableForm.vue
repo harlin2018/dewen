@@ -2,7 +2,10 @@
     <div>
         <head-top></head-top>
         <div class="my_container">
-            <div class="my_save_btn"><el-button type="primary" @click="submitData">保存</el-button></div>
+            <div class="my_save_btn">
+                <el-button type="primary" @click="submitData">保存</el-button>
+                <el-button type="info" @click="$router.go(-1)">返回</el-button>
+            </div>
             <div class="my_main">
                 <el-tabs v-model="activeName">
                     <el-tab-pane label="基本资料单元" name="tab1">
