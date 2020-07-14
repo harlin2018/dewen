@@ -1,0 +1,58 @@
+
+package com.dewen.project.service;
+
+import com.dewen.project.domain.CompanyInfo;
+import org.springframework.data.domain.Page;
+
+/**
+ * 重点工业企业基本情况表
+ * <p>Description: CompanyInfo Service  /p>
+ * <p>Copyright: Copyright (c) 2020</p>
+ * <p>Company: PCCW</p>
+ *
+ * @author Flame.Lai
+ * @version 1.0
+ * @date 2020-07-13
+ */
+public interface ICompanyInfoService {
+
+    /**
+     * create CompanyInfo
+     * @param CompanyInfo
+     * @return
+     */
+    public int createCompanyInfo(CompanyInfo CompanyInfo);
+
+    /**
+     * update CompanyInfo ,including logical delete
+     * @param CompanyInfo
+     * @param id
+     * @return
+     */
+    public int updateCompanyInfo(CompanyInfo CompanyInfo, Integer id);
+
+    /**
+     * delete by id (physical delete)
+     * @param id
+     * @return
+     */
+    public int deleteCompanyInfo(Integer id);
+
+    /**
+     * find by id
+     * @param id
+     * @return
+     */
+    public CompanyInfo findById(Integer id) ;
+
+    /**
+     *  list the  CompanyInfo ,including page ,search , sorts (XX,YY,ZZ)
+     * @param  CompanyInfo
+     * @param pageNumber
+     * @param pageSize
+     * @param sorts
+     * @return
+     */
+    public Page<CompanyInfo> list(CompanyInfo CompanyInfo, int pageNumber, int pageSize, String sorts) ;
+
+}
