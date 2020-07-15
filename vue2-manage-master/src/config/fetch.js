@@ -1,11 +1,11 @@
 import { baseUrl } from './env'
 import {deepClone} from '@/utils'
 
-export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
+export default async(url = '', data = {}, type = 'GET', method = 'fetch',other = '') => {
 	type = type.toUpperCase();
 	url = baseUrl + url;
 
-    data=deepClone(data)
+    if(other!='file') data=deepClone(data)
 
 	if (type == 'GET') {
 		let dataStr = ''; //数据拼接字符串
@@ -65,17 +65,23 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch') => {
 			credentials: 'include',
 			method: type,
 			headers: {
-				'Accept': 'application/json',
+				'Accept': other=='file'?'application/x-www-form-urlencoded':'application/json',
 				'Content-Type': 'application/json'
 			},
 			mode: "cors",
-			cache: "force-cache"
+			// cache: "force-cache"
 		}
 
-		if (type == 'POST') {
-			Object.defineProperty(requestConfig, 'body', {
-				value: JSON.stringify(data)
-			})
+		if (type == 'POST'||type == 'PUT') {
+            if(other=='file'){
+                Object.defineProperty(requestConfig, 'body', {
+                    value: data
+                })
+            }else{
+                Object.defineProperty(requestConfig, 'body', {
+                    value: JSON.stringify(data)
+                })
+            }
 		}
 
 		try {

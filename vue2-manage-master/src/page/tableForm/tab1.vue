@@ -2,7 +2,7 @@
     <el-form class="main_form" :model="mainForm" ref="mainForm">
         <table class="my_table_form">
             <tr>
-                <td>单位名称010</td>
+                <td>单位名称</td>
                 <td colspan="3">
                     <el-form-item prop="name" :rules="[rule.required]">
                         <el-input v-model="mainForm.name"></el-input>
@@ -137,10 +137,17 @@
                 </td>
                 <td>环评批复</td>
                 <td>
-                    <el-form-item prop="officialReply" :rules="[rule.required]">
-                        <el-radio v-model="mainForm.officialReply" label="1">有</el-radio>
-                        <el-radio v-model="mainForm.officialReply" label="2">无</el-radio>
-                    </el-form-item>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item prop="officialReply" :rules="[rule.required]">
+                                <el-radio v-model="mainForm.officialReply" label="1">有</el-radio>
+                                <el-radio v-model="mainForm.officialReply" label="2">无</el-radio>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <uploadFile v-show="mainForm.officialReply==1"></uploadFile>
+                        </el-col>
+                    </el-row>
                 </td>
             </tr>
             <tr>
@@ -209,19 +216,12 @@
 
 import {mixin} from './mixin'
 
+import uploadFile from './uploadFile'
+
 export default {
     name:'tab1',
     mixins:[mixin],
-    props:{
-        mainForm:{
-            type:Object,
-            default(){
-                return {
-
-                }
-            }
-        }
-    },
+    components:{uploadFile},
     data(){
         return {
             title:'基本资料单元'

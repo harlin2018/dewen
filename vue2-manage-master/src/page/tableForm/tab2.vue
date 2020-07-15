@@ -61,30 +61,30 @@
                 <td>检测指标</td>
                 <td class="row_add">
                     检测时间
-                    <span class="td_btn" @click="addRow('swasteWaterMonitorList')"><i class="iconfont icon-add1"></i></span>
+                    <span class="td_btn" @click="addRow('wasteWaterMonitorList')"><i class="iconfont icon-add1"></i></span>
                 </td>
             </tr>
-            <tr v-for="(sitem,sindex) in mainForm.swasteWaterMonitorList" :key="sitem.keyId">
+            <tr v-for="(sitem,sindex) in mainForm.wasteWaterMonitorList" :key="sitem.keyId">
                 <td>
-                    <el-form-item :prop="'swasteWaterMonitorList.'+sindex+'.monitorProject'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteWaterMonitorList.'+sindex+'.monitorProject'" :rules="[rule.required]">
                         <el-input v-model="sitem.monitorProject"></el-input>
                     </el-form-item>
                 </td>
                 <td>
-                    <el-form-item :prop="'swasteWaterMonitorList.'+sindex+'.monitorIndex'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteWaterMonitorList.'+sindex+'.monitorIndex'" :rules="[rule.required]">
                         <el-input v-model="sitem.monitorIndex"></el-input>
                     </el-form-item>
                 </td>
                 <td>
-                    <el-form-item :prop="'swasteWaterMonitorList.'+sindex+'.testItem'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteWaterMonitorList.'+sindex+'.testItem'" :rules="[rule.required]">
                         <el-input v-model="sitem.testItem"></el-input>
                     </el-form-item>
                 </td>
                 <td class="row_add">
-                    <el-form-item :prop="'swasteWaterMonitorList.'+sindex+'.testTime'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteWaterMonitorList.'+sindex+'.testTime'" :rules="[rule.required]">
                         <el-input v-model="sitem.testTime"></el-input>
                     </el-form-item>
-                    <span class="td_btn" @click="removeRow('swasteWaterMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>
+                    <span class="td_btn" @click="removeRow('wasteWaterMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>
                 </td>
             </tr>
         </table>
@@ -98,16 +98,6 @@ import {mixin} from './mixin'
 export default {
     name:'tab2',
     mixins:[mixin],
-    props:{
-        mainForm:{
-            type:Object,
-            default(){
-                return {
-
-                }
-            }
-        }
-    },
     data(){
         return {
             title:'废水单元'

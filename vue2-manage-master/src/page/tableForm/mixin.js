@@ -1,5 +1,14 @@
 
 export const mixin={
+    props:{
+        mainForm:{
+            type:Object,
+            default(){
+                return {
+                }
+            }
+        }
+    },
     data(){
         return {
         }
@@ -18,8 +27,8 @@ export const mixin={
                 })
             })
         },
-        addRow(prop){
-            this.$emit('addRow',prop)
+        addRow(prop,val,src){
+            this.$emit('addRow',{prop,val,src})
         },
         removeRow(prop,index){
             this.$emit('removeRow',{prop,index})

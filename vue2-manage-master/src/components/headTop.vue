@@ -27,9 +27,9 @@
     		}
     	},
     	created(){
-    		if (!this.adminInfo.id) {
-    			this.getAdminData()
-    		}
+    		// if (!this.adminInfo.id) {
+    		// 	this.getAdminData()
+    		// }
     	},
     	computed: {
     		...mapState(['adminInfo']),

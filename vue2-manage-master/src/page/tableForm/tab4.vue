@@ -353,16 +353,6 @@ import {mixin} from './mixin'
 export default {
     name:'tab4',
     mixins:[mixin],
-    props:{
-        mainForm:{
-            type:Object,
-            default(){
-                return {
-
-                }
-            }
-        }
-    },
     data(){
         return {
             title:'固废及危废单元'

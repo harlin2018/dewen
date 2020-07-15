@@ -14,7 +14,7 @@
 					</el-form-item>
 					<el-form-item>
 				    	<el-button type="primary" @click="submitForm('loginForm')" >登陆</el-button>
-				    	<el-button type="primary" @click="submitForm('loginForm')" >注册</el-button>
+				    	<el-button type="primary" @click="$router.push('/register')" >注册</el-button>
 				  	</el-form-item>
 				</el-form>
 	  		</section>

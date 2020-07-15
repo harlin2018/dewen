@@ -98,16 +98,6 @@ import {mixin} from './mixin'
 export default {
     name:'tab3',
     mixins:[mixin],
-    props:{
-        mainForm:{
-            type:Object,
-            default(){
-                return {
-
-                }
-            }
-        }
-    },
     data(){
         return {
             title:'废气单元'
