@@ -16,11 +16,16 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 
 /**
-* @ClassName ControllerAspect
-* @Description TODO
-* @Author huanghl
-* @Date 2020/5/8 16:09
-*/
+ * <p>Title:</p>
+ * <p>Description:</p>
+ * <p>Copyright: Copyright (c) 2020</p>
+ * <p>Company:PCCW</p>
+ *
+ * @version 1.0
+ * @description:
+ * @author: Flame.Lai
+ * @time: 2020/7/14 14:52
+ */
 @Aspect
 @Configuration
 public class ControllerAspect {

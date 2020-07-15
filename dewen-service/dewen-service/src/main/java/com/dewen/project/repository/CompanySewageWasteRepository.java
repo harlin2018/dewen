@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 排污种类
  * <p>Description: CompanySewageWaste Repository  </p>
@@ -23,4 +25,10 @@ public interface CompanySewageWasteRepository extends JpaRepository<CompanySewag
 
 
     void deleteByCompanyId(CompanyInfo companyInfo);
+
+    List<CompanySewageWaste> findByCompanyId(CompanyInfo companyId);
+
+    List<CompanySewageWaste> findByCompanyIdAndWasteType(CompanyInfo companyId, String value);
+
+    List<CompanySewageWaste> findAllByCompanyIdAndWasteType(CompanyInfo companyId, String value);
 }

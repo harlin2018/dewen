@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 记录类型表
  * <p>Description: CompanyRecord Repository  </p>
@@ -23,4 +25,6 @@ public interface CompanyRecordRepository extends JpaRepository<CompanyRecord, In
 
 
     void deleteByCompanyId(CompanyInfo companyInfo);
+
+    List<CompanyRecord> findAllByCompanyIdAndRecordType(CompanyInfo companyId, String value);
 }

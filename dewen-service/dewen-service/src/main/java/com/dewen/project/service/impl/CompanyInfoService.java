@@ -1,7 +1,9 @@
 package com.dewen.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dewen.project.constants.CompanyInfoEnums;
 import com.dewen.project.constants.Constants;
@@ -17,7 +19,9 @@ import com.dewen.project.repository.CompanySewageWasteRepository;
 import com.dewen.project.repository.CompanyWasteRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
+import com.mysql.jdbc.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +33,8 @@ import org.springframework.stereotype.Service;
 import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.service.ICompanyInfoService;
+
+import javax.persistence.criteria.Predicate;
 
 /**
  * 重点工业企业基本情况表
@@ -66,8 +72,8 @@ public class CompanyInfoService implements ICompanyInfoService {
         if (companyProductList!=null) {
             for (CompanyProduct companyProduct : companyProductList) {
                 CompanyProduct newCompanyProduct = new CompanyProduct();
-                newCompanyProduct.setCompanyId(companyInfo);
                 BeanUtils.copyProperties(companyProduct, newCompanyProduct);
+                newCompanyProduct.setCompanyId(companyInfo);
                 companyProductRepository.save(newCompanyProduct);
             }
         }
@@ -276,6 +282,12 @@ public class CompanyInfoService implements ICompanyInfoService {
         Optional<CompanyInfo> CompanyInfo= CompanyInfoRepository.findById(id);
         if(CompanyInfo.isPresent()){
             CompanyInfoRepository.deleteById(id);
+            // 删除原有的资料
+            companyProductRepository.deleteByCompanyId(CompanyInfo.get());
+            companySewageWasteRepository.deleteByCompanyId(CompanyInfo.get());
+            companyRecordRepository.deleteByCompanyId(CompanyInfo.get());
+            companyWasteRepository.deleteByCompanyId(CompanyInfo.get());
+            companyProjectRepository.deleteByCompanyId(CompanyInfo.get());
             Optional<CompanyInfo> CompanyInfoRes= CompanyInfoRepository.findById(id);
             if(CompanyInfoRes.isPresent()){
                 return Constants.RETURN_STATUS_FAIL;
@@ -290,9 +302,27 @@ public class CompanyInfoService implements ICompanyInfoService {
 
     @Override
     public CompanyInfo findById(Integer id) {
-        Optional<CompanyInfo >  CompanyInfo = CompanyInfoRepository.findById(id);
-        if(CompanyInfo.isPresent()){
-            return CompanyInfo.get();
+        Optional<CompanyInfo>  companyInfoOpt = CompanyInfoRepository.findById(id);
+        if(companyInfoOpt.isPresent()){
+            // 主要生产产品表
+            Integer companyId = companyInfoOpt.get().getId();
+            CompanyInfo companyInfo = companyInfoOpt.get();
+            companyInfo.setCompanyProductList(companyProductRepository.findAllByCompanyId(companyInfo).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 排污种类：废水
+            companyInfo.setWasteWaterList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 排污种类：废气
+            companyInfo.setWasteGasList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 监测项目（废水）
+            companyInfo.setWasteWaterMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 监测项目（废气）
+            companyInfo.setWasteGasMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 危废
+            companyInfo.setCompanyWasteList(companyWasteRepository.findAllByCompanyId(companyInfo).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 巡查执法记录
+            companyInfo.setInspectRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            // 行政执法记录
+            companyInfo.setAdminRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            return companyInfo;
         }else{
             return null;
         }
@@ -311,13 +341,27 @@ public class CompanyInfoService implements ICompanyInfoService {
         if(CompanyInfo == null){
             CompanyInfoPages = CompanyInfoRepository.findAll(pageable);
         }else{
-            //create matcher ,if need ,please modify here
-            ExampleMatcher matcher = ExampleMatcher.matchingAll();
-            matcher = matcher.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains());
-            matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
-            //create instant
-            Example<CompanyInfo> example = Example.of(CompanyInfo, matcher);
-            CompanyInfoPages  = CompanyInfoRepository.findAll(example, pageable);
+            Specification<CompanyInfo> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+                List<Predicate> predicateAndList = new ArrayList<Predicate>();
+                if (CompanyInfo.getId()!=null) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("id"), "%" + CompanyInfo.getId() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getName())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("name"), "%" + CompanyInfo.getName() + "%"));
+                }
+                if(!StringUtils.isNullOrEmpty(CompanyInfo.getLegalRepresentative())){
+                    predicateAndList.add(criteriaBuilder.like(root.get("legalRepresentative"), "%" + CompanyInfo.getLegalRepresentative() + "%"));
+                }
+                if(!StringUtils.isNullOrEmpty(CompanyInfo.getEnvironmentalProtectionOfficer())){
+                    predicateAndList.add(criteriaBuilder.like(root.get("environmentalProtectionOfficer"), "%" + CompanyInfo.getEnvironmentalProtectionOfficer() + "%"));
+                }
+                if (predicateAndList.size() > 0) {
+                    return criteriaQuery.where(criteriaBuilder.and(predicateAndList.toArray(new Predicate[predicateAndList.size() - 1]))).getRestriction();
+                }
+                return criteriaQuery.getRestriction();
+            };
+            CompanyInfoPages = CompanyInfoRepository.findAll(specification, pageable);
         }
 
         return CompanyInfoPages;

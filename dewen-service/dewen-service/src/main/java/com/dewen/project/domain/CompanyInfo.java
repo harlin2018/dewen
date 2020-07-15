@@ -62,7 +62,7 @@ public class CompanyInfo implements Serializable {
      * 联系电话
      */
     @Column(name = "contact_number")
-    private Integer contactNumber;
+    private String contactNumber;
 
     /**
      * 行业类别
@@ -315,8 +315,6 @@ public class CompanyInfo implements Serializable {
      */
     @Column(name = "official_time")
     private String officialTime;
-
-
 
     /**
      * 主要生产产品表
