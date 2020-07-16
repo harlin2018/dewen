@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ICommonFileSystemService {
 
-    List<CommonFileSystem> upload(MultipartHttpServletRequest request, String workflowId);
+    List<CommonFileSystem> upload(MultipartHttpServletRequest request);
 
     CommonFileSystem upload(InputStream inputStream, String fileName);
 

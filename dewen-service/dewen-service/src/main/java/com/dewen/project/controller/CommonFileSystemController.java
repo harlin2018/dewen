@@ -57,13 +57,13 @@ public class CommonFileSystemController {
                 } else {
                     multiRequest = multipartResolver.resolveMultipart(request);
                 }
-                String workflowIdStr = multiRequest.getParameter("workflowId");
-                if (StringUtils.isEmpty(workflowIdStr)) {
-                    throw new CommonException("{commonFile.workflowId.not.null}");
-                }
+//                String workflowIdStr = multiRequest.getParameter("workflowId");
+//                if (StringUtils.isEmpty(workflowIdStr)) {
+//                    throw new CommonException("{commonFile.workflowId.not.null}");
+//                }
                 //Integer workflowId = Integer.parseInt(workflowIdStr);
 
-                List<CommonFileSystem> files = commonFileService.upload(multiRequest, workflowIdStr);
+                List<CommonFileSystem> files = commonFileService.upload(multiRequest);
                 model = baseManager.composeSuccessBaseResponse(files);
             } else {
                 throw new CommonException("表单不是multipart/form-data类型");//"{commonFile.workflowId.not.null}");

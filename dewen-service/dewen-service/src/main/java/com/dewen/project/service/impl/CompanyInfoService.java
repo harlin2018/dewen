@@ -1,7 +1,9 @@
 package com.dewen.project.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -365,5 +367,33 @@ public class CompanyInfoService implements ICompanyInfoService {
         }
 
         return CompanyInfoPages;
+    }
+
+    @Override
+    public Map<String, List> record() {
+        Map<String, List> recordMap = new HashMap<>();
+        // 废水
+        List<CompanySewageWaste> wasteWaterList = companySewageWasteRepository.findAllByWasteTypeGroupByName(CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        // 废气
+        List<CompanySewageWaste> wasteGasList = companySewageWasteRepository.findAllByWasteTypeGroupByName(CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        // 监测项目（废水）
+        List<CompanyProject> wasteWaterMonitorList = companyProjectRepository.findAllByWasteTypeGroupByMonitorProject(CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        // 监测项目（废气）
+        List<CompanyProject> wasteGasMonitorList = companyProjectRepository.findAllByWasteTypeGroupByMonitorProject(CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        // 巡查执法记录
+        List<CompanyRecord> inspectRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        // 行政执法记录
+        List<CompanyRecord> adminRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+
+        recordMap.put("wasteWaterList", wasteWaterList);
+        recordMap.put("wasteGasList", wasteGasList);
+        recordMap.put("wasteWaterMonitorList", wasteWaterMonitorList);
+        recordMap.put("wasteGasMonitorList", wasteGasMonitorList);
+        recordMap.put("inspectRecordList", inspectRecordList);
+        recordMap.put("adminRecordList", adminRecordList);
+
+
+
+        return recordMap;
     }
 }

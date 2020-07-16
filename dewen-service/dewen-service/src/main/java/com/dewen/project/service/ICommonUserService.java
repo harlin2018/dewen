@@ -56,4 +56,6 @@ public interface ICommonUserService {
     public Page<CommonUser> list(CommonUser CommonUser, int pageNumber, int pageSize, String sorts) ;
 
     CommonUser getUser(String loginName, String hashPassword);
+
+    int approvalUser(Integer id, Integer status);
 }

@@ -20,6 +20,9 @@ import javax.validation.Valid;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
+
 /**
  * 重点工业企业基本情况表
  * <p>Description: CompanyInfo Controller </p>
@@ -37,6 +40,7 @@ public class CompanyInfoController extends BaseController{
     private IBaseManager baseManager;
     @Autowired
     private ICompanyInfoService CompanyInfoService;
+
 
     /**
      * Get all list for CompanyInfo
@@ -135,5 +139,13 @@ public class CompanyInfoController extends BaseController{
         }else{
             return baseManager.composeDBFailResponse();
         }
+    }
+
+    /**
+     * 获取追加的历史记录
+     */
+    @RequestMapping(value = "/record", method = RequestMethod.GET)
+    public BaseResponse countInfo() {
+        return baseManager.composeSuccessBaseResponse(CompanyInfoService.record());
     }
 }

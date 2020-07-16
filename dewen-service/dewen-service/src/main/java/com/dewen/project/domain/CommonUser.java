@@ -171,6 +171,12 @@ public class CommonUser implements Serializable {
     @Column(name = "external_id")
     private String externalId;
 
+    /**
+     * status（0未通过/1已通过）
+     */
+    @Column(name = "status")
+    private String status;
+
     public CommonUser() {
     }
 

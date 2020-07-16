@@ -1,11 +1,17 @@
 package com.dewen.project.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CompanyInfo;
+import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
+import com.mysql.jdbc.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +23,8 @@ import org.springframework.stereotype.Service;
 import com.dewen.project.domain.CommonUser;
 import com.dewen.project.repository.CommonUserRepository;
 import com.dewen.project.service.ICommonUserService;
+
+import javax.persistence.criteria.Predicate;
 
 
 /**
@@ -39,6 +47,7 @@ public class CommonUserService implements ICommonUserService {
     @Transactional(value = "transactionManager")
     public int createCommonUser(CommonUser CommonUser) {
         queryFk(CommonUser);
+        CommonUser.setEnabled(1);
         CommonUserRepository.save(CommonUser);
         return Constants.RETURN_STATUS_SUCCESS;
     }
@@ -108,13 +117,24 @@ public class CommonUserService implements ICommonUserService {
         if(CommonUser == null){
             CommonUserPages = CommonUserRepository.findAll(pageable);
         }else{
-            //create matcher ,if need ,please modify here
-            ExampleMatcher matcher = ExampleMatcher.matchingAll();
-            matcher = matcher.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains());
-            matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
-            //create instant
-            Example<CommonUser> example = Example.of(CommonUser, matcher);
-            CommonUserPages  = CommonUserRepository.findAll(example, pageable);
+            Specification<CommonUser> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+                List<Predicate> predicateAndList = new ArrayList<Predicate>();
+                if (CommonUser.getId()!=null) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("id"), "%" + CommonUser.getId() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CommonUser.getLoginName())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("loginName"), "%" + CommonUser.getLoginName() + "%"));
+                }
+                if(!StringUtils.isNullOrEmpty(CommonUser.getUserName())){
+                    predicateAndList.add(criteriaBuilder.like(root.get("userName"), "%" + CommonUser.getUserName() + "%"));
+                }
+                if (predicateAndList.size() > 0) {
+                    return criteriaQuery.where(criteriaBuilder.and(predicateAndList.toArray(new Predicate[predicateAndList.size() - 1]))).getRestriction();
+                }
+                return criteriaQuery.getRestriction();
+            };
+            CommonUserPages = CommonUserRepository.findAll(specification, pageable);
         }
 
         return CommonUserPages;
@@ -123,5 +143,17 @@ public class CommonUserService implements ICommonUserService {
     @Override
     public CommonUser getUser(String loginName, String hashPassword) {
         return CommonUserRepository.findByLoginNameAndHashPassword(loginName, hashPassword);
+    }
+
+    @Override
+    @Transactional(value = "transactionManager")
+    public int approvalUser(Integer id, Integer status) {
+        Optional<CommonUser> CommonUser = CommonUserRepository.findById(id);
+        if (CommonUser.isPresent()) {
+            CommonUser.get().setStatus(String.valueOf(status));
+            CommonUserRepository.save(CommonUser.get());
+            return Constants.RETURN_STATUS_SUCCESS;
+        }
+        return Constants.RETURN_STATUS_FAIL;
     }
 }

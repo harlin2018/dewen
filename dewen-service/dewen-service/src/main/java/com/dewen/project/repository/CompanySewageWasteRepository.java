@@ -6,6 +6,7 @@ import com.dewen.project.domain.CompanySewageWaste;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,4 +32,7 @@ public interface CompanySewageWasteRepository extends JpaRepository<CompanySewag
     List<CompanySewageWaste> findByCompanyIdAndWasteType(CompanyInfo companyId, String value);
 
     List<CompanySewageWaste> findAllByCompanyIdAndWasteType(CompanyInfo companyId, String value);
+
+    @Query(value = "select * from company_sewage_waste where waste_type =:wasteType group by name", nativeQuery = true)
+    List<CompanySewageWaste> findAllByWasteTypeGroupByName(String wasteType);
 }

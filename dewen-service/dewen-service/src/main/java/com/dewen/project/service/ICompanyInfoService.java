@@ -4,6 +4,9 @@ package com.dewen.project.service;
 import com.dewen.project.domain.CompanyInfo;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 重点工业企业基本情况表
  * <p>Description: CompanyInfo Service  /p>
@@ -55,4 +58,5 @@ public interface ICompanyInfoService {
      */
     public Page<CompanyInfo> list(CompanyInfo CompanyInfo, int pageNumber, int pageSize, String sorts) ;
 
+    Map<String, List> record();
 }

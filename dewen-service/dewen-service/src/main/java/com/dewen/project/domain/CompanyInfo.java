@@ -305,6 +305,13 @@ public class CompanyInfo implements Serializable {
     private String officialReply;
 
     /**
+    * 环评批复文件Id
+    */
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "official_reply_file_id",referencedColumnName = "ID")
+    private CommonFileSystem officialReplyFileId;
+
+    /**
      * 生产工艺描述
      */
     @Column(name = "breaks")

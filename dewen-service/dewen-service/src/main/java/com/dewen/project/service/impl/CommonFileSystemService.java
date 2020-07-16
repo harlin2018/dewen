@@ -7,6 +7,7 @@ import com.dewen.project.exception.CommonException;
 import com.dewen.project.exception.DataException;
 import com.dewen.project.repository.CommonFileSystemRepository;
 import com.dewen.project.service.ICommonFileSystemService;
+import com.dewen.project.utils.BaseUtils;
 import com.dewen.project.utils.PageUtils;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
@@ -42,6 +43,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -163,7 +165,7 @@ public class CommonFileSystemService implements ICommonFileSystemService {
         return commonFileSystemPages;
     }
 
-    public List<CommonFileSystem> uploadToLoc(MultipartHttpServletRequest multiRequest, String workflowId) {
+    public List<CommonFileSystem> uploadToLoc(MultipartHttpServletRequest multiRequest) {
 
         //校验工单号
 
@@ -178,8 +180,8 @@ public class CommonFileSystemService implements ICommonFileSystemService {
         String processStatusStr = multiRequest.getParameter("processStatus");
         Integer moduleType = StringUtils.isEmpty(moduleTypeStr) ? 0 : Integer.parseInt(moduleTypeStr);
         Integer toBeFollowUp = StringUtils.isEmpty(toBeFollowUpStr) ? 1 : Integer.parseInt(toBeFollowUpStr);
-
-        File directory = new File(fileDir + File.separator + workflowId);
+        String guid = BaseUtils.getUUID();
+        File directory = new File(fileDir + File.separator + guid);
         try {
             if (!directory.exists()) {
                 FileUtils.forceMkdir(directory);
@@ -229,7 +231,7 @@ public class CommonFileSystemService implements ICommonFileSystemService {
                     }
 
                     CommonFileSystem commonFile = new CommonFileSystem();
-                    commonFile.setFilePath(File.separator + workflowId + File.separator + originalName);
+                    commonFile.setFilePath(File.separator + guid + File.separator + originalName);
                     commonFile.setFileName(originalName);
                     commonFile.setFileExtends(fileExtends);
                     commonFile.setEnabled(1);
@@ -266,9 +268,9 @@ public class CommonFileSystemService implements ICommonFileSystemService {
     }
 
     @Override
-    public List<CommonFileSystem> upload(MultipartHttpServletRequest multiRequest, String workflowId) {
+    public List<CommonFileSystem> upload(MultipartHttpServletRequest multiRequest) {
 //        if (!"pro".equals(activeProfile)) {
-            return uploadToLoc(multiRequest, workflowId);
+            return uploadToLoc(multiRequest);
 //        }
 //
 //        //校验工单号

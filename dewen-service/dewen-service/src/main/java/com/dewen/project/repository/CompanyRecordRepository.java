@@ -6,6 +6,7 @@ import com.dewen.project.domain.CompanyRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +28,7 @@ public interface CompanyRecordRepository extends JpaRepository<CompanyRecord, In
     void deleteByCompanyId(CompanyInfo companyInfo);
 
     List<CompanyRecord> findAllByCompanyIdAndRecordType(CompanyInfo companyId, String value);
+
+    @Query(value = "select * from company_record where record_type =:recordType group by content", nativeQuery = true)
+    List<CompanyRecord> findAllByRecordTypeGroupByContent(String recordType);
 }

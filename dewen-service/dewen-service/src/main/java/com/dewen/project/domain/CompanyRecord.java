@@ -46,7 +46,7 @@ public class CompanyRecord implements Serializable {
      * file_url
      */
     @Column(name = "file_url")
-    private String fileUrl;
+    private CommonFileSystem fileUrl;
 
     /**
      * 记录类型:1巡查执法记录/2行政处罚记录

@@ -1,5 +1,6 @@
 package com.dewen.project.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.domain.CommonUser;
 import com.dewen.project.service.ICommonUserService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 import javax.validation.Valid;
@@ -33,7 +35,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/project/commonUser")
-public class CommonUserController {
+public class CommonUserController extends BaseController {
     @Autowired
     private IBaseManager baseManager;
     @Autowired
@@ -150,6 +152,24 @@ public class CommonUserController {
         if(result == Constants.RETURN_STATUS_SUCCESS){
             return baseManager.composeCommonSuccessResponse();
         }else{
+            return baseManager.composeDBFailResponse();
+        }
+    }
+
+    /**
+     * 审批
+     *
+     * @param paramObj
+     * @return
+     */
+    @ApiOperation(value = "审批", notes = "审批")
+    @RequestMapping(value = "/approvalUser", method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResponse approvalUser(@RequestBody JSONObject paramObj) {
+        int result = CommonUserService.approvalUser(getJSONInteger(paramObj, "id"), getJSONInteger(paramObj, "status"));
+        if(result == Constants.RETURN_STATUS_SUCCESS) {
+            return baseManager.composeCommonSuccessResponse();
+        } else{
             return baseManager.composeDBFailResponse();
         }
     }

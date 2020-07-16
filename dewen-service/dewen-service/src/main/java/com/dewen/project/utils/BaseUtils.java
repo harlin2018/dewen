@@ -20,7 +20,7 @@ public class BaseUtils {
 	 * 
 	 * @return
 	 */
-	public String getUUID() {
+	public static String getUUID() {
 		return NumberUtils.getUUID();
 	}
 	

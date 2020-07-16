@@ -6,6 +6,7 @@ import com.dewen.project.domain.CompanyProject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +28,7 @@ public interface CompanyProjectRepository extends JpaRepository<CompanyProject, 
     void deleteByCompanyId(CompanyInfo companyInfo);
 
     List<CompanyProject> findAllByCompanyIdAndWasteType(CompanyInfo companyId, String value);
+
+    @Query(value = "select * from company_project where waste_type =:wasteType group by monitor_project", nativeQuery = true)
+    List<CompanyProject> findAllByWasteTypeGroupByMonitorProject(String wasteType);
 }
