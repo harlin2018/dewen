@@ -19,7 +19,9 @@
                     <ul class="my_record">
                         <li v-for="(item,index) in mainForm.inspectRecordList" :key="index">
                             <p v-if="item.content">{{item.content}}</p>
-                            <a v-else :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
+                            <a v-else-if="isAdmin" :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
+                            <a v-else href="javascript:;">{{item.fileUrl.fileName}}</a>
+                            <div>{{formatDate(item.createDate)}}</div>
                             <span @click="removeRow('inspectRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </li>
                     </ul>
@@ -33,7 +35,7 @@
                             <el-radio label="1">文字</el-radio>
                             <el-radio label="2">附件</el-radio>
                         </el-radio-group>
-                        <uploadFile style="margin-left:30px;" @success="updateFile($event,'adminRecordList')" v-show="first.type==2"></uploadFile>
+                        <uploadFile style="margin-left:30px;" @success="updateFile($event,'adminRecordList')" v-show="second.type==2"></uploadFile>
                     </div>
                     <div v-show="second.type==1">
                         <el-input v-model="second.value">
@@ -43,7 +45,9 @@
                     <ul class="my_record">
                         <li v-for="(item,index) in mainForm.adminRecordList" :key="index">
                             <p v-if="item.content">{{item.content}}</p>
-                            <a v-else :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
+                            <a v-else-if="isAdmin" :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
+                            <a v-else href="javascript:;">{{item.fileUrl.fileName}}</a>
+                            <div>{{formatDate(item.createDate)}}</div>
                             <span @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </li>
                     </ul>
@@ -57,7 +61,7 @@
 
 import {mixin} from './mixin'
 
-
+import {parseTime} from '@/utils'
 import uploadFile from './uploadFile'
 
 export default {
@@ -88,6 +92,13 @@ export default {
         },
         updateFile(data,prop){
             this.$emit('updateFile',{data,prop})
+        },
+        formatDate(date){
+            if(date){
+                return parseTime(date)
+            }else{
+                return ''
+            }
         }
     }
 }
@@ -104,8 +115,20 @@ export default {
         font-size: 14px;
         position: relative;
         border-bottom: 1px dashed #ccc;
+        display: flex;
+    }
+    div{
+        padding-right: 10px;
+        width: 130px;
+        font-size: 12px;
+    }
+    p{
+        flex: 1;
+        width: 0;
     }
     a{
+        flex: 1;
+        width: 0;
         text-decoration: underline;
         color: #409EFF;
         cursor: pointer;
@@ -127,5 +150,6 @@ export default {
     .iconfont{
         color: #F56C6C;
     }
+
 }
 </style>

@@ -13,6 +13,12 @@ export const mixin={
         return {
         }
     },
+    computed:{
+        isAdmin(){
+            let info=this.$store.state.adminInfo
+            return info&&info.userName=='admin'
+        }
+    },
     created(){
     },
     methods:{

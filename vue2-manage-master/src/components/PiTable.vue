@@ -104,7 +104,7 @@
                         :key="index"
                         :content="item.label"
                         placement="bottom">
-                        <span class="tableIcon" :class="[item.color]" @click.stop="handleButton(scope.row,item.type,scope.$index)" >
+                        <span v-show="!scope.row[item.type+'Hide']" class="tableIcon" :class="[item.color]" @click.stop="handleButton(scope.row,item.type,scope.$index)" >
                             <i class="iconfont" :class="['icon-'+item.type]"></i>
                         </span>
                     </el-tooltip>
