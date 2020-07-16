@@ -251,6 +251,7 @@ public class CompanyInfoService implements ICompanyInfoService {
                     BeanUtils.copyProperties(companyRecord, newCompanyRecord);
                     newCompanyRecord.setCompanyId(companyInfo);
                     newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
+                    newCompanyRecord.setCreateDate(new Date());
                     companyRecordRepository.save(newCompanyRecord);
                 }
             }
@@ -261,6 +262,7 @@ public class CompanyInfoService implements ICompanyInfoService {
                     CompanyRecord newCompanyRecord = new CompanyRecord();
                     BeanUtils.copyProperties(companyRecord, newCompanyRecord);
                     newCompanyRecord.setCompanyId(companyInfo);
+                    newCompanyRecord.setCreateDate(new Date());
                     newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
                     companyRecordRepository.save(newCompanyRecord);
                 }
