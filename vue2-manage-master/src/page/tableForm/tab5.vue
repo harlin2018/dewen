@@ -47,6 +47,7 @@
                             <p v-if="item.content">{{item.content}}</p>
                             <a v-else-if="isAdmin" :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
                             <a v-else href="javascript:;">{{item.fileUrl.fileName}}</a>
+                            <div>{{formatDate(item.createDate)}}</div>
                             <span @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </li>
                     </ul>

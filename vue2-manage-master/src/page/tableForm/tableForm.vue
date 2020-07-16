@@ -7,7 +7,7 @@
                 <el-button type="primary" @click="submitData">保存</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
-            <div class="my_main">
+            <div class="my_main" v-loading="loading">
                 <el-tabs v-model="activeName">
                     <el-tab-pane label="基本资料单元" name="tab1">
                         <tab1 ref="tab1" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab1>
@@ -52,6 +52,7 @@ export default {
     data(){
         return {
             cid:'',
+            loading:false,
             activeName:'tab1',
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
@@ -240,11 +241,15 @@ export default {
     },
     methods: {
         getCompanyData(id){ //获取详情
+            this.loading=true
             getCompanyData(id).then(res=>{
+                this.loading=false
                 if(res.resultCode==0){
                     this.setListKeyId(res.payload)
                     this.mainForm=res.payload
                 }
+            }).catch(_=>{
+                this.loading=false
             })
         },
         getCateHistory(){   //分类历史
@@ -359,7 +364,7 @@ export default {
         margin-bottom: 0;
     }
     .el-form-item__label{
-        display: none;
+        // display: none;
     }
     .el-form-item__error{
         padding-top:0px;

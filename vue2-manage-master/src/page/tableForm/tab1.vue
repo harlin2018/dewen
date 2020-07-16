@@ -145,7 +145,7 @@
                             </el-form-item>
                         </li>
                         <li class="right">
-                            <div class="official_file" v-if="!!mainForm.officialReplyFileId">
+                            <div class="official_file" v-if="!!mainForm.officialReplyFileId&&mainForm.officialReply==1">
                                 <a v-if="isAdmin" :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
                                 <a v-else href="javascript:;">{{mainForm.officialReplyFileId.fileName}}</a>
                                 <span @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
@@ -286,5 +286,16 @@ export default {
 }
 .official_file:hover span{
     opacity: 1;
+}
+.is-required{
+    position: relative;
+}
+.is-required:after{
+    content: '*';
+    color: red;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    margin-top: -10px;
 }
 </style>

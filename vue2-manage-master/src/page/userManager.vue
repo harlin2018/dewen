@@ -81,7 +81,12 @@ export default {
                 this.loading=false
                 if(res.resultCode=='0'){
                     res.payload.content.map(item=>{
-                        item.status=item.status==1?'审核通过':'待审核'
+                        if(item.status==1){
+                            item.status='审核通过'
+                            item.eyesHide=true
+                        }else{
+                            item.status='待审核'
+                        }
                     })
                     this.mainList=res.payload.content
                     this.mainQuery.total=res.payload.totalElements
@@ -93,16 +98,10 @@ export default {
         handleButton(data){
             this.$confirm('用户审核', '提示', {
                 confirmButtonText: '通过',
-                cancelButtonText: '拒绝',
+                cancelButtonText: '取消',
                 type: 'warning'
             }).then(_=>{
                 approveUser({id:data.row.id,status:1}).then(res=>{
-                    if(res.resultCode=='0'){
-                        this.getMainList()
-                    }
-                })
-            }).catch(_=>{
-                approveUser({id:data.row.id,status:0}).then(res=>{
                     if(res.resultCode=='0'){
                         this.getMainList()
                     }
