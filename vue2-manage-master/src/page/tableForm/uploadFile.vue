@@ -6,7 +6,8 @@
 </template>
 
 <script>
-import {uploadFileData,createCompanyData} from '@/api/getData'
+import {uploadFileData} from '@/api/getData'
+import {uploadFile} from '@/api/common'
 export default {
 	name:'uploadFile',
 	props:{
@@ -45,18 +46,14 @@ export default {
         uploadFile(file){
 			var formData=new FormData()
             formData.append('file',file)
-			uploadFileData(formData).then(response => {
-				if(response.resultCode==0){
+			uploadFile(formData).then(res => {
+				if(res.resultCode==0){
 					this.$message({
 						message:'上传成功',
 						type:'success'
 					})
-					let fileData=response.data[0]
-					this.$emit('success',response.data)
-					let params={
-						fileRefId:fileData.id,
-						fileName:fileData.fileName,
-					}
+					let fileData=res.payload[0]
+					this.$emit('success',res.payload[0])
 				}else{
 					this.$message({
 						message:'上传失败',

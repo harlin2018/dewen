@@ -7,18 +7,18 @@
                     @handleSearch="searchMain"
                     :search-items="searchItem"
                     :query.sync="mainQuery">
-                    <el-button type="success" @click="redirect">添加</el-button>
                 </PiSearchBar>
 
                 <pi-table
                     v-loading="loading"
                     :data="mainList"
                     :prop="headers"
+                    :edit="false"
+                    :del="false"
+                    :buttons="buttons"
                     :page.sync="mainQuery"
+                    @handleButton="handleButton"
                     @pageChange="getMainList"
-                    @rowDblclick="handleEdit"
-                    @handleEdit="handleEdit"
-                    @handleDelete="handleDelete"
                 ></pi-table>
             </div>
         </div>
@@ -30,7 +30,8 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getCompanyList,deleteCompanyData} from '@/api/common'
+import {getUserList,approveUser} from '@/api/common'
+
 
 export default {
     name:'tableList',
@@ -40,18 +41,29 @@ export default {
             loading:false,
             mainList:[],
             searchItem:[
-                {label:'名称',prop:'name',type:'input'},
+                {label:'名称',prop:'userName',type:'input'},
             ],
             headers:[
-                {label:'公司名称',prop:'name'},
-                {label:'联系人',prop:'environmentalProtectionOfficer'},
-                {label:'电话',prop:'contactNumber'},
+                {label:'用户名',prop:'userName'},
+                {label:'审批状态',prop:'status'},
+                {label:'电话',prop:'mobile'},
+                {label:'邮箱',prop:'email'},
             ],
             mainQuery:{
-                name:'',
+                userName:'',
                 limit:10,
                 page:1,
                 total:0
+            }
+        }
+    },
+    computed:{
+        buttons(){
+            let info=this.$store.state.adminInfo
+            if(info&&info.userName=='admin'){
+                return [{label:'审批',color:'iconBlue',type:'eyes'}]
+            }else{
+                return []
             }
         }
     },
@@ -59,18 +71,18 @@ export default {
         this.getMainList()
     },
     methods: {
-        redirect(){ //重定向
-            this.$router.push('/tableForm')
-        },
         searchMain(){   //搜索
             this.mainQuery.page=1
             this.getMainList()
         },
         getMainList(){  //获取列表
             this.loading=true
-            getCompanyList(this.mainQuery).then(res=>{
+            getUserList(this.mainQuery).then(res=>{
                 this.loading=false
                 if(res.resultCode=='0'){
+                    res.payload.content.map(item=>{
+                        item.status=item.status==1?'审批通过':'待审批'
+                    })
                     this.mainList=res.payload.content
                     this.mainQuery.total=res.payload.totalElements
                 }
@@ -78,15 +90,23 @@ export default {
                 this.loading=false
             })
         },
-        handleEdit(row){    //编辑跳转
-            this.$router.push({path:'/tableForm',query:{id:row.id}})
-        },
-        handleDelete(row){  //删除数据
-            deleteCompanyData(row).then(res=>{
-                if(res.resultCode==0){
-                    this.$message({type:'success',message:'已删除'})
-                    this.getMainList()
-                }
+        handleButton(data){
+            this.$confirm('用户审批', '提示', {
+                confirmButtonText: '通过',
+                cancelButtonText: '拒绝',
+                type: 'warning'
+            }).then(_=>{
+                approveUser({id:data.row.id,status:1}).then(res=>{
+                    if(res.resultCode=='0'){
+                        this.getMainList()
+                    }
+                })
+            }).catch(_=>{
+                approveUser({id:data.row.id,status:0}).then(res=>{
+                    if(res.resultCode=='0'){
+                        this.getMainList()
+                    }
+                })
             })
         }
     }

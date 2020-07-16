@@ -1,8 +1,7 @@
-import service from '@/utils/request'
+import service from '@/config/request'
 const request = service('common')
 
-
-export function login(data) {
+export function login(data) {   //登录
     return request({
         url: '/commonUser/login',
         method: 'post',
@@ -10,44 +9,69 @@ export function login(data) {
     })
 }
 
-export function fetchStmIssue(id) {
+
+export function getCompanyList(params) {    //公司列表
     return request({
-        url: '/cmdb/stm/stmIssue/:id',
-        method: 'get',
-        params: { id }
+        url: '/companyInfo/list',
+        method: 'post',
+        params
+    })
+}
+export function getCompanyData(id) {    //公司详情
+    return request({
+        url: '/companyInfo/'+id,
+        method: 'get'
+    })
+}
+export function createCompanyData(data) {    //创建公司
+    return request({
+        url: '/companyInfo/add',
+        method: 'post',
+        data
+    })
+}
+export function updateCompanyData(data) {    //更新公司
+    return request({
+        url: '/companyInfo/update/'+data.id,
+        method: 'put',
+        data
+    })
+}
+export function deleteCompanyData(data) {    //删除公司
+    return request({
+        url: '/companyInfo/delete/'+data.id,
+        method: 'delete'
     })
 }
 
-export function createStmIssue(data) {
-
-  return request({
-    url: '/cmdb/stm/stmIssue/add',
-    method: 'post',
-    data
-  })
-}
-
-export function updateStmIssue(data) {
-  return request({
-    url: '/cmdb/stm/stmIssue/update/:data.id',
-    method: 'put',
-    data
-  })
-}
-
-export function deleteStmIssue(data) {
-  return request({
-    url: '/cmdb/stm/stmIssue/delete/:data.id',
-    method: 'delete',
-    data
-  })
+export function getCateHistory() {    //分类历史列表
+    return request({
+        url: '/companyInfo/record',
+        method: 'get'
+    })
 }
 
 
-export function getAssetsDetail(data) {
-  return request({
-    url: '/cmdb/stm/stmIssue/getAssetsDetail',
-    method: 'post',
-    data
-  })
+
+export function getUserList(params) {   //用户列表
+    return request({
+        url: '/commonUser/list',
+        method: 'post',
+        params
+    })
+}
+export function approveUser(data) {   //用户审批
+    return request({
+        url: '/commonUser/approvalUser',
+        method: 'post',
+        data
+    })
+}
+
+export function uploadFile(data) {  //上传
+    return request({
+        url: '/file/upload',
+        method: 'post',
+        data
+    })
 }

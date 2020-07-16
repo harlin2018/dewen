@@ -9,6 +9,7 @@
                             <el-radio label="1">文字</el-radio>
                             <el-radio label="2">附件</el-radio>
                         </el-radio-group>
+                        <uploadFile style="margin-left:30px;" @success="updateFile($event,'inspectRecordList')" v-show="first.type==2"></uploadFile>
                     </div>
                     <div v-show="first.type==1">
                         <el-input v-model="first.value">
@@ -18,7 +19,7 @@
                     <ul class="my_record">
                         <li v-for="(item,index) in mainForm.inspectRecordList" :key="index">
                             <p v-if="item.content">{{item.content}}</p>
-                            <a v-else>{{item.url}}</a>
+                            <a v-else :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
                             <span @click="removeRow('inspectRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </li>
                     </ul>
@@ -32,6 +33,7 @@
                             <el-radio label="1">文字</el-radio>
                             <el-radio label="2">附件</el-radio>
                         </el-radio-group>
+                        <uploadFile style="margin-left:30px;" @success="updateFile($event,'adminRecordList')" v-show="first.type==2"></uploadFile>
                     </div>
                     <div v-show="second.type==1">
                         <el-input v-model="second.value">
@@ -41,7 +43,7 @@
                     <ul class="my_record">
                         <li v-for="(item,index) in mainForm.adminRecordList" :key="index">
                             <p v-if="item.content">{{item.content}}</p>
-                            <a v-else>{{item.url}}</a>
+                            <a v-else :href="'file/download/'+item.fileUrl.id" download>{{item.fileUrl.fileName}}</a>
                             <span @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </li>
                     </ul>
@@ -65,11 +67,11 @@ export default {
     data(){
         return {
             first:{
-                type:'',
+                type:'1',
                 value:''
             },
             second:{
-                type:'',
+                type:'1',
                 value:''
             }
         }
@@ -84,6 +86,9 @@ export default {
             }
             this.$emit('addRow',{prop,val,src})
         },
+        updateFile(data,prop){
+            this.$emit('updateFile',{data,prop})
+        }
     }
 }
 </script>
@@ -99,6 +104,11 @@ export default {
         font-size: 14px;
         position: relative;
         border-bottom: 1px dashed #ccc;
+    }
+    a{
+        text-decoration: underline;
+        color: #409EFF;
+        cursor: pointer;
     }
     li:hover span{
         opacity: 1;

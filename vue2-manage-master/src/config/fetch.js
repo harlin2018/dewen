@@ -66,7 +66,7 @@ export default async(url = '', data = {}, type = 'GET', method = 'fetch',other =
 			method: type,
 			headers: {
 				'Accept': other=='file'?'application/x-www-form-urlencoded':'application/json',
-				'Content-Type': 'application/json'
+				'Content-Type': other=='file'?'application/x-www-form-urlencoded':'application/json'
 			},
 			mode: "cors",
 			// cache: "force-cache"

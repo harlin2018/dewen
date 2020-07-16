@@ -137,17 +137,21 @@
                 </td>
                 <td>环评批复</td>
                 <td>
-                    <el-row>
-                        <el-col :span="12">
+                    <ul class="ul_flex">
+                        <li class="left">
                             <el-form-item prop="officialReply" :rules="[rule.required]">
                                 <el-radio v-model="mainForm.officialReply" label="1">有</el-radio>
                                 <el-radio v-model="mainForm.officialReply" label="2">无</el-radio>
                             </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <uploadFile v-show="mainForm.officialReply==1"></uploadFile>
-                        </el-col>
-                    </el-row>
+                        </li>
+                        <li class="right">
+                            <div class="official_file" v-if="!!mainForm.officialReplyFileId">
+                                <a :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
+                                <span @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
+                            </div>
+                            <uploadFile v-show="!mainForm.officialReplyFileId&&mainForm.officialReply==1" @success="updateFile($event,'officialReplyFileId')"></uploadFile>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
@@ -228,11 +232,58 @@ export default {
         }
     },
     methods:{
+        updateFile(data,prop){
+            this.$emit('updateFile',{data,prop})
+        },
+        deleteFile(prop){
+            this.$emit('updateFile',{prop})
+        }
     }
 }
 
 </script>
 
-<style>
-
+<style lang="less">
+.ul_flex{
+    display: flex;
+    max-width: 400px;
+    .left{
+        width: 140px;
+    }
+    .right{
+        flex: 1;
+        width: 0;
+    }
+}
+.official_file{
+    box-sizing: border-box;
+    margin-top: 10px;
+    max-width: 100%;
+    display: inline-block;
+    position: relative;
+    height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    padding-right: 16px;
+    a{
+        font-size:14px;
+        text-decoration: underline;
+    }
+    span{
+        position: absolute;
+        right: 0px;
+        top: 0;
+        opacity: 0;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .iconfont{
+        font-size: 12px;
+    }
+}
+.official_file:hover span{
+    opacity: 1;
+}
 </style>

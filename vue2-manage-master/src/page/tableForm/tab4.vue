@@ -137,8 +137,8 @@
                 <td class="td75">
                     <el-form-item prop="sewerageRain" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.sewerageRain">
-                            <el-radio :label="1">有</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">有</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -162,8 +162,8 @@
                 <td class="td75">
                     <el-form-item prop="enterprisePretreatment" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.enterprisePretreatment">
-                            <el-radio :label="1">有</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">有</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -242,8 +242,8 @@
                 <td class="td75">
                     <el-form-item prop="environmentalProtectionPlan" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.environmentalProtectionPlan">
-                            <el-radio :label="1">有</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">有</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -253,8 +253,8 @@
                 <td class="td75">
                     <el-form-item prop="emissionPermit" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.emissionPermit">
-                            <el-radio :label="1">有</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">有</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -264,8 +264,8 @@
                 <td class="td75">
                     <el-form-item prop="eiaProcess" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.eiaProcess">
-                            <el-radio :label="1">有增、改</el-radio>
-                            <el-radio :label="2">无增、改</el-radio>
+                            <el-radio label="1">有增、改</el-radio>
+                            <el-radio label="2">无增、改</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -275,8 +275,8 @@
                 <td class="td75">
                     <el-form-item prop="newEia" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.newEia">
-                            <el-radio :label="1">办理中</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">办理中</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -286,8 +286,8 @@
                 <td class="td75">
                     <el-form-item prop="epep" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.epep">
-                            <el-radio :label="1">有</el-radio>
-                            <el-radio :label="2">无</el-radio>
+                            <el-radio label="1">有</el-radio>
+                            <el-radio label="2">无</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>
@@ -297,8 +297,8 @@
                 <td class="td75">
                     <el-form-item prop="supervisoryInspectionEnterprise" :rules="[rule.required]">
                         <el-radio-group v-model="mainForm.supervisoryInspectionEnterprise">
-                            <el-radio :label="1">是</el-radio>
-                            <el-radio :label="2">不是</el-radio>
+                            <el-radio label="1">是</el-radio>
+                            <el-radio label="2">不是</el-radio>
                         </el-radio-group>
                     </el-form-item>
                 </td>

@@ -7,11 +7,13 @@ const login = r => require.ensure([], () => r(require('@/page/login')), 'login')
 const register = r => require.ensure([], () => r(require('@/page/register')), 'register');
 
 const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manage');
-const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
-const userList = r => require.ensure([], () => r(require('@/page/userList')), 'userList');
-const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'adminSet');
-const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 
+// const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
+// const userList = r => require.ensure([], () => r(require('@/page/userList')), 'userList');
+// const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'adminSet');
+// const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
+
+const userManager = r => require.ensure([], () => r(require('@/page/userManager')), 'userManager');
 const tableList = r => require.ensure([], () => r(require('@/page/tableList')), 'tableList');
 const tableForm = r => require.ensure([], () => r(require('@/page/tableForm/tableForm')), 'tableForm');
 
@@ -29,33 +31,43 @@ const routes = [
 		path: '/manage',
 		component: manage,
 		name: '',
-		children: [{
-			path: '',
-			component: home,
-			meta: [],
-		},
-        {
-            path: '/tableList',
-            component: tableList,
-            name: ['列表'],
-        },
-        {
-            path: '/tableForm',
-            component: tableForm,
-            name: ['添加'],
-        },{
-			path: '/userList',
-			component: userList,
-			meta: ['数据管理', '用户列表'],
-		},{
-			path: '/adminSet',
-			component: adminSet,
-			meta: ['设置', '管理员设置'],
-		},{
-			path: '/sendMessage',
-			component: sendMessage,
-			meta: ['设置', '发送通知'],
-		}]
+		children: [
+            // {
+            //     path: '',
+            //     component: home,
+            //     meta: [],
+            // },
+            {
+                path: '/tableList',
+                component: tableList,
+                name: ['列表'],
+            },
+            {
+                path: '/tableForm',
+                component: tableForm,
+                name: ['添加'],
+            },
+            {
+                path: '/userManager',
+                component: userManager,
+                name: ['用户管理'],
+            },
+            // {
+            //     path: '/userList',
+            //     component: userList,
+            //     meta: ['数据管理', '用户列表'],
+            // },
+            // {
+            //     path: '/adminSet',
+            //     component: adminSet,
+            //     meta: ['设置', '管理员设置'],
+            // },
+            // {
+            //     path: '/sendMessage',
+            //     component: sendMessage,
+            //     meta: ['设置', '发送通知'],
+            // }
+        ]
 	}
 ]
 
