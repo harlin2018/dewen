@@ -176,8 +176,8 @@ public class CompanyInfoService implements ICompanyInfoService {
             if (companyProductList!=null) {
                 for (CompanyProduct companyProduct : companyProductList) {
                     CompanyProduct newCompanyProduct = new CompanyProduct();
-                    newCompanyProduct.setCompanyId(companyInfo);
                     BeanUtils.copyProperties(companyProduct, newCompanyProduct);
+                    newCompanyProduct.setCompanyId(companyInfo);
                     companyProductRepository.save(newCompanyProduct);
                 }
             }
