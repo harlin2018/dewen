@@ -1,7 +1,7 @@
 <template>
   	<div class="login_page fillcontain">
 	  	<transition name="form-fade" mode="in-out">
-	  		<section class="form_contianer" v-show="showLogin">
+	  		<section class="form_contianer">
 		  		<div class="manage_tip">
 		  			<p>宜春经济环保管家</p>
 		  		</div>
@@ -23,81 +23,76 @@
 </template>
 
 <script>
-	import {login, getAdminInfo} from '@/api/getData'
-	import {mapActions, mapState} from 'vuex'
+import {logingetAdminInfo} from '@/api/getData'
+import {login} from '@/api/common'
 
-	export default {
-	    data(){
-			return {
-				loginForm: {
-					loginName: '',
-					hashPassword: '',
-				},
-				rules: {
-					loginName: [
-			            { required: true, message: '请输入用户名', trigger: 'blur' },
-			        ],
-					hashPassword: [
-						{ required: true, message: '请输入密码', trigger: 'blur' }
-					],
-				},
-				showLogin: false,
-			}
-		},
-		mounted(){
-			this.showLogin = true;
-			if (!this.adminInfo.id) {
-    			this.getAdminData()
-    		}
-		},
-		computed: {
-			...mapState(['adminInfo']),
-		},
-		methods: {
-			...mapActions(['getAdminData']),
-			async submitForm(formName) {
-				this.$refs[formName].validate(async (valid) => {
-					if (valid) {
-                        let params={
-                            loginName: this.loginForm.loginName,
-                            hashPassword: this.loginForm.hashPassword
+import {mapActions, mapState} from 'vuex'
+
+export default {
+    data(){
+        return {
+            loginForm: {
+                loginName: '',
+                hashPassword: '',
+            },
+            rules: {
+                loginName: [
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                ],
+                hashPassword: [
+                    { required: true, message: '请输入密码', trigger: 'blur' }
+                ],
+            }
+        }
+    },
+    mounted(){
+        if (!this.adminInfo.id) {
+            this.getAdminData()
+        }
+    },
+    computed: {
+        ...mapState(['adminInfo']),
+    },
+    methods: {
+        ...mapActions(['getAdminData']),
+        submitForm(formName) {
+            this.$refs[formName].validate(valid=>{
+                if (valid) {
+                    let params={
+                        loginName: this.loginForm.loginName,
+                        hashPassword: this.loginForm.hashPassword
+                    }
+                    login(params).then(res=>{
+                        if (res.resultCode == 0) {
+                            this.$message({
+                                type: 'success',
+                                message: '登录成功'
+                            })
+                            this.$store.commit('saveAdminInfo',res.payload)
+                            this.$router.push('tableList')
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: res.message
+                            })
                         }
-						const res = await login(params)
-						if (res.resultCode == 0) {
-							this.$message({
-		                        type: 'success',
-		                        message: '登录成功'
-		                    });
-							this.$router.push('tableList')
-						}else{
-							this.$message({
-		                        type: 'error',
-		                        message: res.message
-		                    });
-						}
-					} else {
-						this.$notify.error({
-							title: '错误',
-							message: '请输入正确的用户名密码',
-							offset: 100
-						});
-						return false;
-					}
-				});
-			},
-		},
-		watch: {
-			adminInfo: function (newValue){
-				if (newValue.id) {
-					this.$message({
-                        type: 'success',
-                        message: '检测到您之前登录过，将自动登录'
-                    });
-					this.$router.push('tableList')
-				}
-			}
-		}
-	}
+                    })
+                }
+            })
+        }
+    },
+    watch: {
+        // adminInfo: function (newValue){
+        //     if (newValue.id) {
+        //         this.$message({
+        //             type: 'success',
+        //             message: '检测到您之前登录过，将自动登录'
+        //         });
+        //         this.$router.push('tableList')
+        //     }
+        // }
+    }
+}
 </script>
 
 <style lang="less" scoped>

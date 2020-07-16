@@ -4,27 +4,33 @@ import {getAdminInfo} from '@/api/getData'
 
 Vue.use(Vuex)
 
+let userInfo=localStorage.getItem('userInfo')
+if(userInfo) userInfo=JSON.parse(userInfo)
+
 const state = {
-	adminInfo: {
-		avatar: 'default.jpg'
-	},
+	adminInfo:userInfo
 }
 
 const mutations = {
 	saveAdminInfo(state, adminInfo){
-		state.adminInfo = adminInfo;
+        state.adminInfo = adminInfo;
+        localStorage.setItem('userInfo',JSON.stringify(adminInfo))
+	},
+	removeAdminInfo(state){
+        state.adminInfo = {};
+        localStorage.removeItem('userInfo')
 	}
 }
 
 const actions = {
 	async getAdminData({commit}){
 		try{
-			const res = await getAdminInfo()
-			if (res.status == 1) {
-				commit('saveAdminInfo', res.data);
-			}else{
-				throw new Error(res.type)
-			}
+			// const res = await getAdminInfo()
+			// if (res.status == 1) {
+			// 	commit('saveAdminInfo', res.data);
+			// }else{
+			// 	throw new Error(res.type)
+			// }
 		}catch(err){
 			// console.log(err.message)
 		}
