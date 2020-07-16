@@ -146,7 +146,8 @@
                         </li>
                         <li class="right">
                             <div class="official_file" v-if="!!mainForm.officialReplyFileId">
-                                <a :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
+                                <a v-if="isAdmin" :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
+                                <a v-else href="javascript:;">{{mainForm.officialReplyFileId.fileName}}</a>
                                 <span @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
                             </div>
                             <uploadFile v-show="!mainForm.officialReplyFileId&&mainForm.officialReply==1" @success="updateFile($event,'officialReplyFileId')"></uploadFile>

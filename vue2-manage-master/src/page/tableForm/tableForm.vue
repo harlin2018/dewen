@@ -3,6 +3,7 @@
         <head-top></head-top>
         <div class="my_container">
             <div class="my_save_btn">
+                <el-button type="primary" @click="fillData">快速生产数据</el-button>
                 <el-button type="primary" @click="submitData">保存</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
@@ -42,6 +43,8 @@ import tab5 from './tab5'
 import {getCompanyData,createCompanyData,updateCompanyData,getCateHistory} from '@/api/common'
 
 const cateListKey=['companyProductList','wasteWaterList','wasteWaterMonitorList','wasteGasList','wasteGasMonitorList','companyWasteList','inspectRecordList','adminRecordList']
+
+const quickFill={"name":"大横琴科技","address":"横琴","legalRepresentative":"flame","organizationCode":"10010","environmentalProtectionOfficer":"pride","contactNumber":"12345678912","industryCategory":"科技","industryCode":"202020","industryDept":"行政部","completionDate":"2020-07-14T16:00:00.000+0000","fixedAssets":"10","envirProtFixedAssets":"20","enterpriseSize":2,"pollutionSourceManagementLevel":2,"sewageType":null,"createDate":null,"modifyDate":null,"generalIndustrialSolidWaste":"一般工业固体废物A","yearProduction":"1020","yearProcess":"2010","disposalWay":"2","mainSoundSourceName":"汽车","mmppc":"隔音棉","sewerageRain":"2","rowTo":"1","rowToRemark":"","enterprisePretreatment":"1","output":"1212","theSewageTo":"3","theSewageToRemark":"我是其他","stfds":"12","lifeProduced":"123","lifeLineTo":"2","lifeLineToRemark":"","environmentalProtectionPlan":"2","emissionPermit":"2","eiaProcess":"2","newEia":"2","epep":"2","supervisoryInspectionEnterprise":"2","sicfwwo":"2","sicfwwt":"2","sicfwws":"2","numberEmployees":"1000","eia":"1","officialReply":"1","officialReplyFileId":null,"breaks":"生产工艺描述1","officialTime":"2020-07-14T16:00:00.000Z"}
 
 export default {
     name:'tableForm',
@@ -104,8 +107,7 @@ export default {
                 numberEmployees:'',
                 eia:'',
                 officialReply:'',
-                officialReplyFileId:'',
-                officialReplyFileIdObj:{},
+                officialReplyFileId:null,
                 breaks:'',
                 officialTime:'',
                 companyProductList:[    //主要产品
@@ -168,13 +170,13 @@ export default {
                 inspectRecordList:[ //巡查记录
                     {
                         content:'巡查记录',
-                        fileUrl:{}
+                        fileUrl:null
                     }
                 ],
                 adminRecordList:[ //处罚记录
                     {
                         content:'处罚记录',
-                        fileUrl:{}
+                        fileUrl:null
                     }
                 ]
             },
@@ -269,7 +271,7 @@ export default {
         },
         updateFile({data,prop}){   //更新附件信息
             if(prop=='officialReplyFileId'){
-                this.mainForm[prop]=data
+                this.mainForm[prop]=data.id?data:null
             }else{
                 this.addRow({prop,val:'',src:data})
             }
@@ -307,8 +309,8 @@ export default {
         addRow({prop,val,src}){   //根据prop类型表格添加一行空数据
             if(prop=='inspectRecordList'||prop=='adminRecordList'){
                 this.mainForm[prop].push({
-                        content:val||'',
-                        fileUrl:src||''
+                    content:val||'',
+                    fileUrl:src?src:null
                 })
                 return
             }
@@ -321,6 +323,13 @@ export default {
         },
         removeRow({prop,index}){   //根据prop类型删除一行
             this.mainForm[prop].splice(index,1)
+        },
+        fillData(){
+            for(let attr in quickFill){
+                if(quickFill[attr]){
+                    this.mainForm[attr]=quickFill[attr]
+                }
+            }
         }
     }
 }
