@@ -21,5 +21,5 @@ import org.springframework.stereotype.Repository;
 public interface CommonUserRepository extends JpaRepository<CommonUser, Integer>, JpaSpecificationExecutor<CommonUser>{
 
 
-    CommonUser findByLoginNameAndHashPassword(String loginName, String hashPassword);
+    CommonUser findByLoginNameAndHashPasswordAndStatus(String loginName, String hashPassword, String status);
 }

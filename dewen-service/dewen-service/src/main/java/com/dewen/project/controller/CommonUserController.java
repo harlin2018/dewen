@@ -52,7 +52,7 @@ public class CommonUserController extends BaseController {
             res.setResultMsg("success");
         }else{
             res.setResultCode("100001");
-            res.setResultMsg("账号或密码错误");
+            res.setResultMsg("账号或密码错误或无权限进入");
         }
         return res;
     }

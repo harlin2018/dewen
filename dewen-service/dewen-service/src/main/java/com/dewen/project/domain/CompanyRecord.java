@@ -45,7 +45,8 @@ public class CompanyRecord implements Serializable {
     /**
      * file_url
      */
-    @Column(name = "file_url")
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "file_url",referencedColumnName = "ID")
     private CommonFileSystem fileUrl;
 
     /**
@@ -53,6 +54,12 @@ public class CompanyRecord implements Serializable {
      */
     @Column(name = "record_type")
     private String recordType;
+
+    /**
+     * 创建时间
+     */
+    @Column(name = "create_date")
+    private Date createDate;
 
     public CompanyRecord() {
     }

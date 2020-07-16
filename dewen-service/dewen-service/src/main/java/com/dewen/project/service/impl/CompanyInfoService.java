@@ -1,6 +1,7 @@
 package com.dewen.project.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,7 @@ public class CompanyInfoService implements ICompanyInfoService {
                 BeanUtils.copyProperties(companyRecord, newCompanyRecord);
                 newCompanyRecord.setCompanyId(companyInfo);
                 newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
+                newCompanyRecord.setCreateDate(new Date());
                 companyRecordRepository.save(newCompanyRecord);
             }
         }
@@ -152,6 +154,7 @@ public class CompanyInfoService implements ICompanyInfoService {
                 BeanUtils.copyProperties(companyRecord, newCompanyRecord);
                 newCompanyRecord.setCompanyId(companyInfo);
                 newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
+                newCompanyRecord.setCreateDate(new Date());
                 companyRecordRepository.save(newCompanyRecord);
             }
         }

@@ -142,7 +142,7 @@ public class CommonUserService implements ICommonUserService {
 
     @Override
     public CommonUser getUser(String loginName, String hashPassword) {
-        return CommonUserRepository.findByLoginNameAndHashPassword(loginName, hashPassword);
+        return CommonUserRepository.findByLoginNameAndHashPasswordAndStatus(loginName, hashPassword, "1");
     }
 
     @Override
