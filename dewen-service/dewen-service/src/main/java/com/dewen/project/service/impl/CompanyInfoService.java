@@ -10,11 +10,14 @@ import java.util.stream.Collectors;
 
 import com.dewen.project.constants.CompanyInfoEnums;
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CommonFileSystem;
+import com.dewen.project.domain.CommonModelFile;
 import com.dewen.project.domain.CompanyProduct;
 import com.dewen.project.domain.CompanyProject;
 import com.dewen.project.domain.CompanyRecord;
 import com.dewen.project.domain.CompanySewageWaste;
 import com.dewen.project.domain.CompanyWaste;
+import com.dewen.project.repository.CommonModelFileRepository;
 import com.dewen.project.repository.CompanyProductRepository;
 import com.dewen.project.repository.CompanyProjectRepository;
 import com.dewen.project.repository.CompanyRecordRepository;
@@ -64,6 +67,8 @@ public class CompanyInfoService implements ICompanyInfoService {
     private CompanyWasteRepository companyWasteRepository;
     @Autowired
     private CompanyRecordRepository companyRecordRepository;
+    @Autowired
+    private CommonModelFileRepository commonModelFileRepository;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -144,6 +149,13 @@ public class CompanyInfoService implements ICompanyInfoService {
                 newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
                 newCompanyRecord.setCreateDate(new Date());
                 companyRecordRepository.save(newCompanyRecord);
+                List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                for (CommonFileSystem commonFileSystem : fileIdList) {
+                    CommonModelFile commonModelFile = new CommonModelFile();
+                    commonModelFile.setCompanyFileId(commonFileSystem);
+                    commonModelFile.setCompanyRecord(newCompanyRecord);
+                    commonModelFileRepository.save(commonModelFile);
+                }
             }
         }
         // 行政执法记录
@@ -156,6 +168,13 @@ public class CompanyInfoService implements ICompanyInfoService {
                 newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
                 newCompanyRecord.setCreateDate(new Date());
                 companyRecordRepository.save(newCompanyRecord);
+                List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                for (CommonFileSystem commonFileSystem : fileIdList) {
+                    CommonModelFile commonModelFile = new CommonModelFile();
+                    commonModelFile.setCompanyFileId(commonFileSystem);
+                    commonModelFile.setCompanyRecord(newCompanyRecord);
+                    commonModelFileRepository.save(commonModelFile);
+                }
             }
         }
         return Constants.RETURN_STATUS_SUCCESS;
@@ -253,6 +272,15 @@ public class CompanyInfoService implements ICompanyInfoService {
                     newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
                     newCompanyRecord.setCreateDate(new Date());
                     companyRecordRepository.save(newCompanyRecord);
+                    List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                    if (fileIdList!=null && fileIdList.size() > 0) {
+                        for (CommonFileSystem commonFileSystem : fileIdList) {
+                            CommonModelFile commonModelFile = new CommonModelFile();
+                            commonModelFile.setCompanyFileId(commonFileSystem);
+                            commonModelFile.setCompanyRecord(newCompanyRecord);
+                            commonModelFileRepository.save(commonModelFile);
+                        }
+                    }
                 }
             }
             // 行政执法记录
@@ -265,6 +293,15 @@ public class CompanyInfoService implements ICompanyInfoService {
                     newCompanyRecord.setCreateDate(new Date());
                     newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
                     companyRecordRepository.save(newCompanyRecord);
+                    List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                    if (fileIdList!=null && fileIdList.size() > 0) {
+                        for (CommonFileSystem commonFileSystem : fileIdList) {
+                            CommonModelFile commonModelFile = new CommonModelFile();
+                            commonModelFile.setCompanyFileId(commonFileSystem);
+                            commonModelFile.setCompanyRecord(newCompanyRecord);
+                            commonModelFileRepository.save(commonModelFile);
+                        }
+                    }
                 }
             }
             return Constants.RETURN_STATUS_SUCCESS;
@@ -316,25 +353,38 @@ public class CompanyInfoService implements ICompanyInfoService {
             CompanyInfo companyInfo = companyInfoOpt.get();
             companyInfo.setCompanyProductList(companyProductRepository.findAllByCompanyId(companyInfo).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 排污种类：废水
-            companyInfo.setWasteWaterList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setWasteWaterList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 排污种类：废气
-            companyInfo.setWasteGasList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setWasteGasList(companySewageWasteRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 监测项目（废水）
-            companyInfo.setWasteWaterMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setWasteWaterMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteWater.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 监测项目（废气）
-            companyInfo.setWasteGasMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setWasteGasMonitorList(companyProjectRepository.findAllByCompanyIdAndWasteType(companyInfo, CompanyInfoEnums.WasteType.wasteGas.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 危废
-            companyInfo.setCompanyWasteList(companyWasteRepository.findAllByCompanyId(companyInfo).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setCompanyWasteList(companyWasteRepository.findAllByCompanyId(companyInfo)
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             // 巡查执法记录
-            companyInfo.setInspectRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setInspectRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.inspectRecord.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.getInspectRecordList().forEach(companyRecord -> {
+                companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                        .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+            });
             // 行政执法记录
-            companyInfo.setAdminRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.setAdminRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.adminRecord.getValue())
+                    .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
+            companyInfo.getAdminRecordList().forEach(companyRecord -> {
+                companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                        .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+            });
             return companyInfo;
         }else{
             return null;
         }
-
-        //return CompanyInfoRepository.findOne(id);
     }
 
     @Override
@@ -356,6 +406,12 @@ public class CompanyInfoService implements ICompanyInfoService {
                 }
                 if (!StringUtils.isNullOrEmpty(CompanyInfo.getName())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("name"), "%" + CompanyInfo.getName() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getAddress())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("address"), "%" + CompanyInfo.getAddress() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getBreaks())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("breaks"), "%" + CompanyInfo.getBreaks() + "%"));
                 }
                 if(!StringUtils.isNullOrEmpty(CompanyInfo.getLegalRepresentative())){
                     predicateAndList.add(criteriaBuilder.like(root.get("legalRepresentative"), "%" + CompanyInfo.getLegalRepresentative() + "%"));
@@ -387,8 +443,17 @@ public class CompanyInfoService implements ICompanyInfoService {
         List<CompanyProject> wasteGasMonitorList = companyProjectRepository.findAllByWasteTypeGroupByMonitorProject(CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
         // 巡查执法记录
         List<CompanyRecord> inspectRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        inspectRecordList.forEach(companyRecord -> {
+            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+        });
         // 行政执法记录
         List<CompanyRecord> adminRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
+        adminRecordList.forEach(companyRecord -> {
+            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+        });
+
 
         recordMap.put("wasteWaterList", wasteWaterList);
         recordMap.put("wasteGasList", wasteGasList);

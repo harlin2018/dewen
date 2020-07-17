@@ -173,6 +173,12 @@ public class CompanyInfo implements Serializable {
     private String sewerageRain;
 
     /**
+     * 雨污分流备注
+     */
+    @Column(name = "sewerage_rain_remark")
+    private String sewerageRainRemark;
+
+    /**
      * 排向
      */
     @Column(name = "row_to")
@@ -322,6 +328,28 @@ public class CompanyInfo implements Serializable {
      */
     @Column(name = "official_time")
     private String officialTime;
+
+    /**
+     * 月进水量（平均）
+     */
+    @Column(name = "mouth_inflow")
+    private String mouthInflow;
+
+    /**
+     * 污水产生量
+     */
+    @Column(name = "swage_generation")
+    private String swageGeneration;
+    /**
+     * 消耗量
+     */
+    @Column(name = "consumption")
+    private String consumption;
+    /**
+     * 水平衡
+     */
+    @Column(name = "water_balance")
+    private String waterBalance;
 
     /**
      * 主要生产产品表

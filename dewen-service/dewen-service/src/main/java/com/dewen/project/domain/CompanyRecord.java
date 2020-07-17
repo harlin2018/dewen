@@ -61,6 +61,9 @@ public class CompanyRecord implements Serializable {
     @Column(name = "create_date")
     private Date createDate;
 
+    @Transient
+    private List<CommonFileSystem> fileIdList;
+
     public CompanyRecord() {
     }
 

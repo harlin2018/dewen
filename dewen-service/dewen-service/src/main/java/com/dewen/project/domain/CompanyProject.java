@@ -1,5 +1,6 @@
 package com.dewen.project.domain;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -48,7 +49,14 @@ public class CompanyProject implements Serializable {
      * 检测时间
      */
     @Column(name = "test_time")
-    private String testTime;
+    private Date testTime;
+
+    /**
+     * 监测文件Id
+     */
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "monitor_file_id",referencedColumnName = "ID")
+    private CommonFileSystem monitorFileId;
 
     /**
      * 公司Id

@@ -70,7 +70,7 @@ public class CommonFileSystemService implements ICommonFileSystemService {
     @Value("${fileDir.workflow}")
     public String fileDir;
 
-    @Value(value = "${file.upload.types:pdf,xls,xlsx,doc,docx,ppt,pptx,jpg,png,gif}")
+    @Value(value = "${file.upload.types:pdf}")
     private String fileTypes;
 
     @Autowired
@@ -216,6 +216,9 @@ public class CommonFileSystemService implements ICommonFileSystemService {
                     int pos = originalName.lastIndexOf(".");
                     if (pos > -1) {
                         fileExtends = originalName.substring(pos + 1);
+                    }
+                    if (!checkType(originalName)) {
+                        throw new DataException(String.format("文件格式错误，系统允许上传的附件格式：%s", fileTypes));
                     }
                     File dest = new File(directory, originalName);
                     try {
