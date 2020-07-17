@@ -25,7 +25,5 @@ import java.util.Map;
 @Repository
 public interface CompanyInfoRepository extends JpaRepository<CompanyInfo, Integer>, JpaSpecificationExecutor<CompanyInfo>{
 
-    @Query(value = ":sql", nativeQuery = true)
-    List<Map<String, Object>> selectList(@Param("sql") String sql);
 
 }
