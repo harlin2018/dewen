@@ -8,6 +8,7 @@
                     :search-items="searchItem"
                     :query.sync="mainQuery">
                     <el-button type="success" @click="redirect">添加</el-button>
+                    <el-button type="warning" @click="openDialog">导出</el-button>
                 </PiSearchBar>
 
                 <pi-table
@@ -22,6 +23,25 @@
                 ></pi-table>
             </div>
         </div>
+        <el-dialog
+            title="导出列选择"
+            :visible.sync="dialogVisible"
+            width="70%">
+            <div class="my_checkbox">
+                <el-checkbox-group v-model="colArr" size="mini">
+                    <el-checkbox
+                        v-for="(item,key) in colKey"
+                        :key="key"
+                        :label="key">
+                            {{item}}
+                        </el-checkbox>
+                </el-checkbox-group>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="exportExcel">导出</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -32,12 +52,15 @@ import PiTable from '../components/PiTable'
 
 import {getCompanyList,deleteCompanyData} from '@/api/common'
 
+import colKey from './tableForm/col'
+
 export default {
     name:'tableList',
     components: {headTop,PiSearchBar,PiTable},
     data(){
         return {
             loading:false,
+            dialogVisible:false,
             mainList:[],
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
@@ -52,7 +75,9 @@ export default {
                 limit:10,
                 page:1,
                 total:0
-            }
+            },
+            colKey,
+            colArr:['name']
         }
     },
     mounted(){
@@ -88,6 +113,12 @@ export default {
                     this.getMainList()
                 }
             })
+        },
+        openDialog(){
+            this.dialogVisible=true
+        },
+        exportExcel(){
+            console.log(this.colArr)
         }
     }
 }
@@ -99,7 +130,9 @@ export default {
     padding: 20px;
     height: 100%;
 }
-.my_main{
-
+.my_checkbox{
+    .el-checkbox{
+        margin:10px;
+    }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<div class="myUploadFile">
-        <input ref="myFileInput" accept="" type="file" style="display:none" @change="selectedFile">
+        <input ref="myFileInput" accept="application/pdf" type="file" style="display:none" @change="selectedFile">
         <el-button type="text" @click="triggerFileChange">上传附件</el-button>
 	</div>
 </template>
@@ -21,7 +21,7 @@ export default {
 		},
 		limit:{
 			type:[String,Number],
-			default:2,
+			default:10
 		},
 	},
 	data() {
@@ -33,9 +33,14 @@ export default {
 		selectedFile(ev){
 			let file=ev.target.files[0]
 			if(file.size>this.limit*1024*1024){
-				this.$message({message:'附件不能超过2M',type:'warning'})
-				return;
-			}
+				this.$message({message:'附件不能超过10M',type:'warning'})
+				return
+            }
+            let arr=file.name.split('.')
+            if(arr[arr.length-1].toLowerCase()!='pdf'){
+				this.$message({message:'只允许上传pdf文件',type:'warning'})
+                return
+            }
             // this.$emit('selectedFile',file)
             this.uploadFile(file)
 		},

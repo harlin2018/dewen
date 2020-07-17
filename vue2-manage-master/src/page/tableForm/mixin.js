@@ -38,6 +38,12 @@ export const mixin={
         },
         removeRow(prop,index){
             this.$emit('removeRow',{prop,index})
+        },
+        updateFile(data,prop,index){
+            this.$emit('updateFile',{data,prop,index})
+        },
+        deleteFile(prop,index){
+            this.$emit('updateFile',{prop,index})
         }
     }
 }

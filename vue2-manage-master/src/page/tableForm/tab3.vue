@@ -23,7 +23,7 @@
             </tr>
             <tr v-for="(item,index) in mainForm.wasteGasList" :key="item.keyId">
                 <td>
-                    <el-form-item :prop="'wasteGasList.'+index+'.name'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteGasList.'+index+'.name'">
                         <el-input v-model="item.name"></el-input>
                     </el-form-item>
                 </td>
@@ -31,22 +31,22 @@
                     <table class="my_table_form my_table_inner my_table_inner_4">
                         <tr>
                             <td>
-                                <el-form-item :prop="'wasteGasList.'+index+'.craft'" :rules="[rule.required]">
+                                <el-form-item :prop="'wasteGasList.'+index+'.craft'">
                                     <el-input v-model="item.craft"></el-input>
                                 </el-form-item>
                             </td>
                             <td>
-                                <el-form-item :prop="'wasteGasList.'+index+'.wuYuanContent'" :rules="[rule.required]">
+                                <el-form-item :prop="'wasteGasList.'+index+'.wuYuanContent'">
                                     <el-input v-model="item.wuYuanContent"></el-input>
                                 </el-form-item>
                             </td>
                             <td>
-                                <el-form-item :prop="'wasteGasList.'+index+'.environmentalProtectionFacilities'" :rules="[rule.required]">
+                                <el-form-item :prop="'wasteGasList.'+index+'.environmentalProtectionFacilities'">
                                     <el-input v-model="item.environmentalProtectionFacilities"></el-input>
                                 </el-form-item>
                             </td>
                             <td class="row_add">
-                                <el-form-item :prop="'wasteGasList.'+index+'.drainOutlet'" :rules="[rule.required]">
+                                <el-form-item :prop="'wasteGasList.'+index+'.drainOutlet'">
                                     <el-input v-model="item.drainOutlet"></el-input>
                                 </el-form-item>
                                 <span class="td_btn" @click="removeRow('wasteGasList',index)"><i class="iconfont icon-jian"></i></span>
@@ -66,22 +66,22 @@
             </tr>
             <tr v-for="(sitem,sindex) in mainForm.wasteGasMonitorList" :key="sitem.keyId">
                 <td>
-                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.monitorProject'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.monitorProject'">
                         <el-input v-model="sitem.monitorProject"></el-input>
                     </el-form-item>
                 </td>
                 <td>
-                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.monitorIndex'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.monitorIndex'">
                         <el-input v-model="sitem.monitorIndex"></el-input>
                     </el-form-item>
                 </td>
                 <td>
-                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.testItem'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.testItem'">
                         <el-input v-model="sitem.testItem"></el-input>
                     </el-form-item>
                 </td>
                 <td class="row_add">
-                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.testTime'" :rules="[rule.required]">
+                    <el-form-item :prop="'wasteGasMonitorList.'+sindex+'.testTime'">
                         <el-date-picker
                             v-model="sitem.testTime"
                             type="date">

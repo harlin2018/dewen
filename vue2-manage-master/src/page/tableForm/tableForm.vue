@@ -1,19 +1,18 @@
 <template>
     <div>
         <head-top></head-top>
-        <div class="my_container">
+        <div class="my_container" v-loading="loading">
             <div class="my_save_btn">
-                <el-button type="primary" @click="fillData">快速生产数据</el-button>
                 <el-button type="primary" @click="submitData">保存</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
-            <div class="my_main" v-loading="loading">
+            <div class="my_main">
                 <el-tabs v-model="activeName">
                     <el-tab-pane label="基本资料单元" name="tab1">
                         <tab1 ref="tab1" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab1>
                     </el-tab-pane>
                     <el-tab-pane label="废水单元" name="tab2">
-                        <tab2 ref="tab2" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab2>
+                        <tab2 ref="tab2" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab2>
                     </el-tab-pane>
                     <el-tab-pane label="废气单元" name="tab3">
                         <tab3 ref="tab3" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab3>
@@ -43,8 +42,6 @@ import tab5 from './tab5'
 import {getCompanyData,createCompanyData,updateCompanyData,getCateHistory} from '@/api/common'
 
 const cateListKey=['companyProductList','wasteWaterList','wasteWaterMonitorList','wasteGasList','wasteGasMonitorList','companyWasteList','inspectRecordList','adminRecordList']
-
-const quickFill={"name":"大横琴科技","address":"横琴","legalRepresentative":"flame","organizationCode":"10010","environmentalProtectionOfficer":"pride","contactNumber":"12345678912","industryCategory":"科技","industryCode":"202020","industryDept":"行政部","completionDate":"2020-07-14T16:00:00.000+0000","fixedAssets":"10","envirProtFixedAssets":"20","enterpriseSize":2,"pollutionSourceManagementLevel":2,"sewageType":null,"createDate":null,"modifyDate":null,"generalIndustrialSolidWaste":"一般工业固体废物A","yearProduction":"1020","yearProcess":"2010","disposalWay":"2","mainSoundSourceName":"汽车","mmppc":"隔音棉","sewerageRain":"2","rowTo":"1","rowToRemark":"","enterprisePretreatment":"1","output":"1212","theSewageTo":"3","theSewageToRemark":"我是其他","stfds":"12","lifeProduced":"123","lifeLineTo":"2","lifeLineToRemark":"","environmentalProtectionPlan":"2","emissionPermit":"2","eiaProcess":"2","newEia":"2","epep":"2","supervisoryInspectionEnterprise":"2","sicfwwo":"2","sicfwwt":"2","sicfwws":"2","numberEmployees":"1000","eia":"1","officialReply":"1","officialReplyFileId":null,"breaks":"生产工艺描述1","officialTime":"2020-07-14T16:00:00.000Z"}
 
 export default {
     name:'tableForm',
@@ -86,6 +83,7 @@ export default {
                 mainSoundSourceName:'',
                 mmppc:'',
                 sewerageRain:'',
+                sewerageRainRemark:'',
                 rowTo:'',
                 rowToRemark:'',
                 enterprisePretreatment:'',
@@ -111,6 +109,10 @@ export default {
                 officialReplyFileId:null,
                 breaks:'',
                 officialTime:'',
+                mouthInflow:'',
+                swageGeneration:'',
+                consumption:'',
+                waterBalance:'',
                 companyProductList:[    //主要产品
                     {
                         keyId:'companyProductList_1',
@@ -127,7 +129,8 @@ export default {
                         craft:'',
                         wuYuanContent:'',
                         environmentalProtectionFacilities:'',
-                        drainOutlet:''
+                        drainOutlet:'',
+                        monitorFileId:null
                     }
                 ],
                 wasteWaterMonitorList:[   //废水
@@ -186,7 +189,8 @@ export default {
                 craft:'',
                 wuYuanContent:'',
                 environmentalProtectionFacilities:'',
-                drainOutlet:''
+                drainOutlet:'',
+                monitorFileId:null
             },
             wasteWaterMonitorList:{
                 keyId:'swasteWaterMonitorList_1',
@@ -258,7 +262,7 @@ export default {
                 }
             })
         },
-        setListKeyId(data){
+        setListKeyId(data){ //设置一个key
             cateListKey.forEach(key=>{
                 if(data[key]){
                     data[key].map((item,index)=>{
@@ -267,11 +271,13 @@ export default {
                 }
             })
         },
-        updateFile({data,prop}){   //更新附件信息
+        updateFile({data,prop,index}){   //更新附件信息
             if(prop=='officialReplyFileId'){
-                this.mainForm[prop]=data.id?data:null
+                this.mainForm[prop]=data&&data.id?data:null
+            }else if(prop=='wasteWaterMonitorList'){
+                this.mainForm[prop][index].monitorFileId=data&&data.id?data:null
             }else{
-                this.addRow({prop,val:'',src:data})
+                this.mainForm[prop].push(data)
             }
         },
         submitData(){   //提交数据
@@ -280,20 +286,24 @@ export default {
             let tab2=this.$refs.tab2.getTabData()
             let tab3=this.$refs.tab3.getTabData()
             let tab4=this.$refs.tab4.getTabData()
+            this.loading=true
             Promise.all([tab1,tab2,tab3,tab4]).then((values) => {
                 //全部校验通过才提交到后台
                 let handleSubmit=createCompanyData
                 if(this.mainForm.id){
                     handleSubmit=updateCompanyData
                 }
-                console.log(JSON.stringify(this.mainForm))
+                if(this.mainForm.officialReply==2) this.mainForm.officialReplyFileId=null
                 handleSubmit(this.mainForm).then(res=>{
+                    this.loading=false
                     if(res.resultCode==0){
                         this.$message({type:'success',message:'保存成功'})
                         setTimeout(()=>{
                             this.$router.push('/tableList')
                         },1000)
                     }
+                }).catch(_=>{
+                    this.loading=false
                 })
 
 
@@ -304,14 +314,7 @@ export default {
                 })
             })
         },
-        addRow({prop,val,src}){   //根据prop类型表格添加一行空数据
-            if(prop=='inspectRecordList'||prop=='adminRecordList'){
-                this.mainForm[prop].push({
-                    content:val||'',
-                    fileUrl:src?src:null
-                })
-                return
-            }
+        addRow({prop}){   //根据prop类型表格添加一行空数据
             let row=this.deepClone(this[prop])
             let len=this.mainForm[prop].length
             let last=len>0?this.mainForm[prop][len-1]:row   //获取最后一条数据
@@ -321,13 +324,6 @@ export default {
         },
         removeRow({prop,index}){   //根据prop类型删除一行
             this.mainForm[prop].splice(index,1)
-        },
-        fillData(){
-            for(let attr in quickFill){
-                if(quickFill[attr]){
-                    this.mainForm[attr]=quickFill[attr]
-                }
-            }
         }
     }
 }
@@ -357,7 +353,7 @@ export default {
         margin-bottom: 0;
     }
     .el-form-item__label{
-        // display: none;
+        display: none;
     }
     .el-form-item__error{
         padding-top:0px;
