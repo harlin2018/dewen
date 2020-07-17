@@ -3,6 +3,7 @@
         <head-top></head-top>
         <div class="my_container" v-loading="loading">
             <div class="my_save_btn">
+                <el-button type="primary" @click="submitData">暂存</el-button>
                 <el-button type="primary" @click="submitData">保存</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
@@ -256,17 +257,20 @@ export default {
                         res.payload[attr].map(item=>{
                             delete item.id
                         })
-                        this.setListKeyId(res.payload)
+                        this.setListKeyId(res.payload,'create')
                         this.mainForm[attr]=res.payload[attr]
                     }
                 }
             })
         },
-        setListKeyId(data){ //设置一个key
+        setListKeyId(data,type){ //设置一个key
             cateListKey.forEach(key=>{
                 if(data[key]){
                     data[key].map((item,index)=>{
                         item.keyId=key+'_'+index
+                        if(key=='wasteWaterMonitorList'&&type=='create'){
+                            item.monitorFileId=null
+                        }
                     })
                 }
             })
