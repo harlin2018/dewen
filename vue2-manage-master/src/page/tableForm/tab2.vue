@@ -82,7 +82,10 @@
                 </td>
                 <td class="row_add">
                     <el-form-item :prop="'wasteWaterMonitorList.'+sindex+'.testTime'" :rules="[rule.required]">
-                        <el-input v-model="sitem.testTime"></el-input>
+                        <el-date-picker
+                            v-model="sitem.testTime"
+                            type="date">
+                        </el-date-picker>
                     </el-form-item>
                     <span class="td_btn" @click="removeRow('wasteWaterMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>
                 </td>

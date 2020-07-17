@@ -8,8 +8,8 @@ export const login = data => fetch('/commonUser/login', data, 'POST');
 export const register = data => fetch('/commonUser/add', data, 'POST');
 
 export const getCompanyList = data => fetch('/companyInfo/list', data, 'POST');
-export const createCompanyData = data => fetch('/companyInfo/add', data, 'POST');
 export const getCompanyData = data => fetch('/companyInfo/'+data.id, {}, 'GET');
+export const createCompanyData = data => fetch('/companyInfo/add', data, 'POST');
 export const updateCompanyData = data => fetch('/companyInfo/update/'+data.id, data, 'PUT');
 export const deleteCompanyData = data => fetch('/companyInfo/delete/'+data.id, {}, 'DELETE');
 export const uploadFileData = data => fetch('/file/upload', data, 'POST','fetch','file');

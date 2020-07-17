@@ -5,7 +5,7 @@
                 <td>单位名称</td>
                 <td colspan="3">
                     <el-form-item prop="name" :rules="[rule.required]">
-                        <el-input v-model="mainForm.name"></el-input>
+                        <el-input autocomplete v-model="mainForm.name"></el-input>
                     </el-form-item>
                 </td>
             </tr>

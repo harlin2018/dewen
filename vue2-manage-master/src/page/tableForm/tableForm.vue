@@ -169,16 +169,8 @@ export default {
                     }
                 ],
                 inspectRecordList:[ //巡查记录
-                    {
-                        content:'巡查记录',
-                        fileUrl:null
-                    }
                 ],
                 adminRecordList:[ //处罚记录
-                    {
-                        content:'处罚记录',
-                        fileUrl:null
-                    }
                 ]
             },
             companyProductList:{
@@ -256,6 +248,7 @@ export default {
             getCateHistory().then(res=>{
                 if(res.resultCode=='0'){
                     for(let attr in res.payload){
+                        if(res.payload[attr].length<1) continue
                         res.payload[attr].map(item=>{
                             delete item.id
                         })
