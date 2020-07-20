@@ -3,12 +3,19 @@
 		<div class="page_search_bar">
 			<div class="pItem" v-for="(item,index) in searchItems" :key="index">
                 <el-input
+                    clearable
                     v-if="item.type=='input'"
                     v-model="query[item.prop]"
                     :placeholder="item.label"
-                    @keyup.enter.native="handleSearch"
-                    clearable>
+                    @keyup.enter.native="handleSearch">
 				</el-input>
+                <el-date-picker
+                    clearable
+                    v-if="item.type=='date'"
+                    v-model="query[item.prop]"
+                    :placeholder="item.label"
+                    type="date">
+                </el-date-picker>
                 <el-select
                     clearable
                     @change="handleSearch"
@@ -40,7 +47,6 @@
 					:size="size"
 					@click="handleSearch"
 					type="primary">
-					<i class="iconfont icon-search"></i>
 					搜索
 				</el-button>
 			</div>
@@ -49,7 +55,6 @@
 					:size="size"
 					@click="handleReset"
 					type="info">
-					<i class="iconfont icon-search"></i>
 					重置
 				</el-button>
 			</div>

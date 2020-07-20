@@ -238,7 +238,7 @@ export default {
             let a=this.edit?1:0
             let b=this.del?1:0
             let c=this.buttons.length
-            return parseInt(a+b+c)*80
+            return parseInt(a+b+c)*60<80?80:parseInt(a+b+c)*60
         }
 	},
 	methods:{
