@@ -158,11 +158,8 @@ public class CompanyInfoController extends BaseController{
     }
 
     @RequestMapping(value = "/download/exportExcel")
-    public void exportExcel(HttpServletResponse response, @RequestBody FieIds fieId) throws Exception {
+    public void exportExcel(HttpServletResponse response, @RequestParam List<String> fieIds) throws Exception {
         try {
-            // String[] fieIds = fieId.getFieIds();
-            List<String> fieIds = fieId.getFieIds();
-
             if (fieIds.size()<=0){
                 return;
             }
@@ -178,11 +175,15 @@ public class CompanyInfoController extends BaseController{
             List<Object[]> dataList = new ArrayList<Object[]>();
             Object[] objs = null;
             for (int i = 0; i < list.size(); i++) {
-                List<Object> map = Arrays.asList(list.get(i));
-                // Object [] map = (Object[]) objects;
+                Object [] map = new Object[rowsName.length];
+                if (rowsName.length==1){
+                    map[0] = list.get(i);
+                }else{
+                    map = (Object[]) list.get(i);
+                }
                 objs = new Object[rowsName.length];
-                for (int j = 0; j < map.size(); j++) {
-                    objs[j] = map.get(j);
+                for (int j = 0; j < map.length; j++) {
+                    objs[j] = map[j];
                 }
                 dataList.add(objs);
             }
