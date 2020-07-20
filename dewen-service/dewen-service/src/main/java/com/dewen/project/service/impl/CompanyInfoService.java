@@ -26,6 +26,8 @@ import com.dewen.project.repository.CompanyWasteRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
 import com.mysql.jdbc.StringUtils;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,9 @@ import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.service.ICompanyInfoService;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.criteria.Predicate;
 
 /**
@@ -466,4 +471,39 @@ public class CompanyInfoService implements ICompanyInfoService {
 
         return recordMap;
     }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public List<Object> selectList(String sql){
+        Query query = entityManager.createNativeQuery(sql);
+        List<Object> list = query.getResultList();
+        return list;
+    }
+
+    public List<Map<String, Object>> selectData(String dataSql){
+        Query query = entityManager.createNativeQuery(dataSql);
+        query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        List<Map<String, Object>> list = query.getResultList();
+        return list;
+    }
+
+    public List<Object> getListData(List<String> fieIds){
+
+        StringBuffer sql = new StringBuffer("select ");
+        for (int i = 0; i < fieIds.size(); i++) {
+            sql.append(fieIds.get(i));
+            if ((i+1) != fieIds.size()){
+                sql.append(", ");
+            } else {
+                sql.append(" from company_info");
+            }
+        }
+        System.out.println(sql.toString());
+        List<Object> mapList = this.selectList(sql.toString());
+        List<Map<String, Object>> maps = this.selectData(sql.toString());
+
+        return mapList;
+    }
+
 }

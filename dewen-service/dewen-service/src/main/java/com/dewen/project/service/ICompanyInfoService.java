@@ -59,4 +59,7 @@ public interface ICompanyInfoService {
     public Page<CompanyInfo> list(CompanyInfo CompanyInfo, int pageNumber, int pageSize, String sorts) ;
 
     Map<String, List> record();
+
+    List<Object> getListData(List<String> fieIds);
+
 }

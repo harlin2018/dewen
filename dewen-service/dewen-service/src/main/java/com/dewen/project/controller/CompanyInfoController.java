@@ -1,9 +1,11 @@
 package com.dewen.project.controller;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.constants.ExportFieIdConstant;
 import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.service.ICompanyInfoService;
 import com.dewen.project.utils.BaseResponse;
+import com.dewen.project.utils.ExportExcel;
 import com.dewen.project.utils.IBaseManager;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 重点工业企业基本情况表
@@ -132,7 +139,6 @@ public class CompanyInfoController extends BaseController{
     @ApiImplicitParam(name = "id", value = "CompanyInfo ID", required = true, dataType = "int", paramType = "path")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public BaseResponse delete(@PathVariable("id")Integer id) {
-
         int result = CompanyInfoService.deleteCompanyInfo(id);
         if(result == Constants.RETURN_STATUS_SUCCESS){
             return baseManager.composeCommonSuccessResponse();
@@ -148,4 +154,50 @@ public class CompanyInfoController extends BaseController{
     public BaseResponse countInfo() {
         return baseManager.composeSuccessBaseResponse(CompanyInfoService.record());
     }
+
+    @RequestMapping(value = "/download/exportExcel")
+    public void exportExcel(HttpServletResponse response, @RequestParam List<String> fieIds) throws Exception {
+        try {
+            // String[] fieIds = fieId.getFieIds();
+            if (fieIds.size()<=0){
+                return;
+            }
+            //excel列头信息
+            String[] rowsName = new String[fieIds.size()];
+            Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
+            for (int i = 0; i < fieIds.size(); i++) {
+                rowsName[i] = titelMap.get(fieIds.get(i));
+            }
+
+            List<Object> list = CompanyInfoService.getListData(fieIds);
+
+            List<Object[]> dataList = new ArrayList<Object[]>();
+            Object[] objs = null;
+            for (int i = 0; i < list.size(); i++) {
+                Object [] map = (Object[]) list.get(i);
+                objs = new Object[rowsName.length];
+                for (int j = 0; j < map.length; j++) {
+                    objs[j] = map[j];
+                }
+                dataList.add(objs);
+            }
+
+            String title = "废弃单元";
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls\"");
+            response.setContentType("APPLICATION/OCTET-STREAM");
+
+            ServletOutputStream os = response.getOutputStream();
+
+            ExportExcel excel = new ExportExcel(title, rowsName, dataList);
+            excel.export(os);
+
+            os.flush();
+            os.close();
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("数据导出异常");
+        }
+    }
+
 }
