@@ -3,6 +3,7 @@ package com.dewen.project.controller;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.constants.ExportFieIdConstant;
 import com.dewen.project.domain.CompanyInfo;
+import com.dewen.project.domain.FieIds;
 import com.dewen.project.service.ICompanyInfoService;
 import com.dewen.project.utils.BaseResponse;
 import com.dewen.project.utils.ExportExcel;
@@ -27,6 +28,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -156,9 +158,11 @@ public class CompanyInfoController extends BaseController{
     }
 
     @RequestMapping(value = "/download/exportExcel")
-    public void exportExcel(HttpServletResponse response, @RequestParam List<String> fieIds) throws Exception {
+    public void exportExcel(HttpServletResponse response, @RequestBody FieIds fieId) throws Exception {
         try {
             // String[] fieIds = fieId.getFieIds();
+            List<String> fieIds = fieId.getFieIds();
+
             if (fieIds.size()<=0){
                 return;
             }
@@ -174,10 +178,11 @@ public class CompanyInfoController extends BaseController{
             List<Object[]> dataList = new ArrayList<Object[]>();
             Object[] objs = null;
             for (int i = 0; i < list.size(); i++) {
-                Object [] map = (Object[]) list.get(i);
+                List<Object> map = Arrays.asList(list.get(i));
+                // Object [] map = (Object[]) objects;
                 objs = new Object[rowsName.length];
-                for (int j = 0; j < map.length; j++) {
-                    objs[j] = map[j];
+                for (int j = 0; j < map.size(); j++) {
+                    objs[j] = map.get(j);
                 }
                 dataList.add(objs);
             }

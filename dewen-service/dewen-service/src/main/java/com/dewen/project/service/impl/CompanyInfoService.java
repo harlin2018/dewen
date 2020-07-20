@@ -501,7 +501,7 @@ public class CompanyInfoService implements ICompanyInfoService {
         }
         System.out.println(sql.toString());
         List<Object> mapList = this.selectList(sql.toString());
-        List<Map<String, Object>> maps = this.selectData(sql.toString());
+        // List<Map<String, Object>> maps = this.selectData(sql.toString());
 
         return mapList;
     }
