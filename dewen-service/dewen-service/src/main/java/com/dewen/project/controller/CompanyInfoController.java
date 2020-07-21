@@ -259,7 +259,7 @@ public class CompanyInfoController extends BaseController{
             String fileName = exportParam.getTitle() + "-" + String.valueOf(System.currentTimeMillis()).substring(4, 13);
             String title = StringUtils.isEmpty(exportParam.getTitle())?"导出数据":exportParam.getTitle();
             ExportUtil.writeExcel(exportParam.getPath(), fileName, title, rowsName, title, objects, false);
-            return baseManager.composeSuccessBaseResponse(exportParam.getPath()+fileName);
+            return baseManager.composeSuccessBaseResponse(exportParam.getPath()+fileName+".xls");
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("数据导出异常");
