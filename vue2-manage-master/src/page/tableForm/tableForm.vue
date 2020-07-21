@@ -75,7 +75,8 @@ const keyList={
     eiaProcess:['有增、改','无增、改'],
     emissionPermit:['有','无'],
     newEia:['办理中','无'],
-    supervisoryInspectionEnterprise:['是','不是']
+    supervisoryInspectionEnterprise:['是','不是'],
+    'companyWasteList.processMethods':['第三方','回收','回用','垃圾回收站']
 }
 
 
@@ -366,7 +367,7 @@ export default {
             this.mainForm[prop].splice(index,1)
         },
 
-        dealData(){
+        dealData(){ //导出前根式化数据
             let dateKey=['completionDate','officialTime','testTime','createDate']
             let formData=this.deepClone(this.mainForm)
             // if(formData['completionDate']) formData['completionDate']=parseTime(formData['completionDate'])
@@ -384,6 +385,23 @@ export default {
             //     if(item['createDate']) item['createDate']=parseTime(item['createDate'])
             // })
 
+            for(let attr in keyList){
+                if(attr.indexOf('.')>=0){
+                    let arr=attr.split('.')
+                    if(formData[arr[0]]){
+                        console.log(formData[arr[0]])
+                        formData[arr[0]].map(item=>{
+                            if(item[arr[1]]){
+                                item[arr[1]]=keyList[attr][item[arr[1]]-1]
+                            }
+                        })
+                    }
+                }else{
+                    if(formData[attr]){
+                        formData[attr]=keyList[attr][formData[attr]-1]
+                    }
+                }
+            }
             for(let attr in formData){
                 if(dateKey.includes(attr)){
                     formData[attr]=parseTime(formData[attr])

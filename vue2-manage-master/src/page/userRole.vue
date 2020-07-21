@@ -79,7 +79,7 @@ export default {
                 roleCode:'',
                 remark:''
             },
-            buttons:[{label:'关联权限',color:'iconBlue',type:'relation'}]
+            buttons:[{label:'关联权限',color:'iconOrange',type:'relation'}]
         }
     },
     mounted(){
