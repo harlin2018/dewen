@@ -7,8 +7,14 @@ import com.dewen.project.domain.ExportParam;
 import com.dewen.project.service.ICompanyInfoService;
 import com.dewen.project.utils.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -209,7 +216,8 @@ public class CompanyInfoController extends BaseController{
         }
     }
     @RequestMapping(value = "/download/exportExcel", method = RequestMethod.POST)
-    public void exportExcel(@RequestBody ExportParam exportParam) throws Exception {
+    public BaseResponse exportExcel(@RequestBody ExportParam exportParam, HttpServletRequest request) throws Exception {
+        String path = ResourceUtils.getURL("classpath:").getPath();
         try {
             List<String> fieIds = exportParam.getFieIds();
             List<Integer> ids = exportParam.getIds();
@@ -247,8 +255,11 @@ public class CompanyInfoController extends BaseController{
                 }
                 objects.add(dataA);
             }
+            exportParam.setPath(path);
+            String fileName = exportParam.getTitle() + "-" + String.valueOf(System.currentTimeMillis()).substring(4, 13);
             String title = StringUtils.isEmpty(exportParam.getTitle())?"导出数据":exportParam.getTitle();
-            ExportUtil.writeExcel(exportParam.getPath(), exportParam.getTitle()+"-"+String.valueOf(System.currentTimeMillis()).substring(4, 13), title, rowsName, title, objects, false);
+            ExportUtil.writeExcel(exportParam.getPath(), fileName, title, rowsName, title, objects, false);
+            return baseManager.composeSuccessBaseResponse(exportParam.getPath()+fileName);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("数据导出异常");
