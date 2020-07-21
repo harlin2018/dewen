@@ -3,10 +3,13 @@ package com.dewen.project.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.domain.CommonUser;
+import com.dewen.project.domain.support.CommonRightSupport;
+import com.dewen.project.domain.support.UserInfo;
 import com.dewen.project.service.ICommonUserService;
 import com.dewen.project.utils.BaseResponse;
 import com.dewen.project.utils.IBaseManager;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,12 @@ import javax.validation.Valid;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * common_user
@@ -47,6 +56,24 @@ public class CommonUserController extends BaseController {
         CommonUser user =  CommonUserService.getUser(userInfo.getLoginName(),userInfo.getHashPassword());
         BaseResponse res = new BaseResponse();
         if(user!=null){
+//            Map<String, Object> map = new HashMap<String, Object>();
+//            UserInfo user =user;
+//            map.put("roles", user.getRoleCodes());
+//            map.put("groups", user.getGroupCodes());
+//            Collections.sort(user.getRights(), Comparator.comparing(UserInfo.RightInfo::getSortNum));
+//            map.put("menus", CommonRightSupport.toRightInfoTree(user.getRights()));
+//            map.put("introduction","I am a super administrator");
+//
+//            CommonUserDTO userDTO = commonUserService.findById(user.getUserId());
+//            String avatar = userDTO.getHeadImg();
+//            if(StringUtils.isBlank(avatar)){
+//                avatar = "/cmdb/pic.gif";
+//            }
+//            map.put("avatar", avatar);
+//            map.put("name",user.getUserName());
+//            map.put("loginName",user.getLoginName());
+//            map.put("token","admin-token");
+//            res.setPayload(map);
             res.setPayload(user);
             res.setResultCode("0");
             res.setResultMsg("success");

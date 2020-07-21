@@ -41,6 +41,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.Predicate;
+import javax.xml.crypto.Data;
 
 /**
  * 重点工业企业基本情况表
@@ -74,6 +75,7 @@ public class CompanyInfoService implements ICompanyInfoService {
     @Transactional(value = "transactionManager")
     public int createCompanyInfo(CompanyInfo companyInfo) {
         queryFk(companyInfo);
+        companyInfo.setCreateDate(new Date());
         CompanyInfoRepository.save(companyInfo);
         // 主要生产产品表
         List<CompanyProduct> companyProductList =  companyInfo.getCompanyProductList();
@@ -419,6 +421,15 @@ public class CompanyInfoService implements ICompanyInfoService {
                 if(!StringUtils.isNullOrEmpty(CompanyInfo.getEnvironmentalProtectionOfficer())){
                     predicateAndList.add(criteriaBuilder.like(root.get("environmentalProtectionOfficer"), "%" + CompanyInfo.getEnvironmentalProtectionOfficer() + "%"));
                 }
+                if(CompanyInfo.getOfficialTime()!=null){
+                    predicateAndList.add(criteriaBuilder.equal(root.get("officialTime"), CompanyInfo.getOfficialTime()));
+                }
+                if (CompanyInfo.getCreateDate()!=null) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("createDate"), CompanyInfo.getCreateDate()));
+                }
+                if(!StringUtils.isNullOrEmpty(CompanyInfo.getContactNumber())){
+                    predicateAndList.add(criteriaBuilder.like(root.get("contactNumber"), "%" + CompanyInfo.getContactNumber() + "%"));
+                }
                 if (predicateAndList.size() > 0) {
                     return criteriaQuery.where(criteriaBuilder.and(predicateAndList.toArray(new Predicate[predicateAndList.size() - 1]))).getRestriction();
                 }
@@ -443,16 +454,12 @@ public class CompanyInfoService implements ICompanyInfoService {
         List<CompanyProject> wasteGasMonitorList = companyProjectRepository.findAllByWasteTypeGroupByMonitorProject(CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
         // 巡查执法记录
         List<CompanyRecord> inspectRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
-        inspectRecordList.forEach(companyRecord -> {
-            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
-                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
-        });
+        inspectRecordList.forEach(companyRecord -> companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList())));
         // 行政执法记录
         List<CompanyRecord> adminRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
-        adminRecordList.forEach(companyRecord -> {
-            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
-                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
-        });
+        adminRecordList.forEach(companyRecord -> companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList())));
 
 
         recordMap.put("wasteWaterList", wasteWaterList);

@@ -2,7 +2,10 @@
 package com.dewen.project.service;
 
 import com.dewen.project.domain.CommonRight;
+import com.dewen.project.domain.DTO.CommonRightDTO;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * common_right
@@ -55,4 +58,7 @@ public interface ICommonRightService {
      */
     public Page<CommonRight> list(CommonRight CommonRight, int pageNumber, int pageSize, String sorts) ;
 
+    List<CommonRightDTO> listAll(CommonRight commonRight);
+
+    List<CommonRightDTO> listByRole(Integer roleId);
 }

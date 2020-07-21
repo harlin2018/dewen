@@ -3,8 +3,9 @@
         <head-top></head-top>
         <div class="my_container" v-loading="loading">
             <div class="my_save_btn">
-                <el-button type="primary" @click="submitData">暂存</el-button>
+                <el-button type="primary" @click="submitData(false)">暂存</el-button>
                 <el-button type="primary" @click="submitData">保存</el-button>
+                <el-button type="success" @click="exportWord">导出</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
             <div class="my_main">
@@ -34,6 +35,15 @@
 import headTop from '@/components/headTop'
 import PiSearchBar from '@/components/PiSearchBar'
 
+import {parseTime} from '@/utils'
+
+/* 导出word所需 */
+import docxtemplater from 'docxtemplater'
+import PizZip from 'pizzip'
+import JSZipUtils from 'jszip-utils'
+import {saveAs} from 'file-saver'
+/* 导出word所需 */
+
 import tab1 from './tab1'
 import tab2 from './tab2'
 import tab3 from './tab3'
@@ -43,6 +53,31 @@ import tab5 from './tab5'
 import {getCompanyData,createCompanyData,updateCompanyData,getCateHistory} from '@/api/common'
 
 const cateListKey=['companyProductList','wasteWaterList','wasteWaterMonitorList','wasteGasList','wasteGasMonitorList','companyWasteList','inspectRecordList','adminRecordList']
+
+const keyList={
+    eia:['报告书','报告表','无'],
+    waterBalance:['正常','异常','其它'],
+    officialReply:['有','无'],
+    enterpriseSize:['大型','中型','小型'],
+    pollutionSourceManagementLevel:['国控','省控','市控','区控','一般'],
+    disposalWay:['第三方','回收','回用','垃圾回收站'],
+    processMethods:['第三方','回收','回用','垃圾回收站'],
+    rowTo:['三阳河','雷河'],
+    theSewageTo:['纳管（污水处理厂）','雨水管网','其他'],
+    lifeLineTo:['纳管（污水处理厂）','雨水管网','其他'],
+    sicfwwo:['1个月','3个月','6个月','12个月'],
+    sicfwwt:['1个月','3个月','6个月','12个月'],
+    sicfwws:['1个月','3个月','6个月','12个月'],
+    sewerageRain:['有','无'],
+    enterprisePretreatment:['有','无'],
+    environmentalProtectionPlan:['有','无'],
+    emissionPermit:['有','无'],
+    eiaProcess:['有增、改','无增、改'],
+    emissionPermit:['有','无'],
+    newEia:['办理中','无'],
+    supervisoryInspectionEnterprise:['是','不是']
+}
+
 
 export default {
     name:'tableForm',
@@ -130,8 +165,7 @@ export default {
                         craft:'',
                         wuYuanContent:'',
                         environmentalProtectionFacilities:'',
-                        drainOutlet:'',
-                        monitorFileId:null
+                        drainOutlet:''
                     }
                 ],
                 wasteWaterMonitorList:[   //废水
@@ -140,7 +174,8 @@ export default {
                         monitorProject:'',
                         monitorIndex:'',
                         testItem:'',
-                        testTime:''
+                        testTime:'',
+                        monitorFileId:null
                     }
                 ],
                 wasteGasList:[   //废气
@@ -190,15 +225,15 @@ export default {
                 craft:'',
                 wuYuanContent:'',
                 environmentalProtectionFacilities:'',
-                drainOutlet:'',
-                monitorFileId:null
+                drainOutlet:''
             },
             wasteWaterMonitorList:{
                 keyId:'swasteWaterMonitorList_1',
                 monitorProject:'',
                 monitorIndex:'',
                 testItem:'',
-                testTime:''
+                testTime:'',
+                monitorFileId:null
             },
             wasteGasList:{
                 keyId:'wasteGasList_1',
@@ -284,7 +319,7 @@ export default {
                 this.mainForm[prop].push(data)
             }
         },
-        submitData(){   //提交数据
+        submitData(flag){   //提交数据
             /* 调用子组件的检验方法 返回一个promise */
             let tab1=this.$refs.tab1.getTabData()
             let tab2=this.$refs.tab2.getTabData()
@@ -302,6 +337,7 @@ export default {
                     this.loading=false
                     if(res.resultCode==0){
                         this.$message({type:'success',message:'保存成功'})
+                        if(!flag) return
                         setTimeout(()=>{
                             this.$router.push('/tableList')
                         },1000)
@@ -328,6 +364,89 @@ export default {
         },
         removeRow({prop,index}){   //根据prop类型删除一行
             this.mainForm[prop].splice(index,1)
+        },
+
+        dealData(){
+            let dateKey=['completionDate','officialTime','testTime','createDate']
+            let formData=this.deepClone(this.mainForm)
+            // if(formData['completionDate']) formData['completionDate']=parseTime(formData['completionDate'])
+            // if(formData['officialTime']) formData['officialTime']=parseTime(formData['officialTime'])
+            // formData.wasteWaterMonitorList.forEach(item=>{
+            //     if(item['testTime']) item['testTime']=parseTime(item['testTime'])
+            // })
+            // formData.wasteGasMonitorList.forEach(item=>{
+            //     if(item['testTime']) item['testTime']=parseTime(item['testTime'])
+            // })
+            // formData.inspectRecordList.forEach(item=>{
+            //     if(item['createDate']) item['createDate']=parseTime(item['createDate'])
+            // })
+            // formData.adminRecordList.forEach(item=>{
+            //     if(item['createDate']) item['createDate']=parseTime(item['createDate'])
+            // })
+
+            for(let attr in formData){
+                if(dateKey.includes(attr)){
+                    formData[attr]=parseTime(formData[attr])
+                }
+                if(cateListKey.includes(attr)){
+                    formData[attr].forEach(item=>{
+                        for(let sub in item){
+                            if(!item[sub]) item[sub]=''
+                            if(dateKey.includes(sub)){
+                                item[sub]=parseTime(item[sub])
+                            }
+                        }
+                    })
+                }
+                if(!formData[attr]) formData[attr]=''
+            }
+
+            return formData
+        },
+
+        // 点击导出word
+        exportWord: function() {
+            let formData=this.dealData()
+            // return
+            let that = this;
+            // 读取并获得模板文件的二进制内容
+            JSZipUtils.getBinaryContent("static/input.docx", function(error, content) {
+                // model.docx是模板。我们在导出的时候，会根据此模板来导出对应的数据
+                // 抛出异常
+                if (error) {
+                    throw error;
+                }
+
+                // 创建一个PizZip实例，内容为模板的内容
+                let zip = new PizZip(content);
+                // 创建并加载docxtemplater实例对象
+                let doc = new docxtemplater().loadZip(zip);
+                // 设置模板变量的值
+                doc.setData(formData);
+
+                try {
+                    // 用模板变量的值替换所有模板变量
+                    doc.render();
+                } catch (error) {
+                    // 抛出异常
+                    let e = {
+                        message: error.message,
+                        name: error.name,
+                        stack: error.stack,
+                        properties: error.properties
+                    };
+                    console.log(JSON.stringify({ error: e }));
+                    throw error;
+                }
+
+                // 生成一个代表docxtemplater对象的zip文件（不是一个真实的文件，而是在内存中的表示）
+                let out = doc.getZip().generate({
+                    type: "blob",
+                    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                });
+                // 将目标文件对象保存为目标类型的文件，并命名
+                saveAs(out, "output.docx");
+            });
         }
     }
 }

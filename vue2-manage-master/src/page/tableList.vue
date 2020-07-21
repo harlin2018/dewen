@@ -50,7 +50,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getCompanyList,deleteCompanyData} from '@/api/common'
+import {getCompanyList,deleteCompanyData,exportList} from '@/api/common'
 
 import colKey from './tableForm/col'
 
@@ -64,14 +64,19 @@ export default {
             mainList:[],
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
+                {label:'环评时间',prop:'officialTime',type:'date'},
+                {label:'录入时间',prop:'createDate',type:'date'}
             ],
             headers:[
-                {label:'公司名称',prop:'name'},
+                {label:'企业名称',prop:'name'},
                 {label:'联系人',prop:'environmentalProtectionOfficer'},
                 {label:'电话',prop:'contactNumber'},
+                {label:'地址',prop:'address'},
             ],
             mainQuery:{
                 name:'',
+                officialTime:'',
+                createDate:'',
                 limit:10,
                 page:1,
                 total:0
@@ -118,7 +123,11 @@ export default {
             this.dialogVisible=true
         },
         exportExcel(){
-            console.log(this.colArr)
+            if(this.colArr.length>0){
+                exportList({fieIds:this.colArr}).then(res=>{
+
+                })
+            }
         }
     }
 }

@@ -177,6 +177,7 @@ public class CommonUser implements Serializable {
     @Column(name = "status")
     private String status;
 
+
     public CommonUser() {
     }
 

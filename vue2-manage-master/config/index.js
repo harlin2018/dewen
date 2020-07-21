@@ -47,6 +47,8 @@ module.exports = {
         '/project',
         '/commonUser',
         '/companyInfo',
+        '/commonRight',
+        '/commonRole',
         '/file'
     ],
     // CSS Sourcemaps off by default because relative paths are "buggy"

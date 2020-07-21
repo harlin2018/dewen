@@ -16,8 +16,13 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "docxtemplater": "^3.17.9",
     "echarts": "^3.5.4",
     "element-ui": "^2.13.2",
+    "file-saver": "^2.0.2",
+    "jszip": "^3.5.0",
+    "jszip-utils": "^0.1.0",
+    "pizzip": "^3.0.6",
     "time-formater": "^1.0.1",
     "vue": "^2.2.6",
     "vue-quill-editor": "^2.2.1",

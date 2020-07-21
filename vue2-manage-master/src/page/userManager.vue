@@ -34,7 +34,7 @@ import {getUserList,approveUser} from '@/api/common'
 
 
 export default {
-    name:'tableList',
+    name:'userManager',
     components: {headTop,PiSearchBar,PiTable},
     data(){
         return {
