@@ -21,4 +21,5 @@ import org.springframework.stereotype.Repository;
 public interface CommonRightRepository extends JpaRepository<CommonRight, Integer>, JpaSpecificationExecutor<CommonRight>{
 
 
+    CommonRight findByParentIdAndRightCodeAndEnabled(Integer parentId, String rightCode, Integer enable);
 }

@@ -1,7 +1,9 @@
 package com.dewen.project.controller;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CommonRight;
 import com.dewen.project.domain.CommonRole;
+import com.dewen.project.domain.DTO.CommonRightDTO;
 import com.dewen.project.service.ICommonRoleService;
 import com.dewen.project.utils.BaseResponse;
 import com.dewen.project.utils.IBaseManager;
@@ -20,6 +22,9 @@ import javax.validation.Valid;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
+
 /**
  * common_role
  * <p>Description: CommonRole Controller </p>
@@ -37,6 +42,8 @@ public class CommonRoleController {
     private IBaseManager baseManager;
     @Autowired
     private ICommonRoleService CommonRoleService;
+
+
 
     /**
      * Get all list for CommonRole
