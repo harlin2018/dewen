@@ -179,8 +179,10 @@ public class CompanyInfoController extends BaseController{
                     rowsName[i] = titelMap.get(fieIds.get(i));
                 }
             }
-
-            List<Object> list = CompanyInfoService.getListData(fieIds,ids);
+            ExportParam exportParam = new ExportParam();
+            exportParam.setFieIds(fieIds);
+            exportParam.setIds(ids);
+            List<Object> list = CompanyInfoService.getListData(exportParam);
 
             List<Object[]> dataList = new ArrayList<Object[]>();
             Object[] objs = null;
@@ -238,8 +240,9 @@ public class CompanyInfoController extends BaseController{
                     rowsName.add(titelMap.get(fieIds.get(i)));
                 }
             }
+            exportParam.setPath(path);
 
-            List<Object> list = CompanyInfoService.getListData(fieIds,ids);
+            List<Object> list = CompanyInfoService.getListData(exportParam);
 
             List<List<Object>> objects = new LinkedList<>();
             for (int i = 0; i < list.size(); i++) {
@@ -255,7 +258,6 @@ public class CompanyInfoController extends BaseController{
                 }
                 objects.add(dataA);
             }
-            exportParam.setPath(path);
             String fileName = exportParam.getTitle() + "-" + String.valueOf(System.currentTimeMillis()).substring(4, 13);
             String title = StringUtils.isEmpty(exportParam.getTitle())?"导出数据":exportParam.getTitle();
             ExportUtil.writeExcel(exportParam.getPath(), fileName, title, rowsName, title, objects, false);

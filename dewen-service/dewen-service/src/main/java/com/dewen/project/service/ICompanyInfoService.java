@@ -2,6 +2,7 @@
 package com.dewen.project.service;
 
 import com.dewen.project.domain.CompanyInfo;
+import com.dewen.project.domain.ExportParam;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -60,6 +61,6 @@ public interface ICompanyInfoService {
 
     Map<String, List> record();
 
-    List<Object> getListData(List<String> fieIds, List<Integer> ids);
+    List<Object> getListData(ExportParam exportParam);
 
 }

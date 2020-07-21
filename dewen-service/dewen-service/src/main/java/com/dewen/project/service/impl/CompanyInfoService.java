@@ -5,13 +5,7 @@ import java.util.stream.Collectors;
 
 import com.dewen.project.constants.CompanyInfoEnums;
 import com.dewen.project.constants.Constants;
-import com.dewen.project.domain.CommonFileSystem;
-import com.dewen.project.domain.CommonModelFile;
-import com.dewen.project.domain.CompanyProduct;
-import com.dewen.project.domain.CompanyProject;
-import com.dewen.project.domain.CompanyRecord;
-import com.dewen.project.domain.CompanySewageWaste;
-import com.dewen.project.domain.CompanyWaste;
+import com.dewen.project.domain.*;
 import com.dewen.project.repository.CommonModelFileRepository;
 import com.dewen.project.repository.CompanyProductRepository;
 import com.dewen.project.repository.CompanyProjectRepository;
@@ -21,6 +15,8 @@ import com.dewen.project.repository.CompanyWasteRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
 import com.mysql.jdbc.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +29,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.service.ICompanyInfoService;
 
@@ -490,24 +485,43 @@ public class CompanyInfoService implements ICompanyInfoService {
         return list;
     }
 
-    public List<Object> getListData(List<String> fieIds, List<Integer> ids){
-
+    public List<Object> getListData(ExportParam exportParam){
+        List<String> fieIds = exportParam.getFieIds();
+        List<Integer> ids = exportParam.getIds();
         StringBuffer sql = new StringBuffer("select ");
         for (int i = 0; i < fieIds.size(); i++) {
             sql.append(fieIds.get(i));
             if ((i+1) != fieIds.size()){
                 sql.append(", ");
             } else {
-                sql.append(" from company_info");
+                sql.append(" from company_info where 1=1");
             }
         }
+
         if (ids!=null&&ids.size()>0){
-            sql.append(" where id in (");
+            sql.append(" and id in (");
             StringJoiner sj =new StringJoiner(",");
             for (Integer id : ids) {
                 sj.add(id.toString());
             }
             sql.append(sj.toString()).append(")");
+        }
+        if (!StringUtils.isNullOrEmpty(exportParam.getName())){
+            sql.append(" and name like \"%").append(exportParam.getName()).append("%\"");
+        }
+        if (exportParam.getCreateDate()!=null){
+            Date createDate = exportParam.getCreateDate();
+            String befor = DateFormatUtils.format(createDate, "yyyy-MM-dd");
+            Date date = DateUtils.addDays(createDate, 1);
+            String after = DateFormatUtils.format(date, "yyyy-MM-dd");
+            sql.append(" and create_date >=").append(befor).append(" and create_date <=").append(after);
+        }
+        if (exportParam.getOfficialTime()!=null){
+            Date officialTime = exportParam.getOfficialTime();
+            String befor = DateFormatUtils.format(officialTime, "yyyy-MM-dd");
+            Date date = DateUtils.addDays(officialTime, 1);
+            String after = DateFormatUtils.format(date, "yyyy-MM-dd");
+            sql.append(" and official_time >=").append(befor).append(" and official_time <=").append(after);
         }
         System.out.println(sql.toString());
         List<Object> mapList = this.selectList(sql.toString());
