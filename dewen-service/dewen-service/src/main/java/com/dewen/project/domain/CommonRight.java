@@ -3,6 +3,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 /**
  * common_right
@@ -119,6 +120,17 @@ public class CommonRight implements Serializable {
      */
     @Column(name = "resource_type")
     private String resourceType;
+
+    @Transient
+    private String searchKeyWord;
+
+    /**
+     * one to many -one is CommonRight,many is commonRoleRightRelationship
+     * default value: null
+     */
+    @OneToMany(cascade=CascadeType.DETACH)
+    @JoinColumn(name = "COM_RIGHT_ID")
+    private List<CommonRoleRightRelationship> commonRoleRightRelationship;
 
     public CommonRight() {
     }

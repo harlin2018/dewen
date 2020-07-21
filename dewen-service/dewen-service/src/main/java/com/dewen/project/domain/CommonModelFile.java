@@ -2,8 +2,6 @@ package com.dewen.project.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 import lombok.Data;
-import java.util.Date;
-import java.util.List;
 
 /**
  * common_model_file

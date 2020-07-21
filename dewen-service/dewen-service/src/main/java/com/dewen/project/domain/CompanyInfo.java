@@ -327,7 +327,7 @@ public class CompanyInfo implements Serializable {
      * 环评时间
      */
     @Column(name = "official_time")
-    private String officialTime;
+    private Date officialTime;
 
     /**
      * 月进水量（平均）
