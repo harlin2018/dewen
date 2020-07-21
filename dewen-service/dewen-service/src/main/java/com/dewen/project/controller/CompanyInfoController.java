@@ -3,12 +3,10 @@ package com.dewen.project.controller;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.constants.ExportFieIdConstant;
 import com.dewen.project.domain.CompanyInfo;
-import com.dewen.project.domain.FieIds;
+import com.dewen.project.domain.ExportParam;
 import com.dewen.project.service.ICompanyInfoService;
-import com.dewen.project.utils.BaseResponse;
-import com.dewen.project.utils.ExportExcel;
-import com.dewen.project.utils.IBaseManager;
-import com.dewen.project.utils.NullAwareBeanUtilsBean;
+import com.dewen.project.utils.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +25,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 重点工业企业基本情况表
@@ -157,20 +152,28 @@ public class CompanyInfoController extends BaseController{
         return baseManager.composeSuccessBaseResponse(CompanyInfoService.record());
     }
 
-    @RequestMapping(value = "/download/exportExcel")
-    public void exportExcel(HttpServletResponse response, @RequestParam List<String> fieIds) throws Exception {
+    @RequestMapping(value = "/download/exportExcel", method = RequestMethod.GET)
+    public void exportExcel(HttpServletResponse response, @RequestParam List<String> fieIds, @RequestParam List<Integer> ids) throws Exception {
         try {
-            if (fieIds.size()<=0){
-                return;
-            }
             //excel列头信息
-            String[] rowsName = new String[fieIds.size()];
-            Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
-            for (int i = 0; i < fieIds.size(); i++) {
-                rowsName[i] = titelMap.get(fieIds.get(i));
+            String[] rowsName;
+            if (fieIds==null||fieIds.size()<=0){
+                Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
+                rowsName = new String[titelMap.size()];
+                int i = 0;
+                for (String value : titelMap.values()) {
+                    rowsName[i] = value;
+                    i++;
+                }
+            } else {
+                rowsName = new String[fieIds.size()];
+                Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
+                for (int i = 0; i < fieIds.size(); i++) {
+                    rowsName[i] = titelMap.get(fieIds.get(i));
+                }
             }
 
-            List<Object> list = CompanyInfoService.getListData(fieIds);
+            List<Object> list = CompanyInfoService.getListData(fieIds,ids);
 
             List<Object[]> dataList = new ArrayList<Object[]>();
             Object[] objs = null;
@@ -200,6 +203,52 @@ public class CompanyInfoController extends BaseController{
             os.flush();
             os.close();
             return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("数据导出异常");
+        }
+    }
+    @RequestMapping(value = "/download/exportExcel", method = RequestMethod.POST)
+    public void exportExcel(@RequestBody ExportParam exportParam) throws Exception {
+        try {
+            List<String> fieIds = exportParam.getFieIds();
+            List<Integer> ids = exportParam.getIds();
+            //excel列头信息
+            List<String> rowsName = new LinkedList<>();
+            if (fieIds==null||fieIds.size()<=0){
+                fieIds = new LinkedList<>();
+                Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
+                int i = 0;
+                for (String key : titelMap.keySet()) {
+                    fieIds.add(key);
+                    rowsName.add(titelMap.get(key));
+                    i++;
+                }
+            } else {
+                Map<String, String> titelMap = ExportFieIdConstant.getFieIds();
+                for (int i = 0; i < fieIds.size(); i++) {
+                    rowsName.add(titelMap.get(fieIds.get(i)));
+                }
+            }
+
+            List<Object> list = CompanyInfoService.getListData(fieIds,ids);
+
+            List<List<Object>> objects = new LinkedList<>();
+            for (int i = 0; i < list.size(); i++) {
+                List<Object> dataA = new LinkedList<>();
+                Object [] map = new Object[rowsName.size()];
+                if (rowsName.size()==1){
+                    map[0] = list.get(i);
+                }else{
+                    map = (Object[]) list.get(i);
+                }
+                for (int j = 0; j < map.length; j++) {
+                    dataA.add(map[j]);
+                }
+                objects.add(dataA);
+            }
+            String title = StringUtils.isEmpty(exportParam.getTitle())?"导出数据":exportParam.getTitle();
+            ExportUtil.writeExcel(exportParam.getPath(), exportParam.getTitle()+"-"+String.valueOf(System.currentTimeMillis()).substring(4, 13), title, rowsName, title, objects, false);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("数据导出异常");

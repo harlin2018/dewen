@@ -1,11 +1,6 @@
 package com.dewen.project.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.dewen.project.constants.CompanyInfoEnums;
@@ -488,7 +483,7 @@ public class CompanyInfoService implements ICompanyInfoService {
         return list;
     }
 
-    public List<Object> getListData(List<String> fieIds){
+    public List<Object> getListData(List<String> fieIds, List<Integer> ids){
 
         StringBuffer sql = new StringBuffer("select ");
         for (int i = 0; i < fieIds.size(); i++) {
@@ -498,6 +493,14 @@ public class CompanyInfoService implements ICompanyInfoService {
             } else {
                 sql.append(" from company_info");
             }
+        }
+        if (ids!=null&&ids.size()>0){
+            sql.append(" where id in (");
+            StringJoiner sj =new StringJoiner(",");
+            for (Integer id : ids) {
+                sj.add(id.toString());
+            }
+            sql.append(sj.toString()).append(")");
         }
         System.out.println(sql.toString());
         List<Object> mapList = this.selectList(sql.toString());

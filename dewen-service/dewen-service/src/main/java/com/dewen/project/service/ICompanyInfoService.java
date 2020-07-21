@@ -60,6 +60,6 @@ public interface ICompanyInfoService {
 
     Map<String, List> record();
 
-    List<Object> getListData(List<String> fieIds);
+    List<Object> getListData(List<String> fieIds, List<Integer> ids);
 
 }

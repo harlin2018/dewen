@@ -28,7 +28,7 @@ public class ExportExcel {
     public void export(OutputStream out) {
         try {
             HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet(title);
+            HSSFSheet sheet = workbook.createSheet();
 
             // 产生表格标题行
             HSSFRow rowm = sheet.createRow(0);
@@ -69,6 +69,8 @@ public class ExportExcel {
                         cell = row.createCell(j, HSSFCell.CELL_TYPE_STRING);
                         if (!"".equals(obj[j]) && obj[j] != null) {
                             cell.setCellValue(obj[j].toString());
+                        }else{
+                            cell.setCellValue("");
                         }
                     }
                     cell.setCellStyle(style);
