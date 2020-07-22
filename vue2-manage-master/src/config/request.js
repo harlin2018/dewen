@@ -1,4 +1,7 @@
 import axios from 'axios'
+
+import {Message, MessageBox} from 'element-ui'
+
 import {
 	baseUrl
 } from './env'
@@ -62,9 +65,21 @@ Object.keys(modules).forEach(module => {
     // response interceptor
     service.interceptors.response.use(
         response => {
-            return response.data
+            let res=response.data
+            if(res.resultCode!='0'){
+                Message({
+                    message: res.resultMsg || 'Error',
+                    type: 'error',
+                })
+
+            }
+            return res
         },
         error => {
+            Message({
+                message: res.resultMsg || 'Error',
+                type: 'error',
+            })
             return Promise.reject(error)
         }
     )

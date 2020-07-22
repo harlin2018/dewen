@@ -144,3 +144,21 @@ export function deleteRole(data) {    //删除角色
         data
     })
 }
+
+
+export function assignRole(data) {    //用户关联角色
+    return request({
+        url: '/commonUser/assignRole',
+        method: 'post',
+        data
+    })
+}
+
+
+export function getUserRoleList(params) {    //角色列表
+    return request({
+        url: '/commonUserRoleRelationship/list',
+        method: 'post',
+        params
+    })
+}

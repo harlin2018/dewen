@@ -124,8 +124,25 @@ export default {
         },
         exportExcel(){
             if(this.colArr.length>0){
-                exportList({fieIds:this.colArr}).then(res=>{
-
+                let params={
+                    title:'废弃单元',
+                    fieIds:this.colArr,
+                    ids:[],
+                    name:this.mainQuery.name,
+                    officialTime:this.mainQuery.officialTime,
+                    createDate:this.mainQuery.createDate
+                }
+                exportList(params).then(res=>{
+                    if(res.resultCode=='0'){
+                        window.open(res.payload)
+                        // var downloadFileUrl=res.payload
+                        // var elemIF=document.createElement('iframe')
+                        // elemIF.src=downloadFileUrl
+                        // elemIF.style.display='none'
+                        // document.body.appendChild(elemIF)
+                    }else{
+                        this.$message({type:'error',message:'导出错误'})
+                    }
                 })
             }
         }

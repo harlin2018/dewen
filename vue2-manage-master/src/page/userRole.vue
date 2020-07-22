@@ -48,7 +48,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getRoleList,deleteRole,createRole,updateRole} from '@/api/common'
+import {getRoleList,deleteRole,createRole,updateRole,getUserRoleList} from '@/api/common'
 
 
 export default {
@@ -160,8 +160,5 @@ export default {
 .my_container{
     padding: 20px;
     height: 100%;
-}
-.my_main{
-
 }
 </style>

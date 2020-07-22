@@ -22,6 +22,20 @@
                 ></pi-table>
             </div>
         </div>
+        <el-dialog width="400px" title="关联角色" :visible.sync="dialogVisible">
+             <el-checkbox-group v-model="roleIds">
+                <el-checkbox
+                    v-for="item in roleList"
+                    :label="item.id"
+                    :key="item.id">
+                    {{item.roleName}}
+                </el-checkbox>
+            </el-checkbox-group>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible=false">取 消</el-button>
+                <el-button type="primary" @click="submitRealtionRole">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -30,7 +44,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getUserList,approveUser} from '@/api/common'
+import {getUserList,approveUser,getRoleList,assignRole,getUserRoleList } from '@/api/common'
 
 
 export default {
@@ -39,6 +53,10 @@ export default {
     data(){
         return {
             loading:false,
+            dialogVisible:false,
+            userId:'',
+            roleIds:[],
+            roleList:[],
             mainList:[],
             searchItem:[
                 {label:'名称',prop:'userName',type:'input'},
@@ -61,7 +79,10 @@ export default {
         buttons(){
             let info=this.$store.state.adminInfo
             if(info&&info.userName=='admin'){
-                return [{label:'审核',color:'iconBlue',type:'eyes'}]
+                return [
+                    {label:'审核',color:'iconBlue',type:'eyes'},
+                    {label:'关联角色',color:'iconBlue',type:'relation'}
+                ]
             }else{
                 return []
             }
@@ -69,6 +90,7 @@ export default {
     },
     mounted(){
         this.getMainList()
+        this.getRoleList()
     },
     methods: {
         searchMain(){   //搜索
@@ -95,7 +117,49 @@ export default {
                 this.loading=false
             })
         },
+        getRoleList(){  //获取列表
+            getRoleList({page:1,limit:1000}).then(res=>{
+                if(res.resultCode=='0'){
+                    this.roleList=res.payload.content
+                }
+            })
+        },
+        getUserRoleList(){
+            getUserRoleList({page:1,limit:1000,commonUser:{id:this.userId}}).then(res=>{
+                if(res.resultCode=='0'){
+                    if(res.payload.content){
+                        let tmp=[]
+                        this.roleIds=res.payload.content.map(item=>item.commonRole.id)
+                    }
+                }
+            })
+        },
+        submitRealtionRole(){   //提交关联角色数据
+            if(this.roleIds.length>0){
+                let params={
+                    userId:this.userId,
+                    roleIds:this.roleIds
+                }
+                assignRole(params).then(res=>{
+                    if(res.resultCode=='0'){
+                        this.dialogVisible=false
+                    }
+                })
+            }
+        },
         handleButton(data){
+            if(data.type=='eyes'){
+                this.handleApprove()
+            }else{
+                this.handleRelation(data)
+            }
+        },
+        handleRelation(data){   //关联角色
+            this.userId=data.row.id
+            this.dialogVisible=true
+            this.getUserRoleList()
+        },
+        handleApprove(){    //审核
             this.$confirm('用户审核', '提示', {
                 confirmButtonText: '通过',
                 cancelButtonText: '取消',
@@ -118,7 +182,9 @@ export default {
     padding: 20px;
     height: 100%;
 }
-.my_main{
-
+.el-dialog__body{
+    .el-checkbox{
+        margin-bottom: 16px;
+    }
 }
 </style>
