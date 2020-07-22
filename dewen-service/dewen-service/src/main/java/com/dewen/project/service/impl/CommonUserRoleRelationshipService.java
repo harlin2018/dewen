@@ -1,10 +1,18 @@
 package com.dewen.project.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CompanyInfo;
+import com.dewen.project.repository.CommonRoleRepository;
+import com.dewen.project.repository.CommonUserRepository;
+import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
+import com.mysql.jdbc.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +24,8 @@ import org.springframework.stereotype.Service;
 import com.dewen.project.domain.CommonUserRoleRelationship;
 import com.dewen.project.repository.CommonUserRoleRelationshipRepository;
 import com.dewen.project.service.ICommonUserRoleRelationshipService;
+
+import javax.persistence.criteria.Predicate;
 
 /**
  * common_user_role_relationship
@@ -32,6 +42,10 @@ public class CommonUserRoleRelationshipService implements ICommonUserRoleRelatio
 
     @Autowired
     private CommonUserRoleRelationshipRepository CommonUserRoleRelationshipRepository;
+    @Autowired
+    private CommonRoleRepository commonRoleRepository;
+    @Autowired
+    private CommonUserRepository commonUserRepository;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -106,13 +120,21 @@ public class CommonUserRoleRelationshipService implements ICommonUserRoleRelatio
         if(CommonUserRoleRelationship == null){
             CommonUserRoleRelationshipPages = CommonUserRoleRelationshipRepository.findAll(pageable);
         }else{
-            //create matcher ,if need ,please modify here
-            ExampleMatcher matcher = ExampleMatcher.matchingAll();
-            matcher = matcher.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains());
-            matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
-            //create instant
-            Example<CommonUserRoleRelationship> example = Example.of(CommonUserRoleRelationship, matcher);
-            CommonUserRoleRelationshipPages  = CommonUserRoleRelationshipRepository.findAll(example, pageable);
+            Specification<CommonUserRoleRelationship> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+                List<Predicate> predicateAndList = new ArrayList<Predicate>();
+                if (CommonUserRoleRelationship.getCommonRole()!=null) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("commonRole"), commonRoleRepository.findById(CommonUserRoleRelationship.getCommonRole().getId()).get()));
+                }
+                if (CommonUserRoleRelationship.getCommonUser()!=null) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("commonUser"), commonUserRepository.findById(CommonUserRoleRelationship.getCommonUser().getId()).get()));
+                }
+                if (predicateAndList.size() > 0) {
+                    return criteriaQuery.where(criteriaBuilder.and(predicateAndList.toArray(new Predicate[predicateAndList.size() - 1]))).getRestriction();
+                }
+                return criteriaQuery.getRestriction();
+            };
+            CommonUserRoleRelationshipPages = CommonUserRoleRelationshipRepository.findAll(specification, pageable);
         }
 
         return CommonUserRoleRelationshipPages;

@@ -3,6 +3,7 @@ package com.dewen.project.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.domain.CommonUser;
+import com.dewen.project.domain.DTO.UserAssignRoleRequest;
 import com.dewen.project.domain.support.CommonRightSupport;
 import com.dewen.project.domain.support.UserInfo;
 import com.dewen.project.service.ICommonUserService;
@@ -199,5 +200,29 @@ public class CommonUserController extends BaseController {
         } else{
             return baseManager.composeDBFailResponse();
         }
+    }
+
+    /**
+     * Modify CommonUser information according to the id
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "update CommonUser information ", notes = "According to url id to update CommonUser information")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "CommonUserID", required = true, dataType = "int", paramType = "path"),
+            @ApiImplicitParam(name = "CommonUser", value = "entity CommonUser", required = true, dataType = "CommonUser")
+    })
+    @RequestMapping(value = "/assignRole", method = RequestMethod.POST)
+    public BaseResponse assignRole(@RequestBody @Valid UserAssignRoleRequest request) {
+
+        boolean result = CommonUserService.assignRole(request.getUserId(), request.getRoleIds());
+        if (result) {
+
+            return baseManager.composeCommonSuccessResponse();
+        } else {
+            return baseManager.composeDBFailResponse();
+        }
+
     }
 }

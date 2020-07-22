@@ -4,6 +4,8 @@ package com.dewen.project.service;
 import com.dewen.project.domain.CommonUser;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 /**
  * common_user
  * <p>Description: CommonUser Service  /p>
@@ -58,4 +60,6 @@ public interface ICommonUserService {
     CommonUser getUser(String loginName, String hashPassword);
 
     int approvalUser(Integer id, Integer status);
+
+    boolean assignRole(Integer userId, List<Integer> roleIds);
 }

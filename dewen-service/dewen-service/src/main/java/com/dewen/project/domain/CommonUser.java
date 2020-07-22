@@ -1,8 +1,13 @@
 package com.dewen.project.domain;
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * common_user
@@ -20,155 +25,186 @@ import java.util.Date;
 public class CommonUser implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
-     * id
+     * 编号
+     * default value: null
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID", nullable = false, length = 11)
     private Integer id;
+
 
     /**
      * 用户名
+     * default value: null
      */
-    @Column(name = "user_name")
+    @Length(max=200, message = "{commonUser.userName.name.length.limit}")
+    @NotBlank(message = "用户名不能为空")
+    @Column(name = "USER_NAME", nullable = false, length = 200)
     private String userName;
+
 
     /**
      * 密码
+     * default value: null
      */
-    @Column(name = "hash_password")
+    @Column(name = "HASH_PASSWORD", nullable = true, length = 256)
+    @NotBlank(message = "密码不能为空")
     private String hashPassword;
 
-    /**
-     * 用户密钥
-     */
-    @Column(name = "secret")
-    private String secret;
 
     /**
      * 邮箱
+     * default value: null
      */
-    @Column(name = "email")
+    @Column(name = "EMAIL", nullable = true, length = 200)
     private String email;
+
 
     /**
      * 登陆名称
+     * default value: null
      */
-    @Column(name = "login_name")
+    @Length(max=100, message = "{commonUser.loginName.name.length.limit}")
+    @NotBlank(message = "登陆名称不能为空")
+    @Column(name = "LOGIN_NAME", nullable = false, length = 100)
     private String loginName;
+
 
     /**
      * 登陆时间
+     * default value: null
      */
-    @Column(name = "login_time")
+    @Column(name = "LOGIN_TIME", nullable = true, length = 19)
     private Date loginTime;
+
 
     /**
      * 最后登陆
+     * default value: null
      */
-    @Column(name = "last_logintime")
+    @Column(name = "LAST_LOGINTIME", nullable = true, length = 19)
     private Date lastLogintime;
+
 
     /**
      * 次数
+     * default value: null
      */
-    @Column(name = "count")
+    @Column(name = "COUNT", nullable = true, length = 10)
     private Integer count;
 
-    /**
-     * mobile
-     */
-    @Column(name = "mobile")
-    private String mobile;
 
     /**
-     * 用户昵称
+     *
+     * default value: null
      */
-    @Column(name = "nick_name")
+    @Column(name = "MOBILE", nullable = true, length = 11)
+    private String mobile;
+
+
+    /**
+     * 微信昵称
+     */
+    @Column(name = "NICK_NAME", nullable = true, length = 100)
     private String nickName;
 
     /**
-     * 微信号标识
+     * 微信openid
      */
-    @Column(name = "we_chat_openid")
+    @Column(name = "WE_CHAT_OPENID", nullable = true, length = 50)
     private String weChatOpenid;
 
     /**
      * 微信号核对状态 1:已核对 2:未核对
      */
-    @Column(name = "we_chat_status")
+    @Column(name = "WE_CHAT_STATUS", nullable = true, length = 11)
     private Integer weChatStatus;
 
     /**
      * 职员编号
+     * default value: null
      */
-    @Column(name = "employee_id")
+    @Column(name = "EMPLOYEE_ID", nullable = true, length = 10)
     private Integer employeeId;
+
 
     /**
      * 回收站
+     * default value: null
      */
-    @Column(name = "enabled")
+    @Column(name = "ENABLED", nullable = true, length = 1)
     private Integer enabled;
+
 
     /**
      * 备注
+     * default value: null
      */
-    @Column(name = "remark")
+    @Column(name = "REMARK", nullable = true, length = 200)
     private String remark;
+
 
     /**
      * 创建职员
+     * default value: null
      */
-    @Column(name = "create_staff")
+    @Column(name = "CREATE_STAFF", nullable = true, length = 10)
     private Integer createStaff;
+
 
     /**
      * 创建日期
+     * default value: null
      */
-    @Column(name = "create_date")
+    @Column(name = "CREATE_DATE", nullable = true, length = 19)
     private Date createDate;
+
 
     /**
      * 修改职员
+     * default value: null
      */
-    @Column(name = "modify_date")
+    @Column(name = "MODIFY_DATE", nullable = true, length = 19)
     private Date modifyDate;
+
 
     /**
      * 修改日期
+     * default value: null
      */
-    @Column(name = "modify_staff")
+    @Column(name = "MODIFY_STAFF", nullable = true, length = 10)
     private Integer modifyStaff;
 
     /**
      * 头像url
+     * default value: null
      */
-    @Column(name = "head_img")
+    @Column(name = "HEAD_IMG", nullable = true, length = 256)
     private String headImg;
 
     /**
-     * 微信用户 1:微信端用户 2:非微信端用户
+     * one to many -one is CommonUser,many is commonUserRoleRelationship
+     * default value: null
      */
-    @Column(name = "we_chat_user")
+    @OneToMany(cascade=CascadeType.DETACH)
+    @JoinColumn(name = "COM_USER_ID")
+    private List<CommonUserRoleRelationship> commonUserRoleRelationship;
+
+    /**
+     * 微信用户 1:微信端用户 2:非微信端用户
+     * default value: null
+     */
+    @Column(name = "WE_CHAT_USER", nullable = true, length = 1)
     private Integer weChatUser;
 
-    /**
-     * 所属单位
-     */
-    @Column(name = "belong_company")
+    @Column(name = "BELONG_COMPANY", nullable = true, length = 255)
     private String belongCompany;
 
-    /**
-     * department
-     */
-    @Column(name = "department")
+    @Column(name = "DEPARTMENT")
     private String department;
 
-    /**
-     * idaas，外部id
-     */
-    @Column(name = "external_id")
+    @Column(name = "EXTERNAL_ID")
     private String externalId;
 
     /**
