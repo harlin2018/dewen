@@ -75,9 +75,11 @@ const keyList={
     eiaProcess:['有增、改','无增、改'],
     emissionPermit:['有','无'],
     newEia:['办理中','无'],
-    supervisoryInspectionEnterprise:['是','不是']
+    supervisoryInspectionEnterprise:['是','不是'],
+    'companyWasteList.processMethods':['第三方','回收','回用','垃圾回收站']
 }
 
+import {baseUrl} from '../../config/env'
 
 export default {
     name:'tableForm',
@@ -366,25 +368,33 @@ export default {
             this.mainForm[prop].splice(index,1)
         },
 
-        dealData(){
+        dealData(){ //导出前根式化数据
             let dateKey=['completionDate','officialTime','testTime','createDate']
+            let fileKey=[
+                {key:'wasteWaterMonitorList',file:'monitorFileId'},
+                {key:'inspectRecordList',file:'fileIdList',list:true},
+                {key:'adminRecordList',file:'fileIdList',list:true},
+            ]
             let formData=this.deepClone(this.mainForm)
-            // if(formData['completionDate']) formData['completionDate']=parseTime(formData['completionDate'])
-            // if(formData['officialTime']) formData['officialTime']=parseTime(formData['officialTime'])
-            // formData.wasteWaterMonitorList.forEach(item=>{
-            //     if(item['testTime']) item['testTime']=parseTime(item['testTime'])
-            // })
-            // formData.wasteGasMonitorList.forEach(item=>{
-            //     if(item['testTime']) item['testTime']=parseTime(item['testTime'])
-            // })
-            // formData.inspectRecordList.forEach(item=>{
-            //     if(item['createDate']) item['createDate']=parseTime(item['createDate'])
-            // })
-            // formData.adminRecordList.forEach(item=>{
-            //     if(item['createDate']) item['createDate']=parseTime(item['createDate'])
-            // })
+            let basePath=formData.basePath
 
-            for(let attr in formData){
+            for(let attr in keyList){   //回显
+                if(attr.indexOf('.')>=0){
+                    let arr=attr.split('.')
+                    if(formData[arr[0]]){
+                        formData[arr[0]].map(item=>{
+                            if(item[arr[1]]){
+                                item[arr[1]]=keyList[attr][item[arr[1]]-1]
+                            }
+                        })
+                    }
+                }else{
+                    if(formData[attr]){
+                        formData[attr]=keyList[attr][formData[attr]-1]
+                    }
+                }
+            }
+            for(let attr in formData){  //处理时间
                 if(dateKey.includes(attr)){
                     formData[attr]=parseTime(formData[attr])
                 }
@@ -400,7 +410,19 @@ export default {
                 }
                 if(!formData[attr]) formData[attr]=''
             }
-
+            fileKey.forEach(item=>{
+                formData[item.key].map(fd=>{
+                    if(item.list){
+                        fd[item.file].forEach(f=>{
+                            // f.fileUrl=`<a href="${basePath+f.filePath}" download>${f.fileName}</a>`
+                            f.fileUrl=basePath+f.filePath
+                        })
+                    }else{
+                        // fd.fileUrl=`<a href="${basePath+fd[item.file].filePath}" download>${fd[item.file].fileName}</a>`
+                        fd.fileUrl=basePath+fd[item.file].filePath
+                    }
+                })
+            })
             return formData
         },
 
