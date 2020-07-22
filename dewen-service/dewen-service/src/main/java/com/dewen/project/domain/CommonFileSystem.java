@@ -1,6 +1,7 @@
 
 package com.dewen.project.domain;
 
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +25,7 @@ import java.util.Date;
  * @version 1.0
  * @date 2019-07-01
  */
-
+@Data
 @Entity
 @Table(name = "COMMON_FILE_SYSTEM")
 public class CommonFileSystem implements Serializable {
@@ -158,154 +160,13 @@ public class CommonFileSystem implements Serializable {
 	@Column(name = "MODIFY_DATE", nullable = true)
 	private Date modifyDate;
 
-	/**
-	 * null
-	 * default value: null
-	 */
-	@Column(name = "MODIFY_STAFF", nullable = true, length = 10)
-	private Integer modifyStaff;
-	
-	public Integer getId() {
-		return this.id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	public String getFileName() {
-		return this.fileName;
-	}
-	
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-	
-	public String getUplManager() {
-		return this.uplManager;
-	}
-	
-	public void setUplManager(String uplManager) {
-		this.uplManager = uplManager;
-	}
-	
-	public Date getUplDate() {
-		return this.uplDate;
-	}
-	
-	public void setUplDate(Date uplDate) {
-		this.uplDate = uplDate;
-	}
-	
-	public String getFilePath() {
-		return this.filePath;
-	}
-	
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
-	
-	public String getFileExtends() {
-		return this.fileExtends;
-	}
-	
-	public void setFileExtends(String fileExtends) {
-		this.fileExtends = fileExtends;
-	}
-	
-	public String getSystemType() {
-		return this.systemType;
-	}
-	
-	public void setSystemType(String systemType) {
-		this.systemType = systemType;
-	}
-	
-	public Integer getToBeFollowUp() {
-		return this.toBeFollowUp;
-	}
-	
-	public void setToBeFollowUp(Integer toBeFollowUp) {
-		this.toBeFollowUp = toBeFollowUp;
-	}
-	
-	public Integer getModuleType() {
-		return this.moduleType;
-	}
-	
-	public void setModuleType(Integer moduleType) {
-		this.moduleType = moduleType;
-	}
-	
-	public String getProcessStatus() {
-		return this.processStatus;
-	}
-	
-	public void setProcessStatus(String processStatus) {
-		this.processStatus = processStatus;
-	}
-	
-	public Integer getEmployeeId() {
-		return this.employeeId;
-	}
-	
-	public void setEmployeeId(Integer employeeId) {
-		this.employeeId = employeeId;
-	}
-	
-	public String getVisitUri() {
-		return this.visitUri;
-	}
-	
-	public void setVisitUri(String visitUri) {
-		this.visitUri = visitUri;
-	}
-	
-	public Integer getEnabled() {
-		return this.enabled;
-	}
-	
-	public void setEnabled(Integer enabled) {
-		this.enabled = enabled;
-	}
-	
-	public String getRemark() {
-		return this.remark;
-	}
-	
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	
-	public Integer getCreateStaff() {
-		return this.createStaff;
-	}
-	
-	public void setCreateStaff(Integer createStaff) {
-		this.createStaff = createStaff;
-	}
-	
-	public Date getCreateDate() {
-		return this.createDate;
-	}
-	
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-	
-	public Date getModifyDate() {
-		return this.modifyDate;
-	}
-	
-	public void setModifyDate(Date modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-	
-	public Integer getModifyStaff() {
-		return this.modifyStaff;
-	}
-	
-	public void setModifyStaff(Integer modifyStaff) {
-		this.modifyStaff = modifyStaff;
-	}
+    /**
+     * null
+     * default value: null
+     */
+    @Column(name = "MODIFY_STAFF", nullable = true, length = 10)
+    private Integer modifyStaff;
+
+    @Transient
+    private String fullPath;
 }

@@ -399,6 +399,9 @@ public class CompanyInfo implements Serializable {
     @Transient
     private List<CompanyRecord> adminRecordList;
 
+    @Transient
+    private String basePath;
+
     public CompanyInfo() {
     }
 

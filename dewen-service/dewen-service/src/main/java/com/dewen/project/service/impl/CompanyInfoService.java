@@ -1,11 +1,24 @@
 package com.dewen.project.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.dewen.project.constants.CompanyInfoEnums;
 import com.dewen.project.constants.Constants;
-import com.dewen.project.domain.*;
+import com.dewen.project.domain.CommonFileSystem;
+import com.dewen.project.domain.CommonModelFile;
+import com.dewen.project.domain.CompanyProduct;
+import com.dewen.project.domain.CompanyProject;
+import com.dewen.project.domain.CompanyRecord;
+import com.dewen.project.domain.CompanySewageWaste;
+import com.dewen.project.domain.CompanyWaste;
+import com.dewen.project.domain.ExportParam;
 import com.dewen.project.repository.CommonModelFileRepository;
 import com.dewen.project.repository.CompanyProductRepository;
 import com.dewen.project.repository.CompanyProjectRepository;
@@ -20,6 +33,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +43,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.repository.CompanyInfoRepository;
 import com.dewen.project.service.ICompanyInfoService;
 
@@ -65,6 +80,8 @@ public class CompanyInfoService implements ICompanyInfoService {
     private CompanyRecordRepository companyRecordRepository;
     @Autowired
     private CommonModelFileRepository commonModelFileRepository;
+    @Value("${fileDir.workflow}")
+    public String fileDir;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -73,7 +90,7 @@ public class CompanyInfoService implements ICompanyInfoService {
         companyInfo.setCreateDate(new Date());
         CompanyInfoRepository.save(companyInfo);
         // 主要生产产品表
-        List<CompanyProduct> companyProductList =  companyInfo.getCompanyProductList();
+        List<CompanyProduct> companyProductList = companyInfo.getCompanyProductList();
         if (companyProductList!=null) {
             for (CompanyProduct companyProduct : companyProductList) {
                 CompanyProduct newCompanyProduct = new CompanyProduct();
@@ -181,14 +198,14 @@ public class CompanyInfoService implements ICompanyInfoService {
     @Transactional(value = "transactionManager")
     public int updateCompanyInfo(CompanyInfo companyInfo, Integer id) {
         queryFk(companyInfo);
-        Optional<CompanyInfo> CompanyInfoRes= CompanyInfoRepository.findById(id);
-        if(CompanyInfoRes.isPresent()){
+        Optional<CompanyInfo> CompanyInfoRes = CompanyInfoRepository.findById(id);
+        if (CompanyInfoRes.isPresent()) {
             companyInfo = NullAwareBeanUtilsBean.copyExculdeList(CompanyInfoRes.get(), companyInfo);
             CompanyInfoRepository.save(companyInfo);
             // 主要生产产品表
             // 删除原有的资料
             companyProductRepository.deleteByCompanyId(companyInfo);
-            List<CompanyProduct> companyProductList =  companyInfo.getCompanyProductList();
+            List<CompanyProduct> companyProductList = companyInfo.getCompanyProductList();
             if (companyProductList!=null) {
                 for (CompanyProduct companyProduct : companyProductList) {
                     CompanyProduct newCompanyProduct = new CompanyProduct();
@@ -302,7 +319,7 @@ public class CompanyInfoService implements ICompanyInfoService {
                 }
             }
             return Constants.RETURN_STATUS_SUCCESS;
-        }else{
+        } else {
             return Constants.RETURN_STATUS_FAIL;
         }
 
@@ -310,6 +327,7 @@ public class CompanyInfoService implements ICompanyInfoService {
 
     /**
      * 处理外键对象
+     *
      * @param CompanyInfo
      */
     private void queryFk(CompanyInfo CompanyInfo) {
@@ -320,8 +338,8 @@ public class CompanyInfoService implements ICompanyInfoService {
     @Override
     @Transactional(value = "transactionManager")
     public int deleteCompanyInfo(Integer id) {
-        Optional<CompanyInfo> CompanyInfo= CompanyInfoRepository.findById(id);
-        if(CompanyInfo.isPresent()){
+        Optional<CompanyInfo> CompanyInfo = CompanyInfoRepository.findById(id);
+        if (CompanyInfo.isPresent()) {
             CompanyInfoRepository.deleteById(id);
             // 删除原有的资料
             companyProductRepository.deleteByCompanyId(CompanyInfo.get());
@@ -329,13 +347,13 @@ public class CompanyInfoService implements ICompanyInfoService {
             companyRecordRepository.deleteByCompanyId(CompanyInfo.get());
             companyWasteRepository.deleteByCompanyId(CompanyInfo.get());
             companyProjectRepository.deleteByCompanyId(CompanyInfo.get());
-            Optional<CompanyInfo> CompanyInfoRes= CompanyInfoRepository.findById(id);
-            if(CompanyInfoRes.isPresent()){
+            Optional<CompanyInfo> CompanyInfoRes = CompanyInfoRepository.findById(id);
+            if (CompanyInfoRes.isPresent()) {
                 return Constants.RETURN_STATUS_FAIL;
-            }else{
+            } else {
                 return Constants.RETURN_STATUS_SUCCESS;
             }
-        }else{
+        } else {
             return Constants.RETURN_STATUS_FAIL;
         }
 
@@ -343,8 +361,8 @@ public class CompanyInfoService implements ICompanyInfoService {
 
     @Override
     public CompanyInfo findById(Integer id) {
-        Optional<CompanyInfo>  companyInfoOpt = CompanyInfoRepository.findById(id);
-        if(companyInfoOpt.isPresent()){
+        Optional<CompanyInfo> companyInfoOpt = CompanyInfoRepository.findById(id);
+        if (companyInfoOpt.isPresent()) {
             // 主要生产产品表
             Integer companyId = companyInfoOpt.get().getId();
             CompanyInfo companyInfo = companyInfoOpt.get();
@@ -370,31 +388,35 @@ public class CompanyInfoService implements ICompanyInfoService {
             companyInfo.getInspectRecordList().forEach(companyRecord -> {
                 companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
                         .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+                companyRecord.getFileIdList().forEach(it->it.setFullPath(fileDir+it.getFilePath()));
             });
+
             // 行政执法记录
             companyInfo.setAdminRecordList(companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.adminRecord.getValue())
                     .stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList()));
             companyInfo.getAdminRecordList().forEach(companyRecord -> {
                 companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
                         .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+                companyRecord.getFileIdList().forEach(it->it.setFullPath(fileDir+it.getFilePath()));
             });
+            companyInfo.setBasePath(fileDir);
             return companyInfo;
-        }else{
+        } else {
             return null;
         }
     }
 
     @Override
-    public Page<CompanyInfo> list(CompanyInfo CompanyInfo,int pageNumber,int pageSize,String sorts)  {
+    public Page<CompanyInfo> list(CompanyInfo CompanyInfo, int pageNumber, int pageSize, String sorts) {
 
         //add sorts to query
-        Page<CompanyInfo> CompanyInfoPages =null;
+        Page<CompanyInfo> CompanyInfoPages = null;
         //Pageable
-        Pageable pageable =  PageUtils.pageable(pageNumber,pageSize,sorts);
+        Pageable pageable = PageUtils.pageable(pageNumber, pageSize, sorts);
 
-        if(CompanyInfo == null){
+        if (CompanyInfo==null) {
             CompanyInfoPages = CompanyInfoRepository.findAll(pageable);
-        }else{
+        } else {
             Specification<CompanyInfo> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
                 List<Predicate> predicateAndList = new ArrayList<Predicate>();
@@ -410,19 +432,19 @@ public class CompanyInfoService implements ICompanyInfoService {
                 if (!StringUtils.isNullOrEmpty(CompanyInfo.getBreaks())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("breaks"), "%" + CompanyInfo.getBreaks() + "%"));
                 }
-                if(!StringUtils.isNullOrEmpty(CompanyInfo.getLegalRepresentative())){
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getLegalRepresentative())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("legalRepresentative"), "%" + CompanyInfo.getLegalRepresentative() + "%"));
                 }
-                if(!StringUtils.isNullOrEmpty(CompanyInfo.getEnvironmentalProtectionOfficer())){
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getEnvironmentalProtectionOfficer())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("environmentalProtectionOfficer"), "%" + CompanyInfo.getEnvironmentalProtectionOfficer() + "%"));
                 }
-                if(CompanyInfo.getOfficialTime()!=null){
+                if (CompanyInfo.getOfficialTime()!=null) {
                     predicateAndList.add(criteriaBuilder.equal(root.get("officialTime"), CompanyInfo.getOfficialTime()));
                 }
                 if (CompanyInfo.getCreateDate()!=null) {
                     predicateAndList.add(criteriaBuilder.equal(root.get("createDate"), CompanyInfo.getCreateDate()));
                 }
-                if(!StringUtils.isNullOrEmpty(CompanyInfo.getContactNumber())){
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getContactNumber())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("contactNumber"), "%" + CompanyInfo.getContactNumber() + "%"));
                 }
                 if (predicateAndList.size() > 0) {
@@ -437,8 +459,8 @@ public class CompanyInfoService implements ICompanyInfoService {
     }
 
     @Override
-    public Map<String, List> record() {
-        Map<String, List> recordMap = new HashMap<>();
+    public Map<String, Object> record() {
+        Map<String, Object> recordMap = new HashMap<>();
         // 废水
         List<CompanySewageWaste> wasteWaterList = companySewageWasteRepository.findAllByWasteTypeGroupByName(CompanyInfoEnums.WasteType.wasteWater.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
         // 废气
@@ -449,40 +471,29 @@ public class CompanyInfoService implements ICompanyInfoService {
         List<CompanyProject> wasteGasMonitorList = companyProjectRepository.findAllByWasteTypeGroupByMonitorProject(CompanyInfoEnums.WasteType.wasteGas.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
         // 巡查执法记录
         List<CompanyRecord> inspectRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.inspectRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
-        inspectRecordList.forEach(companyRecord -> companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
-                .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList())));
+        inspectRecordList.forEach(companyRecord -> {
+            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+            companyRecord.getFileIdList().forEach(it -> it.setFullPath(fileDir + it.getFilePath()));
+        });
+
         // 行政执法记录
         List<CompanyRecord> adminRecordList = companyRecordRepository.findAllByRecordTypeGroupByContent(CompanyInfoEnums.RecordType.adminRecord.getValue()).stream().peek(it -> it.setCompanyId(null)).collect(Collectors.toList());
-        adminRecordList.forEach(companyRecord -> companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
-                .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList())));
-
-
+        adminRecordList.forEach(companyRecord -> {
+            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+            companyRecord.getFileIdList().forEach(it -> it.setFullPath(fileDir + it.getFilePath()));
+        });
         recordMap.put("wasteWaterList", wasteWaterList);
         recordMap.put("wasteGasList", wasteGasList);
         recordMap.put("wasteWaterMonitorList", wasteWaterMonitorList);
         recordMap.put("wasteGasMonitorList", wasteGasMonitorList);
         recordMap.put("inspectRecordList", inspectRecordList);
         recordMap.put("adminRecordList", adminRecordList);
-
+        recordMap.put("basePath", fileDir);
 
 
         return recordMap;
-    }
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public List<Object> selectList(String sql){
-        Query query = entityManager.createNativeQuery(sql);
-        List<Object> list = query.getResultList();
-        return list;
-    }
-
-    public List<Map<String, Object>> selectData(String dataSql){
-        Query query = entityManager.createNativeQuery(dataSql);
-        query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        List<Map<String, Object>> list = query.getResultList();
-        return list;
     }
 
     public List<Object> getListData(ExportParam exportParam){
@@ -522,6 +533,40 @@ public class CompanyInfoService implements ICompanyInfoService {
             Date date = DateUtils.addDays(officialTime, 1);
             String after = DateFormatUtils.format(date, "yyyy-MM-dd");
             sql.append(" and official_time >=").append(befor).append(" and official_time <=").append(after);
+        }
+        System.out.println(sql.toString());
+        List<Object> mapList = this.selectList(sql.toString());
+        // List<Map<String, Object>> maps = this.selectData(sql.toString());
+
+        return mapList;
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public List<Object> selectList(String sql) {
+        Query query = entityManager.createNativeQuery(sql);
+        List<Object> list = query.getResultList();
+        return list;
+    }
+
+    public List<Map<String, Object>> selectData(String dataSql) {
+        Query query = entityManager.createNativeQuery(dataSql);
+        query.unwrap(NativeQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        List<Map<String, Object>> list = query.getResultList();
+        return list;
+    }
+
+    public List<Object> getListData(List<String> fieIds) {
+
+        StringBuffer sql = new StringBuffer("select ");
+        for (int i = 0; i < fieIds.size(); i++) {
+            sql.append(fieIds.get(i));
+            if ((i + 1)!=fieIds.size()) {
+                sql.append(", ");
+            } else {
+                sql.append(" from company_info");
+            }
         }
         System.out.println(sql.toString());
         List<Object> mapList = this.selectList(sql.toString());

@@ -59,7 +59,7 @@ public interface ICompanyInfoService {
      */
     public Page<CompanyInfo> list(CompanyInfo CompanyInfo, int pageNumber, int pageSize, String sorts) ;
 
-    Map<String, List> record();
+    Map<String, Object> record();
 
     List<Object> getListData(ExportParam exportParam);
 
