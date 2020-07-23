@@ -1,12 +1,17 @@
 package com.dewen.project.service.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CommonRight;
 import com.dewen.project.domain.CommonRole;
 import com.dewen.project.domain.CommonUserRoleRelationship;
+import com.dewen.project.domain.support.UserInfo;
+import com.dewen.project.repository.CommonRightRepository;
 import com.dewen.project.repository.CommonRoleRepository;
 import com.dewen.project.repository.CommonUserRepository;
 import com.dewen.project.repository.CommonUserRoleRelationshipRepository;
@@ -15,6 +20,7 @@ import com.dewen.project.utils.PageUtils;
 import com.mysql.jdbc.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +54,8 @@ public class CommonUserService implements ICommonUserService {
     private CommonRoleRepository commonRoleRepository;
     @Autowired
     private CommonUserRoleRelationshipRepository commonUserRoleRelationshipRepository;
+    @Autowired
+    private CommonRightRepository commonRightRepository;
     
     @Override
     @Transactional(value = "transactionManager")
@@ -209,4 +217,72 @@ public class CommonUserService implements ICommonUserService {
         }
         return true;
     }
+
+    @Override
+    public List<UserInfo.RightInfo> findRight(Integer userId) {
+        List<CommonRight> rightList =  commonRightRepository.findAllByUserId(userId);
+        List<UserInfo.RightInfo> rightInfos = new ArrayList<>();
+        for (CommonRight commonRight : rightList) {
+            UserInfo.RightInfo rightInfo= new UserInfo.RightInfo();
+            BeanUtils.copyProperties(commonRight, rightInfo);
+            rightInfo.setRightId(commonRight.getId());
+            rightInfos.add(rightInfo);
+        }
+        return rightInfos;
+    }
+
+
+//    /**
+//     * 查询所有菜单
+//     *
+//     * @return
+//     */
+//    public List<Map<String, Object>> listAll() {
+//        // 查询出所有的一级菜单[pid=""为一级菜单]
+//        List<CommonRight> treeRight = commonRightRepository.selectParent();
+//        List<Map<String, Object>> list = new ArrayList<>();
+//        if (treeRight.size() > 0) {
+//            for (CommonRight commonRight : treeRight) {
+//                Map<String, Object> map = new LinkedHashMap<>();
+//                map.put
+//
+//            }
+//            for (CommonCategories commonCategories : treeCommonCategories) {
+//                Map<String, Object> map = new LinkedHashMap<>();
+//                map.put("id", commonCategories.getId());
+//                map.put("guid", commonCategories.getGuid());
+//                map.put("name", commonCategories.getName());
+//                map.put("level", commonCategories.getLevel());
+//                map.put("parent", commonCategories.getParent());
+//                map.put("children", getChildren(commonCategories.getGuid()));
+//                list.add(map);
+//            }
+//        }
+//        return list;
+//    }
+//
+//    /**
+//     * 递归
+//     *
+//     * @param id
+//     * @return
+//     */
+//    private List<Object> getChildren(String id) {
+//        List<Object> list = new ArrayList<>();
+//        List<CommonRight> treeRight = commonRightRepository.selectByPid(id);
+//        for (CommonCategories commonCategories : treeCommonCategories) {
+//            Map<String, Object> map = new LinkedHashMap<>();
+//            map.put("id", commonCategories.getId());
+//            map.put("guid", commonCategories.getGuid());
+//            map.put("name", commonCategories.getName());
+//            map.put("level", commonCategories.getLevel());
+//            map.put("parent", commonCategories.getParent());
+//            List childreList = getChildren(commonCategories.getGuid());
+//            if (childreList.size() > 0) {
+//                map.put("children", childreList);
+//            }
+//            list.add(map);
+//        }
+//        return list;
+//    }
 }

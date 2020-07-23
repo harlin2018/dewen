@@ -3,6 +3,7 @@ package com.dewen.project.service;
 
 import com.dewen.project.domain.CommonRight;
 import com.dewen.project.domain.DTO.CommonRightDTO;
+import com.dewen.project.domain.DTO.RoleAssignRightRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -61,4 +62,6 @@ public interface ICommonRightService {
     List<CommonRightDTO> listAll(CommonRight commonRight);
 
     List<CommonRightDTO> listByRole(Integer roleId);
+
+    boolean grant(RoleAssignRightRequest request);
 }

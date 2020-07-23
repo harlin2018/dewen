@@ -4,6 +4,7 @@ import com.dewen.project.constants.Constants;
 import com.dewen.project.domain.CommonRight;
 import com.dewen.project.domain.DTO.CommonRightDTO;
 import com.dewen.project.domain.DTO.RightListByRoleRequest;
+import com.dewen.project.domain.DTO.RoleAssignRightRequest;
 import com.dewen.project.service.ICommonRightService;
 import com.dewen.project.utils.BaseResponse;
 import com.dewen.project.utils.IBaseManager;
@@ -42,6 +43,21 @@ public class CommonRightController {
     private IBaseManager baseManager;
     @Autowired
     private ICommonRightService commonRightService;
+
+    /**
+     * Get all list for CommonRight
+     * @return
+     */
+    @ApiOperation(value="Get list for CommonRight", notes="Get list for CommonRight")
+    @RequestMapping(value = "/grant",method = RequestMethod.POST)
+    public BaseResponse grant(@RequestBody @Valid RoleAssignRightRequest request) {
+        boolean result = commonRightService.grant(request);
+        if(result){
+            return baseManager.composeCommonSuccessResponse();
+        }else{
+            return baseManager.composeDBFailResponse();
+        }
+    }
 
     /**
      * Get all list for CommonRight

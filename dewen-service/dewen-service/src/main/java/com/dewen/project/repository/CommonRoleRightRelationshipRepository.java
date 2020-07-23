@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * common_role_right_relationship
  * <p>Description: CommonRoleRightRelationship Repository  </p>
@@ -21,4 +25,14 @@ import org.springframework.stereotype.Repository;
 public interface CommonRoleRightRelationshipRepository extends JpaRepository<CommonRoleRightRelationship, Integer>, JpaSpecificationExecutor<CommonRoleRightRelationship>{
 
 
+    default Map<Integer, CommonRoleRightRelationship> findRightByRoleMap(Integer id) {
+        List<CommonRoleRightRelationship> rightByRole = findByCommonRoleId(id);
+        Map<Integer, CommonRoleRightRelationship> hashMap = new HashMap();
+        for (CommonRoleRightRelationship commonRoleRightRelationship : rightByRole) {
+            hashMap.put(commonRoleRightRelationship.getCommonRight().getId(), commonRoleRightRelationship);
+        }
+        return hashMap;
+    }
+
+    List<CommonRoleRightRelationship> findByCommonRoleId(Integer commonRoleId);
 }

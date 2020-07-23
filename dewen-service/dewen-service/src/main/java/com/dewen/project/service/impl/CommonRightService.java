@@ -3,16 +3,25 @@ package com.dewen.project.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CommonRole;
+import com.dewen.project.domain.CommonRoleRightRelationship;
 import com.dewen.project.domain.DTO.CommonRightDTO;
+import com.dewen.project.domain.DTO.RoleAssignRightRequest;
 import com.dewen.project.domain.support.CommonRightSupport;
+import com.dewen.project.repository.CommonRightRepository;
+import com.dewen.project.repository.CommonRoleRepository;
+import com.dewen.project.repository.CommonRoleRightRelationshipRepository;
 import com.dewen.project.utils.ListExtraUtils;
 import com.dewen.project.utils.MessageUtils;
 import com.dewen.project.utils.PageUtils;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +33,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.dewen.project.domain.CommonRight;
-import com.dewen.project.repository.CommonRightRepository;
 import com.dewen.project.service.ICommonRightService;
 
 import javax.persistence.criteria.Predicate;
@@ -40,10 +48,15 @@ import javax.persistence.criteria.Predicate;
  * @date 2020-07-18
  */
 @Service
+@Slf4j
 public class CommonRightService implements ICommonRightService {
 
     @Autowired
-    private CommonRightRepository CommonRightRepository;
+    private CommonRightRepository commonRightRepository;
+    @Autowired
+    private CommonRoleRightRelationshipRepository commonRoleRightRelationshipRepository;
+    @Autowired
+    private CommonRoleRepository commonRoleRepository;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -55,7 +68,7 @@ public class CommonRightService implements ICommonRightService {
         commonRight.setCreateDate(new Date());
         commonRight.setModifyDate(new Date());
         queryFk(commonRight);
-        CommonRightRepository.save(commonRight);
+        commonRightRepository.save(commonRight);
         return Constants.RETURN_STATUS_SUCCESS;
     }
 
@@ -63,13 +76,13 @@ public class CommonRightService implements ICommonRightService {
     @Transactional(value = "transactionManager")
     public int updateCommonRight(CommonRight commonRight,Integer id) {
         queryFk(commonRight);
-        Optional<CommonRight> commonRightRes= CommonRightRepository.findById(id);
+        Optional<CommonRight> commonRightRes= commonRightRepository.findById(id);
         if(commonRightRes.isPresent()){
             commonRight.setId(id);
             CommonRight result = commonRightRes.get();
             commonRight.setModifyDate(new Date());
             commonRight.setCommonRoleRightRelationship(result.getCommonRoleRightRelationship());
-            CommonRightRepository.save(commonRight);
+            commonRightRepository.save(commonRight);
             return Constants.RETURN_STATUS_SUCCESS;
         }else{
             return Constants.RETURN_STATUS_FAIL;
@@ -81,7 +94,7 @@ public class CommonRightService implements ICommonRightService {
      * @param commonRight
      */
     private void queryFk(CommonRight commonRight) {
-        CommonRight right = CommonRightRepository.findByParentIdAndRightCodeAndEnabled(
+        CommonRight right = commonRightRepository.findByParentIdAndRightCodeAndEnabled(
                 commonRight.getParentId(), commonRight.getRightCode(), Constants.ENABLE);
 
         MessageUtils.isTrue(Objects.isNull(right) || Objects.equals(right.getId(), commonRight.getId()),
@@ -92,10 +105,10 @@ public class CommonRightService implements ICommonRightService {
     @Override
     @Transactional(value = "transactionManager")
     public int deleteCommonRight(Integer id) {
-        Optional<CommonRight> CommonRight= CommonRightRepository.findById(id);
+        Optional<CommonRight> CommonRight= commonRightRepository.findById(id);
         if(CommonRight.isPresent()){
-            CommonRightRepository.deleteById(id);
-            Optional<CommonRight> CommonRightRes= CommonRightRepository.findById(id);
+            commonRightRepository.deleteById(id);
+            Optional<CommonRight> CommonRightRes= commonRightRepository.findById(id);
             if(CommonRightRes.isPresent()){
                 return Constants.RETURN_STATUS_FAIL;
             }else{
@@ -109,14 +122,14 @@ public class CommonRightService implements ICommonRightService {
 
     @Override
     public CommonRight findById(Integer id) {
-        Optional<CommonRight >  CommonRight = CommonRightRepository.findById(id);
+        Optional<CommonRight >  CommonRight = commonRightRepository.findById(id);
         if(CommonRight.isPresent()){
             return CommonRight.get();
         }else{
             return null;
         }
 
-        //return CommonRightRepository.findOne(id);
+        //return commonRightRepository.findOne(id);
     }
 
     @Override
@@ -128,7 +141,7 @@ public class CommonRightService implements ICommonRightService {
         Pageable pageable =  PageUtils.pageable(pageNumber,pageSize,sorts);
 
         if(CommonRight == null){
-            CommonRightPages = CommonRightRepository.findAll(pageable);
+            CommonRightPages = commonRightRepository.findAll(pageable);
         }else{
             //create matcher ,if need ,please modify here
             ExampleMatcher matcher = ExampleMatcher.matchingAll();
@@ -136,7 +149,7 @@ public class CommonRightService implements ICommonRightService {
             matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
             //create instant
             Example<CommonRight> example = Example.of(CommonRight, matcher);
-            CommonRightPages  = CommonRightRepository.findAll(example, pageable);
+            CommonRightPages  = commonRightRepository.findAll(example, pageable);
         }
 
         return CommonRightPages;
@@ -148,7 +161,15 @@ public class CommonRightService implements ICommonRightService {
 
     @Override
     public List<CommonRightDTO> listByRole(Integer roleId) {
-        return null;
+        List<CommonRight> all = commonRightRepository.findByEnabled(Constants.ENABLE);
+        List<CommonRightDTO> rights = ListExtraUtils.toList(all, CommonRightDTO.class);
+
+        Map<Integer, CommonRoleRightRelationship> rightByRoleMap = commonRoleRightRelationshipRepository.findRightByRoleMap(roleId);
+
+        List<CommonRightDTO> rightDTOS = CommonRightSupport.toTree(rights, rightByRoleMap);
+
+
+        return rightDTOS;
     }
 
     private List<CommonRightDTO> listAll(CommonRight commonRight, boolean rightToTree) {
@@ -189,11 +210,66 @@ public class CommonRightService implements ICommonRightService {
             }
         };
 
-        List<CommonRight> all = CommonRightRepository.findAll(specification);
+        List<CommonRight> all = commonRightRepository.findAll(specification);
         List<CommonRightDTO> rights = ListExtraUtils.toList(all, CommonRightDTO.class);
         if (!rightToTree) {
             return rights;
         }
         return CommonRightSupport.toTree(rights);
+    }
+
+
+    @Override
+    public boolean grant(RoleAssignRightRequest request) {
+        Map<Integer, String> rightMap = request.getRightIds();
+        Optional<CommonRole> role = commonRoleRepository.findById(request.getRoleId());
+        if (!role.isPresent()) {
+            log.error("角色（{}）不存在", request.getRoleId());
+            return false;
+        }
+        List<CommonRoleRightRelationship> commonRoleRightRelationshipAdds = new ArrayList<>();
+        List<CommonRoleRightRelationship> commonRoleRightRelationshipDeletes = new ArrayList<>();
+        List<CommonRoleRightRelationship> commonRoleRightRelationships = role.get().getCommonRoleRightRelationship();
+        // 找出要删除的，和要添加的
+        for (int i = commonRoleRightRelationships.size() - 1; i >= 0; i--) {
+            CommonRoleRightRelationship commonRoleRightRelationship = commonRoleRightRelationships.get(i);
+            Integer rightId = commonRoleRightRelationship.getCommonRight().getId();
+            if (!rightMap.keySet().contains(rightId)) {
+                commonRoleRightRelationshipDeletes.add(commonRoleRightRelationship);
+                role.get().getCommonRoleRightRelationship().remove(commonRoleRightRelationship);
+            } else {
+                String rightType = rightMap.get(rightId);
+                rightMap.remove(rightId);
+                // 需要更新的
+                if (!Objects.equals(commonRoleRightRelationship.getRightType(),rightType)) {
+                    commonRoleRightRelationship.setRightType(rightType);
+                    commonRoleRightRelationshipAdds.add(commonRoleRightRelationship);
+                }
+            }
+        }
+        // 需要添加的
+        CommonRoleRightRelationship commonRoleRightRelationship;
+        for (Integer rightId : rightMap.keySet()) {
+            Optional<CommonRight> right = commonRightRepository.findById(rightId);
+            if (!right.isPresent()) {
+                log.error("权限（{}）不存在", request.getRoleId());
+                return false;
+            }
+            commonRoleRightRelationship = new CommonRoleRightRelationship();
+            commonRoleRightRelationship.setCommonRole(role.get());
+            commonRoleRightRelationship.setCommonRight(right.get());
+            commonRoleRightRelationship.setRightType(rightMap.get(rightId));
+            commonRoleRightRelationshipAdds.add(commonRoleRightRelationship);
+        }
+
+        if (CollectionUtils.isNotEmpty(commonRoleRightRelationshipDeletes)) {
+            commonRoleRightRelationshipRepository.deleteAll(commonRoleRightRelationshipDeletes);
+        }
+
+        if (CollectionUtils.isNotEmpty(commonRoleRightRelationshipAdds)) {
+            commonRoleRightRelationshipRepository.saveAll(commonRoleRightRelationshipAdds);
+        }
+        //192commonRoleRepository.save(role.get());
+        return true;
     }
 }

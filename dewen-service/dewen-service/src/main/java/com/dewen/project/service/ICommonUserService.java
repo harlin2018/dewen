@@ -1,7 +1,9 @@
 
 package com.dewen.project.service;
 
+import com.dewen.project.domain.CommonRight;
 import com.dewen.project.domain.CommonUser;
+import com.dewen.project.domain.support.UserInfo;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -62,4 +64,6 @@ public interface ICommonUserService {
     int approvalUser(Integer id, Integer status);
 
     boolean assignRole(Integer userId, List<Integer> roleIds);
+
+    List<UserInfo.RightInfo> findRight(Integer id);
 }

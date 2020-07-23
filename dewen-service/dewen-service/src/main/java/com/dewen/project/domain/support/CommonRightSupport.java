@@ -55,34 +55,34 @@ public class CommonRightSupport {
     }
 
 
-//    public static List<UserInfo.RightInfo> toRightInfoTree(List<UserInfo.RightInfo> rightInfos){
-//        List<UserInfo.RightInfo> rootList = new ArrayList();
-//
-//        Map<Integer, UserInfo.RightInfo> hashMap = rightInfos.stream()
-//                .collect(Collectors.toMap(UserInfo.RightInfo::getRightId, Function.identity(), (s1, s2) -> s2));
-//
-//        for (UserInfo.RightInfo rightInfo : rightInfos) {
-//            if (hashMap.containsKey(rightInfo.getParentId()) || Objects.equals(ROOT_RIGHT_ID, rightInfo.getParentId())) {
-//                UserInfo.RightInfo parent = hashMap.get(rightInfo.getParentId());
-//                if (parent == null) {
-//                    rootList.add(rightInfo);
-//                    continue;
-//                }
-//                if (parent.getChildren() == null) {
-//                    parent.setChildren(new ArrayList<>());
-//                }
-//                if (parent.getApis() == null) {
-//                    parent.setApis(new ArrayList<>());
-//                }
-//                if (Objects.equals(ResourceTypeEnum.Api.getValue(), rightInfo.getResourceType())) {
-//                    parent.getApis().add(rightInfo);
-//                } else {
-//                    parent.getChildren().add(rightInfo);
-//                }
-//            }
-//
-//        }
-//
-//        return rootList;
-//    }
+    public static List<UserInfo.RightInfo> toRightInfoTree(List<UserInfo.RightInfo> rightInfos){
+        List<UserInfo.RightInfo> rootList = new ArrayList();
+
+        Map<Integer, UserInfo.RightInfo> hashMap = rightInfos.stream()
+                .collect(Collectors.toMap(UserInfo.RightInfo::getRightId, Function.identity(), (s1, s2) -> s2));
+
+        for (UserInfo.RightInfo rightInfo : rightInfos) {
+            if (hashMap.containsKey(rightInfo.getParentId()) || Objects.equals(ROOT_RIGHT_ID, rightInfo.getParentId())) {
+                UserInfo.RightInfo parent = hashMap.get(rightInfo.getParentId());
+                if (parent == null) {
+                    rootList.add(rightInfo);
+                    continue;
+                }
+                if (parent.getChildren() == null) {
+                    parent.setChildren(new ArrayList<>());
+                }
+                if (parent.getApis() == null) {
+                    parent.setApis(new ArrayList<>());
+                }
+                if (Objects.equals(ResourceTypeEnum.Api.getValue(), rightInfo.getResourceType())) {
+                    parent.getApis().add(rightInfo);
+                } else {
+                    parent.getChildren().add(rightInfo);
+                }
+            }
+
+        }
+
+        return rootList;
+    }
 }
