@@ -9,16 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * <p>Title:</p>
- * <p>Description:BaseResponse</p>
- * <p>Copyright: Copyright (c) 2019</p>
- * <p>Company: PCCW</p>
- *
- * @author Welge
- * @version 1.0
- * @date 2019/6/20
- */
 @Data
 public class UserInfo implements Serializable {
 

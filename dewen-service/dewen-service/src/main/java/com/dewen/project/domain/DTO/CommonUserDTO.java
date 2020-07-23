@@ -7,17 +7,6 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
-/**
- * <p>Title:</p>
- * <p>Description: CommonUserDTO Domain </p>
- * <p>Copyright: Copyright (c) 2019</p>
- * <p>Company: PCCW</p>
- * <p>用户表</p>
- *
- * @author Welge
- * @version 1.0
- * @date 2019-06-13
- */
 
 @NoArgsConstructor
 @Data

@@ -1,22 +1,11 @@
 package com.dewen.project.domain.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
 
-/**
- * <p>Title:</p>
- * <p>Description: CommonRole Domain </p>
- * <p>Copyright: Copyright (c) 2019</p>
- * <p>Company: PCCW</p>
- * <p>角色</p>
- * @author Welge
- * @version 1.0
- * @date 2019-06-13
- */
 
 @Data
 public class CommonRoleDTO {

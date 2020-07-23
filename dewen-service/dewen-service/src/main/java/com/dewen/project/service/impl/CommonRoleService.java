@@ -38,6 +38,7 @@ public class CommonRoleService implements ICommonRoleService {
     @Transactional(value = "transactionManager")
     public int createCommonRole(CommonRole CommonRole) {
         queryFk(CommonRole);
+        CommonRole.setEnabled(Constants.ENABLE);
         CommonRoleRepository.save(CommonRole);
         return Constants.RETURN_STATUS_SUCCESS;
     }

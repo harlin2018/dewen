@@ -61,7 +61,7 @@ public class CommonUserService implements ICommonUserService {
     @Transactional(value = "transactionManager")
     public int createCommonUser(CommonUser CommonUser) {
         queryFk(CommonUser);
-        CommonUser.setEnabled(1);
+        CommonUser.setEnabled(Constants.ENABLE);
         commonUserRepository.save(CommonUser);
         return Constants.RETURN_STATUS_SUCCESS;
     }
