@@ -7,14 +7,16 @@
                     @handleSearch="searchMain"
                     :search-items="searchItem"
                     :query.sync="mainQuery">
-                    <el-button type="success" @click="redirect">添加</el-button>
-                    <el-button type="warning" @click="openDialog">导出</el-button>
+                    <el-button type="success" @click="redirect" :disabled="!authList.edit">添加</el-button>
+                    <el-button type="warning" @click="openDialog" :disabled="!authList.export">导出</el-button>
                 </PiSearchBar>
 
                 <pi-table
                     v-loading="loading"
                     :data="mainList"
                     :prop="headers"
+                    :edit="!!authList.edit"
+                    :del="!!authList.delete"
                     :page.sync="mainQuery"
                     @pageChange="getMainList"
                     @rowDblclick="handleEdit"
@@ -83,6 +85,18 @@ export default {
             },
             colKey,
             colArr:['name']
+        }
+    },
+    computed:{
+        authList(){
+            let menu=this.$store.state.userMenu
+            if(!menu) return {}
+            let cur=menu.find(item=>item.rightCode=='tableList')
+            let auth={}
+            cur.children.forEach(item=>{
+                auth[item.rightCode]=true
+            })
+            return auth
         }
     },
     mounted(){

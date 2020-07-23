@@ -18,6 +18,10 @@ const tableForm = r => require.ensure([], () => r(require('@/page/tableForm/tabl
 const routes = [
 	{
 		path: '/',
+		redirect: '/tableList'
+	},
+	{
+		path: '/login',
 		component: login
 	},
 	{
@@ -32,27 +36,27 @@ const routes = [
             {
                 path: '/tableList',
                 component: tableList,
-                name: ['列表'],
+                name: 'tableList',
             },
             {
                 path: '/tableForm',
                 component: tableForm,
-                name: ['添加'],
+                name: 'tableForm',
             },
             {
                 path: '/userManager',
                 component: userManager,
-                name: ['用户管理'],
+                name: 'userManager',
             },
             {
                 path: '/userAuth',
                 component: userAuth,
-                name: ['权限管理'],
+                name: 'userAuth',
             },
             {
                 path: '/userRole',
                 component: userRole,
-                name: ['角色管理'],
+                name: 'userRole',
             }
         ]
 	}

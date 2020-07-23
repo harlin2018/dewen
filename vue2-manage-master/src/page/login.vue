@@ -27,8 +27,6 @@
 import {logingetAdminInfo} from '@/api/getData'
 import {login} from '@/api/common'
 
-import {mapActions, mapState} from 'vuex'
-
 export default {
     data(){
         return {
@@ -46,16 +44,13 @@ export default {
             }
         }
     },
-    mounted(){
-        // if (!this.adminInfo.id) {
-        //     this.getAdminData()
-        // }
-    },
-    computed: {
-        ...mapState(['adminInfo']),
+    created(){
+        let store=this.$store.state
+        if(store.adminInfo&&store.adminInfo.id){
+            this.$router.push('tableList')
+        }
     },
     methods: {
-        ...mapActions(['getAdminData']),
         submitForm(formName) {
             this.$refs[formName].validate(valid=>{
                 if (valid) {
@@ -81,17 +76,6 @@ export default {
                 }
             })
         }
-    },
-    watch: {
-        // adminInfo: function (newValue){
-        //     if (newValue.id) {
-        //         this.$message({
-        //             type: 'success',
-        //             message: '检测到您之前登录过，将自动登录'
-        //         });
-        //         this.$router.push('tableList')
-        //     }
-        // }
     }
 }
 </script>

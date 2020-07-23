@@ -3,27 +3,27 @@
         <head-top></head-top>
         <div class="my_container" v-loading="loading">
             <div class="my_save_btn">
-                <el-button type="primary" @click="submitData(false)">暂存</el-button>
-                <el-button type="primary" @click="submitData">保存</el-button>
-                <el-button type="success" @click="exportWord">导出</el-button>
+                <el-button type="primary" @click="submitData(false)" :disabled="!authList.edit">暂存</el-button>
+                <el-button type="primary" @click="submitData" :disabled="!authList.edit">保存</el-button>
+                <el-button type="success" @click="exportWord" :disabled="!authList.export">导出</el-button>
                 <el-button type="info" @click="$router.go(-1)">返回</el-button>
             </div>
             <div class="my_main">
                 <el-tabs v-model="activeName">
                     <el-tab-pane label="基本资料单元" name="tab1">
-                        <tab1 ref="tab1" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab1>
+                        <tab1 ref="tab1" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab1>
                     </el-tab-pane>
                     <el-tab-pane label="废水单元" name="tab2">
-                        <tab2 ref="tab2" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab2>
+                        <tab2 ref="tab2" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab2>
                     </el-tab-pane>
                     <el-tab-pane label="废气单元" name="tab3">
-                        <tab3 ref="tab3" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab3>
+                        <tab3 ref="tab3" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab3>
                     </el-tab-pane>
                     <el-tab-pane label="固废及危废单元" name="tab4">
-                        <tab4 ref="tab4" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab4>
+                        <tab4 ref="tab4" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab4>
                     </el-tab-pane>
                     <el-tab-pane label="巡查及处罚单元" name="tab5">
-                        <tab5 ref="tab5" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab5>
+                        <tab5 ref="tab5" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab5>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -262,6 +262,18 @@ export default {
             }
         }
     },
+    computed:{
+        authList(){
+            let menu=this.$store.state.userMenu
+            if(!menu) return {}
+            let cur=menu.find(item=>item.rightCode=='tableList')
+            let auth={}
+            cur.children.forEach(item=>{
+                auth[item.rightCode]=true
+            })
+            return auth
+        }
+    },
     created(){
         this.cid=this.$route.query.id
         if(this.cid){
@@ -269,9 +281,6 @@ export default {
         }else{
             this.getCateHistory()
         }
-    },
-    mounted(){
-
     },
     methods: {
         getCompanyData(id){ //获取详情

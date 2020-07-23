@@ -7,6 +7,14 @@ export const mixin={
                 return {
                 }
             }
+        },
+        disabled:{
+            type:Boolean,
+            default:false
+        },
+        download:{
+            type:Boolean,
+            default:false
         }
     },
     data(){

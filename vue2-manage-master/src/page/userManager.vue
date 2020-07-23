@@ -22,7 +22,7 @@
                 ></pi-table>
             </div>
         </div>
-        <el-dialog width="400px" title="关联角色" :visible.sync="dialogVisible">
+        <el-dialog class="my_userManager" width="400px" title="关联角色" :visible.sync="dialogVisible">
              <el-checkbox-group v-model="roleIds">
                 <el-checkbox
                     v-for="item in roleList"
@@ -76,16 +76,25 @@ export default {
         }
     },
     computed:{
+        authList(){
+            let menu=this.$store.state.userMenu
+            if(!menu) return {}
+            let cur=menu.find(item=>item.rightCode=='userManager')
+            let auth={}
+            cur.children.forEach(item=>{
+                auth[item.rightCode]=true
+            })
+            return auth
+        },
         buttons(){
-            let info=this.$store.state.adminInfo
-            if(info&&info.userName=='admin'){
-                return [
-                    {label:'审核',color:'iconBlue',type:'eyes'},
-                    {label:'关联角色',color:'iconOrange',type:'relation'}
-                ]
-            }else{
-                return []
+            let buttons=[]
+            if(this.authList.audit){
+                buttons.push({label:'审核',color:'iconBlue',type:'eyes'})
             }
+            if(this.authList.relation){
+                buttons.push({label:'关联角色',color:'iconOrange',type:'relation'})
+            }
+            return buttons
         }
     },
     mounted(){
@@ -149,7 +158,7 @@ export default {
         },
         handleButton(data){
             if(data.type=='eyes'){
-                this.handleApprove()
+                this.handleApprove(data)
             }else{
                 this.handleRelation(data)
             }
@@ -159,7 +168,7 @@ export default {
             this.dialogVisible=true
             this.getUserRoleList()
         },
-        handleApprove(){    //审核
+        handleApprove(data){    //审核
             this.$confirm('用户审核', '提示', {
                 confirmButtonText: '通过',
                 cancelButtonText: '取消',
@@ -182,7 +191,7 @@ export default {
     padding: 20px;
     height: 100%;
 }
-.el-dialog__body{
+.my_userManager{
     .el-checkbox{
         margin-bottom: 16px;
     }

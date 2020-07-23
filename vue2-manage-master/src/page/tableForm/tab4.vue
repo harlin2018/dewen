@@ -1,5 +1,5 @@
 <template>
-    <el-form class="main_form" :model="mainForm" ref="mainForm">
+    <el-form class="main_form" :model="mainForm" ref="mainForm" :disabled="disabled">
         <table class="my_table_form">
             <tr>
                 <td>排污种类</td>
@@ -64,8 +64,8 @@
                                 <el-form-item :prop="'companyWasteList.'+index+'.nameType'">
                                     <el-input v-model="item.nameType"></el-input>
                                 </el-form-item>
-                                <span v-show="index==0" class="td_btn" @click="addRow('companyWasteList')"><i class="iconfont icon-add1"></i></span>
-                                <span v-show="index!=0" class="td_btn td_btn_r" @click="removeRow('companyWasteList',index)"><i class="iconfont icon-jian"></i></span>
+                                <span v-show="!disabled&&index==0" class="td_btn" @click="addRow('companyWasteList')"><i class="iconfont icon-add1"></i></span>
+                                <span v-show="!disabled&&index!=0" class="td_btn td_btn_r" @click="removeRow('companyWasteList',index)"><i class="iconfont icon-jian"></i></span>
                             </td>
                         </tr>
                         <tr>

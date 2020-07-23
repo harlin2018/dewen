@@ -1,5 +1,5 @@
 <template>
-    <el-form class="main_form" :model="mainForm" ref="mainForm">
+    <el-form class="main_form" :model="mainForm" ref="mainForm" :disabled="disabled">
         <table class="my_table_form">
             <tr>
                 <td>单位名称</td>
@@ -160,7 +160,7 @@
                         </li>
                         <li class="right">
                             <div class="official_file" v-if="!!mainForm.officialReplyFileId&&mainForm.officialReply==1">
-                                <a v-if="isAdmin" :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
+                                <a v-if="download" :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
                                 <a v-else href="javascript:;">{{mainForm.officialReplyFileId.fileName}}</a>
                                 <span @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
                             </div>
@@ -191,7 +191,7 @@
                 <td>主要原辅材料名称</td>
                 <td class="row_add">
                     主要污染物
-                    <span class="td_btn" @click="addRow('companyProductList')"><i class="iconfont icon-add1"></i></span>
+                    <span v-show="!disabled" class="td_btn" @click="addRow('companyProductList')"><i class="iconfont icon-add1"></i></span>
                 </td>
             </tr>
             <tr v-for="(item,index) in mainForm.companyProductList" :key="item.keyId">
@@ -214,7 +214,7 @@
                     <el-form-item :prop="'companyProductList.'+index+'.majorPollutants'">
                         <el-input v-model="item.majorPollutants"></el-input>
                     </el-form-item>
-                    <span class="td_btn" @click="removeRow('companyProductList',index)"><i class="iconfont icon-jian"></i></span>
+                    <span v-show="!disabled" class="td_btn" @click="removeRow('companyProductList',index)"><i class="iconfont icon-jian"></i></span>
                 </td>
             </tr>
             <tr>

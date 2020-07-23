@@ -1,5 +1,5 @@
 <template>
-    <el-form class="main_form" :model="mainForm" ref="mainForm">
+    <el-form class="main_form" :model="mainForm" ref="mainForm"  :disabled="disabled">
         <table class="my_table_form">
             <tr>
                 <td>排污种类</td>
@@ -15,7 +15,7 @@
                             <td>环保治理设施</td>
                             <td class="row_add">
                                 排污口
-                                <span class="td_btn" @click="addRow('wasteGasList')"><i class="iconfont icon-add1"></i></span>
+                                <span v-show="!disabled" class="td_btn" @click="addRow('wasteGasList')"><i class="iconfont icon-add1"></i></span>
                             </td>
                         </tr>
                     </table>
@@ -49,7 +49,7 @@
                                 <el-form-item :prop="'wasteGasList.'+index+'.drainOutlet'">
                                     <el-input v-model="item.drainOutlet"></el-input>
                                 </el-form-item>
-                                <span class="td_btn" @click="removeRow('wasteGasList',index)"><i class="iconfont icon-jian"></i></span>
+                                <span v-show="!disabled" class="td_btn" @click="removeRow('wasteGasList',index)"><i class="iconfont icon-jian"></i></span>
                             </td>
                         </tr>
                     </table>
@@ -61,7 +61,7 @@
                 <td>检测指标</td>
                 <td class="row_add">
                     检测时间
-                    <span class="td_btn" @click="addRow('wasteGasMonitorList')"><i class="iconfont icon-add1"></i></span>
+                    <span v-show="!disabled" class="td_btn" @click="addRow('wasteGasMonitorList')"><i class="iconfont icon-add1"></i></span>
                 </td>
             </tr>
             <tr v-for="(sitem,sindex) in mainForm.wasteGasMonitorList" :key="sitem.keyId">
@@ -87,7 +87,7 @@
                             type="date">
                         </el-date-picker>
                     </el-form-item>
-                    <span class="td_btn" @click="removeRow('wasteGasMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>
+                    <span v-show="!disabled" class="td_btn" @click="removeRow('wasteGasMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>
                 </td>
             </tr>
         </table>
