@@ -77,7 +77,7 @@ Object.keys(modules).forEach(module => {
         },
         error => {
             Message({
-                message: res.resultMsg || 'Error',
+                message: 'Error',
                 type: 'error',
             })
             return Promise.reject(error)

@@ -290,7 +290,7 @@ export default {
             getCateHistory().then(res=>{
                 if(res.resultCode=='0'){
                     for(let attr in res.payload){
-                        if(res.payload[attr].length<1) continue
+                        if(res.payload[attr].length<1||attr=='basePath') continue
                         res.payload[attr].map(item=>{
                             delete item.id
                         })

@@ -81,7 +81,7 @@ export default {
             if(info&&info.userName=='admin'){
                 return [
                     {label:'审核',color:'iconBlue',type:'eyes'},
-                    {label:'关联角色',color:'iconBlue',type:'relation'}
+                    {label:'关联角色',color:'iconOrange',type:'relation'}
                 ]
             }else{
                 return []
