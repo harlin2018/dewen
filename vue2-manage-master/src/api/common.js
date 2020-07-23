@@ -154,7 +154,6 @@ export function assignRole(data) {    //用户关联角色
     })
 }
 
-
 export function getUserRoleList(params) {    //角色列表
     return request({
         url: '/commonUserRoleRelationship/list',
@@ -162,3 +161,21 @@ export function getUserRoleList(params) {    //角色列表
         params
     })
 }
+
+
+
+export function getRoleAuthList(data) {    //角色关联权限
+    return request({
+        url: '/commonRight/listByRole',
+        method: 'post',
+        data
+    })
+}
+export function submitAuthRole(data) {    //提交角色关联权限数据
+    return request({
+        url: '/commonRight/grant',
+        method: 'post',
+        data
+    })
+}
+

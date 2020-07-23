@@ -3,14 +3,15 @@
 	  	<transition name="form-fade" mode="in-out">
 	  		<section class="form_contianer">
 		  		<div class="manage_tip">
-		  			<p>宜春经济环保管家</p>
+		  			<p>宜春经济技术开发区环保管家</p>
 		  		</div>
 		    	<el-form :model="loginForm" :rules="rules" ref="loginForm">
 					<el-form-item prop="loginName">
 						<el-input v-model="loginForm.loginName" placeholder="用户名"><span>dsfsf</span></el-input>
 					</el-form-item>
 					<el-form-item prop="hashPassword">
-						<el-input type="password" placeholder="密码" v-model="loginForm.hashPassword"></el-input>
+						<el-input type="password" placeholder="密码" v-model="loginForm.hashPassword"
+                    @keyup.enter.native="submitForm('loginForm')"></el-input>
 					</el-form-item>
 					<el-form-item>
 				    	<el-button type="primary" @click="submitForm('loginForm')" >登陆</el-button>
@@ -46,9 +47,9 @@ export default {
         }
     },
     mounted(){
-        if (!this.adminInfo.id) {
-            this.getAdminData()
-        }
+        // if (!this.adminInfo.id) {
+        //     this.getAdminData()
+        // }
     },
     computed: {
         ...mapState(['adminInfo']),

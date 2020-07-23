@@ -40,6 +40,23 @@
                 <el-button type="primary" @click="submitRole">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog title="关联权限" :visible.sync="authDialogVisible">
+            <el-tree
+                ref="tree"
+                :data="authRoleList"
+                :props="defaultProps"
+                show-checkbox
+                node-key="id"
+                default-expand-all
+                :expand-on-click-node="false"
+                :default-checked-keys="checkedKey"
+                >
+            </el-tree>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="authDialogVisible=false">取 消</el-button>
+                <el-button type="primary" @click="submitAuthRole">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -48,7 +65,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getRoleList,deleteRole,createRole,updateRole,getUserRoleList} from '@/api/common'
+import {getRoleList,deleteRole,createRole,updateRole,getUserRoleList,getRoleAuthList,submitAuthRole} from '@/api/common'
 
 
 export default {
@@ -58,7 +75,9 @@ export default {
         return {
             loading:false,
             dialogVisible:false,
+            authDialogVisible:false,
             opCreate:true,
+            roleId:'',
             mainList:[],
             searchItem:[
                 {label:'角色名',prop:'roleName',type:'input'},
@@ -79,7 +98,13 @@ export default {
                 roleCode:'',
                 remark:''
             },
-            buttons:[{label:'关联权限',color:'iconOrange',type:'relation'}]
+            buttons:[{label:'关联权限',color:'iconOrange',type:'relation'}],
+            authRoleList:[],
+            checkedKey: [],
+            defaultProps: {
+                children:'children',
+                label:'rightName'
+            },
         }
     },
     mounted(){
@@ -103,7 +128,10 @@ export default {
             })
         },
         handleButton(data){
-
+            console.log(data)
+            if(data.type=='relation'){
+                this.showAuthRole(data.row.id)
+            }
         },
         submitRole(){   //提交角色基础数据
             this.$refs.mainForm.validate(valid=>{
@@ -112,7 +140,7 @@ export default {
                 }
             })
         },
-        submitRoleData(){
+        submitRoleData(){   //提交数据
             let method=createRole
             if(this.mainForm.id){
                 method=updateRole
@@ -150,6 +178,49 @@ export default {
             this.$nextTick(_=>{
                 this.$refs.mainForm.clearValidate()
             })
+        },
+
+
+        showAuthRole(id){
+            this.roleId=id
+            this.authDialogVisible=true
+            this.checkedKey=[]
+            this.getRoleAuthList()
+        },
+        getRoleAuthList(){  //角色关联权限列表
+            getRoleAuthList({roleId:this.roleId}).then(res=>{
+                if(res.resultCode=='0'){
+                    this.checkedDefault(res.payload)
+                    this.authRoleList=res.payload
+                }
+            })
+        },
+        submitAuthRole(){  //提交角色关联权限数据
+            let nodes = this.$refs.tree.getCheckedNodes(false, true)
+            let rights = []
+            nodes.forEach(item=> {
+                rights.push({rightId:item.id,rightType:'1'})
+            })
+            let params={
+                roleId: this.roleId,
+                rights: rights
+            }
+            submitAuthRole(params).then(res=>{
+                if(res.resultCode=='0'){
+                    this.$message({type:'success',message:'保存成功'})
+                    this.authDialogVisible=false
+                }
+            })
+        },
+        checkedDefault(tree) {
+            for (const index in tree) {
+                if (tree[index].checked) {
+                    this.checkedKey.push(tree[index].id)
+                }
+                if (tree[index].children) {
+                    this.checkedDefault(tree[index].children)
+                }
+            }
         }
     }
 }
