@@ -86,10 +86,10 @@ export default {
 		background-color: #324057;
 	}
 	.manage_tip{
+        width: 200%;
 		position: absolute;
-		width: 100%;
 		top: -100px;
-		left: 0;
+		left: -50%;
 		p{
 			font-size: 34px;
 			color: #fff;

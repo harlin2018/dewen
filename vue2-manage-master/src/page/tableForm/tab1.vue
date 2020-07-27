@@ -201,8 +201,13 @@
                     </el-form-item>
                 </td>
                 <td>
-                    <el-form-item :prop="'companyProductList.'+index+'.unit'">
-                        <el-input v-model="item.unit"></el-input>
+                    <el-form-item :prop="'companyProductList.'+index+'.number'">
+                        <el-input v-model="item.number"  class="input-with-select">
+                            <el-select v-model="item.unit" slot="prepend">
+                                <el-option label="个" value="1"></el-option>
+                                <el-option label="吨" value="2"></el-option>
+                            </el-select>
+                        </el-input>
                     </el-form-item>
                 </td>
                 <td>
@@ -256,14 +261,14 @@
             <tr>
                 <td colspan="4">
                     <el-form-item prop="breaks">
-                        <!-- <el-input type="textarea" rows="6" v-model="mainForm.breaks"></el-input> -->
-                        <el-autocomplete
+                        <el-input type="textarea" rows="6" v-model="mainForm.breaks"></el-input>
+                        <!-- <el-autocomplete
                             clearable
                             v-model.trim="mainForm.breaks"
                             :debounce="parseInt(0)"
                             :fetch-suggestions="(queryString,cb)=>{searchForAuto(queryString,cb,'breaks')}"
                             value-key="breaks">
-                        </el-autocomplete>
+                        </el-autocomplete> -->
                     </el-form-item>
                 </td>
             </tr>
@@ -368,5 +373,8 @@ export default {
 }
 .el-autocomplete{
     width: 100%;
+}
+.el-input-group__prepend{
+    width: 30px;
 }
 </style>

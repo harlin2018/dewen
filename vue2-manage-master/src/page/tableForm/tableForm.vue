@@ -155,7 +155,8 @@ export default {
                     {
                         keyId:'companyProductList_1',
                         name:'',
-                        unit:'',
+                        unit:'1',
+                        number:'',
                         mainMaterialsName:'',
                         majorPollutants:'',
                     }
@@ -217,7 +218,8 @@ export default {
             companyProductList:{
                 keyId:'companyProductList_1',
                 name:'',
-                unit:'',
+                unit:'1',
+                number:'',
                 mainMaterialsName:'',
                 majorPollutants:'',
             },
@@ -279,7 +281,7 @@ export default {
         if(this.cid){
             this.getCompanyData(this.cid)
         }else{
-            this.getCateHistory()
+            // this.getCateHistory()
         }
     },
     methods: {

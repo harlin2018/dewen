@@ -144,7 +144,7 @@
                                 </el-radio-group>
                             </el-form-item>
                         </li>
-                        <li class="right" v-if="mainForm.sewerageRain==2">
+                        <li class="right">
                             <el-form-item prop="sewerageRainRemark">
                                 <el-input v-model="mainForm.sewerageRainRemark"></el-input>
                             </el-form-item>
