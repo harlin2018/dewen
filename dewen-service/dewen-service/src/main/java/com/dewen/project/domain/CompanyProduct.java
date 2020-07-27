@@ -35,6 +35,12 @@ public class CompanyProduct implements Serializable {
     private String name;
 
     /**
+     * 产品产量（数量）
+     */
+    @Column(name = "number")
+    private Integer number;
+
+    /**
      * 产品产量（计量单位）
      */
     @Column(name = "unit")
