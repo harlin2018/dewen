@@ -41,10 +41,10 @@
 			...mapActions(['getAdminData']),
 			handleCommand(command) {
 				if (command == 'home') {
-					this.$router.push('/tableList');
+					this.$router.push('/');
 				}else if(command == 'signout'){
                     this.$store.commit('removeAdminInfo')
-					this.$router.push('/');
+					this.$router.push('/login');
 				}
 			},
 		}

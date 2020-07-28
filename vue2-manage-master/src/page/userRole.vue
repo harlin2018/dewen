@@ -7,7 +7,7 @@
                     @handleSearch="searchMain"
                     :search-items="searchItem"
                     :query.sync="mainQuery">
-                    <el-button type="success" @click="showAdd">添加</el-button>
+                    <el-button type="success" @click="showAdd" :disabled="!authList.edit">添加</el-button>
                 </PiSearchBar>
 
                 <pi-table
@@ -16,6 +16,8 @@
                     :prop="headers"
                     :buttons="buttons"
                     :page.sync="mainQuery"
+                    :edit="!!authList.edit"
+                    :del="!!authList.delete"
                     @handleButton="handleButton"
                     @handleEdit="handleEdit"
                     @handleDelete="handleDelete"
@@ -98,13 +100,31 @@ export default {
                 roleCode:'',
                 remark:''
             },
-            buttons:[{label:'关联权限',color:'iconOrange',type:'relation'}],
             authRoleList:[],
             checkedKey: [],
             defaultProps: {
                 children:'children',
                 label:'rightName'
             },
+        }
+    },
+    computed:{
+        authList(){
+            let menu=this.$store.state.userMenu
+            if(!menu) return {}
+            let cur=menu.find(item=>item.rightCode=='userRole')
+            let auth={}
+            cur.children.forEach(item=>{
+                auth[item.rightCode]=true
+            })
+            return auth
+        },
+        buttons(){
+            let buttons=[]
+            if(this.authList.relation){
+                buttons.push({label:'关联权限',color:'iconOrange',type:'relation'})
+            }
+            return buttons
         }
     },
     mounted(){
@@ -128,7 +148,6 @@ export default {
             })
         },
         handleButton(data){
-            console.log(data)
             if(data.type=='relation'){
                 this.showAuthRole(data.row.id)
             }

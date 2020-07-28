@@ -77,7 +77,7 @@ export default {
                     this.ruleForm.loginName=this.ruleForm.userName
                     register(this.ruleForm).then(res=>{
                         if(res.resultCode==0){
-                            this.$router.push('/')
+                            this.$router.push('/login')
                         }
                     })
                 }

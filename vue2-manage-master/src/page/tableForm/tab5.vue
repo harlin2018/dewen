@@ -4,7 +4,7 @@
             <td valign="top">巡查执法记录</td>
             <td class="td75 row_table">
                 <div>
-                    <el-form class="this_form" :model="inspectRecordList" label-width="60px">
+                    <el-form class="this_form" :model="inspectRecordList" label-width="60px" :disabled="disabled">
                         <el-form-item label="描述">
                             <el-input v-model="inspectRecordList.content"></el-input>
                         </el-form-item>
@@ -33,13 +33,13 @@
                         <td>{{item.content}}</td>
                         <td>
                             <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
-                                <a v-if="isAdmin" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
+                                <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                 <a v-else href="javascript:;">{{file.fileName}}</a>
                             </span>
                         </td>
                         <td>{{formatDate(item.createDate)}}</td>
                         <td>
-                            <span class="file_del" @click="removeRow('inspectRecordList',index)"><i class="iconfont icon-delete"></i></span>
+                            <span v-show="!disabled" class="file_del" @click="removeRow('inspectRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </td>
                     </tr>
                 </table>
@@ -49,7 +49,7 @@
             <td valign="top">行政处罚记录</td>
             <td class="td75 row_table">
                 <div>
-                    <el-form class="this_form" :model="adminRecordList" label-width="60px">
+                    <el-form class="this_form" :model="adminRecordList" label-width="60px" :disabled="disabled">
                         <el-form-item label="描述">
                             <el-input v-model="adminRecordList.content"></el-input>
                         </el-form-item>
@@ -78,13 +78,13 @@
                         <td>{{item.content}}</td>
                         <td>
                             <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
-                                <a v-if="isAdmin" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
+                                <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                 <a v-else href="javascript:;">{{file.fileName}}</a>
                             </span>
                         </td>
                         <td>{{formatDate(item.createDate)}}</td>
                         <td>
-                            <span class="file_del" @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
+                            <span v-show="!disabled" class="file_del" @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
                         </td>
                     </tr>
                 </table>

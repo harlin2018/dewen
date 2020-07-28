@@ -15,6 +15,7 @@
                         <span>
                             <el-button
                                 v-if="!data.parentId"
+                                v-show="authList.create"
                                 type="text"
                                 size="mini"
                                 @click="appendNode(data)">
@@ -22,6 +23,7 @@
                             </el-button>
                             <el-button
                                 v-if="!!data.parentId"
+                                v-show="authList.delete"
                                 type="text"
                                 size="mini"
                                 @click="deleteData(node,data)">
@@ -72,7 +74,19 @@ export default {
             curData:{}
         }
     },
-    mounted(){
+    computed:{
+        authList(){
+            let menu=this.$store.state.userMenu
+            if(!menu) return {}
+            let cur=menu.find(item=>item.rightCode=='userAuth')
+            let auth={}
+            cur.children.forEach(item=>{
+                auth[item.rightCode]=true
+            })
+            return auth
+        }
+    },
+    created(){
         this.getMainList()
     },
     methods: {
