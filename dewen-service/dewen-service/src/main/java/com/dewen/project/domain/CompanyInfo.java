@@ -197,6 +197,12 @@ public class CompanyInfo implements Serializable {
     private String enterprisePretreatment;
 
     /**
+     * 企业预处理
+     */
+    @Column(name = "enterprise_pretreatment_remark")
+    private String enterprisePretreatmentRemark;
+
+    /**
      * 产生量（月平均）
      */
     @Column(name = "output")
@@ -245,10 +251,22 @@ public class CompanyInfo implements Serializable {
     private String environmentalProtectionPlan;
 
     /**
+     * 环保应急预案情况
+     */
+    @Column(name = "environmental_protection_plan_remark")
+    private String environmentalProtectionPlanRemark;
+
+    /**
      * 排污许可证
      */
     @Column(name = "emission_permit")
     private String emissionPermit;
+
+    /**
+     * 排污许可证
+     */
+    @Column(name = "emission_permit_remark")
+    private String emissionPermitRemark;
 
     /**
      * 环评工艺
@@ -257,10 +275,22 @@ public class CompanyInfo implements Serializable {
     private String eiaProcess;
 
     /**
+     * 环评工艺
+     */
+    @Column(name = "eia_process_remark")
+    private String eiaProcessRemark;
+
+    /**
      * 新环评
      */
     @Column(name = "new_eia")
     private String newEia;
+
+    /**
+     * 新环评
+     */
+    @Column(name = "new_eia_remark")
+    private String newEiaRemark;
 
     /**
      * 环保应急预案情况
@@ -269,10 +299,22 @@ public class CompanyInfo implements Serializable {
     private String epep;
 
     /**
+     * 环保应急预案情况备注
+     */
+    @Column(name = "epep_remark")
+    private String epepRemark;
+
+    /**
      * 监督性检测企业
      */
     @Column(name = "supervisory_inspection_enterprise")
     private String supervisoryInspectionEnterprise;
+
+    /**
+     * 监督性检测企业
+     */
+    @Column(name = "supervisory_inspection_enterprise_remark")
+    private String supervisoryInspectionEnterpriseRemark;
 
     /**
      * 废水监督性检测周期
@@ -350,6 +392,13 @@ public class CompanyInfo implements Serializable {
      */
     @Column(name = "water_balance")
     private String waterBalance;
+
+
+    /**
+     * 记录状态 1 保存/2暂存
+     */
+    @Column(name = "record_status")
+    private String recordStatus;
 
     /**
      * 主要生产产品表
