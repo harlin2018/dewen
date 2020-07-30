@@ -88,6 +88,7 @@ export default {
         return {
             cid:'',
             loading:false,
+            dblclick:false,
             activeName:'tab1',
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
@@ -156,6 +157,7 @@ export default {
                         keyId:'companyProductList_1',
                         name:'',
                         unit:'1',
+                        unitOther:'',
                         number:'',
                         mainMaterialsName:'',
                         majorPollutants:'',
@@ -219,6 +221,7 @@ export default {
                 keyId:'companyProductList_1',
                 name:'',
                 unit:'1',
+                unitOther:'',
                 number:'',
                 mainMaterialsName:'',
                 majorPollutants:'',
@@ -341,12 +344,22 @@ export default {
             this.loading=true
             Promise.all([tab1,tab2,tab3,tab4]).then((values) => {
                 //全部校验通过才提交到后台
+                let params=this.deepClone(this.mainForm)
+
                 let handleSubmit=createCompanyData
-                if(this.mainForm.id){
+                if(params.id){
                     handleSubmit=updateCompanyData
                 }
-                if(this.mainForm.officialReply==2) this.mainForm.officialReplyFileId=null
-                handleSubmit(this.mainForm).then(res=>{
+                if(params.officialReply==2) params.officialReplyFileId=null
+                params.companyProductList.map(item=>{
+                    if(item.unit==0) item.unit=item.unitOther
+                })
+                params.recordStatus=flag?'1':'2'
+                if(this.dblclick) return
+                this.dblclick=true
+
+                handleSubmit(params).then(res=>{
+                    this.dblclick=false
                     this.loading=false
                     if(res.resultCode==0){
                         this.$message({type:'success',message:'保存成功'})
@@ -356,11 +369,11 @@ export default {
                         },1000)
                     }
                 }).catch(_=>{
+                    this.dblclick=false
                     this.loading=false
                 })
-
-
             }).catch(err=>{
+                this.dblclick=false
                 this.$message({
                     type:'error',
                     message:'【'+err+'】有资料未填写'
@@ -579,5 +592,12 @@ export default {
     tr td:last-child{
         border-right: none;
     }
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+}
+input[type="number"]{
+  -moz-appearance: textfield;
 }
 </style>
