@@ -321,6 +321,7 @@
                             <el-option label="3个月" value="2"></el-option>
                             <el-option label="6个月" value="3"></el-option>
                             <el-option label="12个月" value="4"></el-option>
+                            <el-option label="在线监控" value="5"></el-option>
                         </el-select>
                     </el-form-item>
                 </td>

@@ -74,6 +74,7 @@ export default {
                 {label:'联系人',prop:'environmentalProtectionOfficer'},
                 {label:'电话',prop:'contactNumber'},
                 {label:'地址',prop:'address'},
+                {label:'状态',prop:'recordStatus'},
             ],
             mainQuery:{
                 name:'',
@@ -115,6 +116,9 @@ export default {
             getCompanyList(this.mainQuery).then(res=>{
                 this.loading=false
                 if(res.resultCode=='0'){
+                    res.payload.content.map(item=>{
+                        item.recordStatus=item.recordStatus==1?'保存':'暂存'
+                    })
                     this.mainList=res.payload.content
                     this.mainQuery.total=res.payload.totalElements
                 }

@@ -55,7 +55,7 @@
                 <td>联系电话</td>
                 <td>
                     <el-form-item prop="contactNumber">
-                        <el-input v-model="mainForm.contactNumber"></el-input>
+                        <el-input type="number" v-model="mainForm.contactNumber"></el-input>
                     </el-form-item>
                 </td>
             </tr>
@@ -94,13 +94,13 @@
                 <td>固定资产（万元）</td>
                 <td>
                     <el-form-item prop="fixedAssets">
-                        <el-input v-model="mainForm.fixedAssets"></el-input>
+                        <el-input type="number" v-model="mainForm.fixedAssets"></el-input>
                     </el-form-item>
                 </td>
                 <td>环保设施固定资产（万元）</td>
                 <td>
                     <el-form-item prop="envirProtFixedAssets">
-                        <el-input v-model="mainForm.envirProtFixedAssets"></el-input>
+                        <el-input type="number" v-model="mainForm.envirProtFixedAssets"></el-input>
                     </el-form-item>
                 </td>
             </tr>
@@ -132,7 +132,7 @@
                 <td>企业在职人数</td>
                 <td>
                     <el-form-item prop="numberEmployees">
-                        <el-input v-model="mainForm.numberEmployees"></el-input>
+                        <el-input type="number" v-model="mainForm.numberEmployees"></el-input>
                     </el-form-item>
                 </td>
                 <td></td>
@@ -202,11 +202,13 @@
                 </td>
                 <td>
                     <el-form-item :prop="'companyProductList.'+index+'.number'">
-                        <el-input v-model="item.number"  class="input-with-select">
-                            <el-select v-model="item.unit" slot="prepend">
+                        <el-input type="number" v-model="item.number"  class="input-with-select">
+                            <el-select v-model="item.unit" slot="append">
                                 <el-option label="个" value="1"></el-option>
                                 <el-option label="吨" value="2"></el-option>
+                                <el-option label="其他" value="0"></el-option>
                             </el-select>
+                            <el-input v-show="item.unit==0" v-model="item.unitOther" slot="append"></el-input>
                         </el-input>
                     </el-form-item>
                 </td>
@@ -374,7 +376,28 @@ export default {
 .el-autocomplete{
     width: 100%;
 }
-.el-input-group__prepend{
-    width: 30px;
+
+.el-input-group--append{
+    display: flex;
+    .el-input__inner{
+        flex:1;
+    }
+    .el-input-group__append{
+        width: auto;
+        height: 38px;
+        overflow: hidden;
+        padding:0;
+        .el-select{
+            width: 80px;
+            margin:0;
+        }
+        .el-input{
+            width: 80px;
+            margin:0;
+        }
+        .el-input__inner{
+            height: 38px;
+        }
+    }
 }
 </style>
