@@ -220,7 +220,7 @@ public class CompanyInfoController extends BaseController{
     @RequestMapping(value = "/download/exportExcel", method = RequestMethod.POST)
     public BaseResponse exportExcel(@RequestBody ExportParam exportParam, HttpServletRequest request) throws Exception {
         // String path = ResourceUtils.getURL("classpath:").getPath();
-        String path = "C:/dewen/down";
+        String path = "C:\\dewen\\vue2-manage-master\\src\\down";
         try {
             List<String> fieIds = exportParam.getFieIds();
             List<Integer> ids = exportParam.getIds();
