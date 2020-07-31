@@ -1,33 +1,10 @@
 package com.dewen.project.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import com.dewen.project.constants.CompanyInfoEnums;
 import com.dewen.project.constants.Constants;
-import com.dewen.project.domain.CommonFileSystem;
-import com.dewen.project.domain.CommonModelFile;
-import com.dewen.project.domain.CompanyProduct;
-import com.dewen.project.domain.CompanyProject;
-import com.dewen.project.domain.CompanyRecord;
-import com.dewen.project.domain.CompanySewageWaste;
-import com.dewen.project.domain.CompanyWaste;
-import com.dewen.project.domain.ExportParam;
-import com.dewen.project.exception.CommonException;
-import com.dewen.project.repository.CommonModelFileRepository;
-import com.dewen.project.repository.CompanyProductRepository;
-import com.dewen.project.repository.CompanyProjectRepository;
-import com.dewen.project.repository.CompanyRecordRepository;
-import com.dewen.project.repository.CompanySewageWasteRepository;
-import com.dewen.project.repository.CompanyWasteRepository;
+import com.dewen.project.domain.*;
+import com.dewen.project.repository.*;
+import com.dewen.project.service.ICompanyInfoService;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
 import com.mysql.jdbc.StringUtils;
@@ -37,23 +14,17 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import com.dewen.project.domain.CompanyInfo;
-import com.dewen.project.repository.CompanyInfoRepository;
-import com.dewen.project.service.ICompanyInfoService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -61,7 +32,10 @@ import javax.persistence.Query;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 重点工业企业基本情况表
@@ -92,6 +66,9 @@ public class CompanyInfoService implements ICompanyInfoService {
     private CommonModelFileRepository commonModelFileRepository;
     @Value("${fileDir.workflow}")
     public String fileDir;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -567,9 +544,6 @@ public class CompanyInfoService implements ICompanyInfoService {
 //        }
         return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public List<Object> selectList(String sql) {
         Query query = entityManager.createNativeQuery(sql);

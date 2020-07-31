@@ -6,36 +6,26 @@ import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.domain.ExportParam;
 import com.dewen.project.service.ICompanyInfoService;
 import com.dewen.project.utils.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 重点工业企业基本情况表
@@ -55,6 +45,8 @@ public class CompanyInfoController extends BaseController{
     @Autowired
     private ICompanyInfoService CompanyInfoService;
 
+    @Value("${fileDir.export}")
+    public String fileExport;
 
     /**
      * Get all list for CompanyInfo
@@ -220,9 +212,6 @@ public class CompanyInfoController extends BaseController{
             throw new Exception("数据导出异常");
         }
     }
-
-    @Value("${fileDir.export}")
-    public String fileExport;
 
     @RequestMapping(value = "/download/exportExcel", method = RequestMethod.POST)
     public BaseResponse exportExcel(@RequestBody ExportParam exportParam, HttpServletRequest request) throws Exception {
