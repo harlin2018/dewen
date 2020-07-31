@@ -52,7 +52,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getCompanyList,deleteCompanyData,exportList} from '@/api/common'
+import {getCompanyList,deleteCompanyData,exportList,exportDownload} from '@/api/common'
 
 import colKey from './tableForm/col'
 

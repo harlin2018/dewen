@@ -1,5 +1,7 @@
 package com.dewen.project.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import com.dewen.project.domain.CompanyRecord;
 import com.dewen.project.domain.CompanySewageWaste;
 import com.dewen.project.domain.CompanyWaste;
 import com.dewen.project.domain.ExportParam;
+import com.dewen.project.exception.CommonException;
 import com.dewen.project.repository.CommonModelFileRepository;
 import com.dewen.project.repository.CompanyProductRepository;
 import com.dewen.project.repository.CompanyProjectRepository;
@@ -28,6 +31,7 @@ import com.dewen.project.repository.CompanyWasteRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
 import com.mysql.jdbc.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hibernate.query.NativeQuery;
@@ -35,6 +39,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +59,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.crypto.Data;
 
 /**
@@ -539,6 +549,23 @@ public class CompanyInfoService implements ICompanyInfoService {
         // List<Map<String, Object>> maps = this.selectData(sql.toString());
 
         return mapList;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> download(HttpServletRequest request, HttpServletResponse response, String fileName, String path) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        //为了解决中文名称乱码问题
+        // String fname = CommonFileSystemService.processFileName(request, fileName);
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        String filePath = path + fileName;
+        byte[] body;
+//        if ("pro".equals(activeProfile)) {
+//            body = new AliFileUtils().dowloadFile(filePath, fileParamConstant);
+//        } else {
+        body = FileUtils.readFileToByteArray(new File(filePath));
+//        }
+        return new ResponseEntity<byte[]>(body, headers, HttpStatus.OK);
     }
 
     @PersistenceContext
