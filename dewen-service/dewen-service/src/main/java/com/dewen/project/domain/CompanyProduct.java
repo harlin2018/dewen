@@ -38,7 +38,7 @@ public class CompanyProduct implements Serializable {
      * 产品产量（数量）
      */
     @Column(name = "number")
-    private Integer number;
+    private String number;
 
     /**
      * 产品产量（计量单位）
