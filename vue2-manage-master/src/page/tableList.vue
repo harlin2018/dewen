@@ -152,7 +152,7 @@ export default {
                 }
                 exportList(params).then(res=>{
                     if(res.resultCode=='0'){
-                        window.open(res.payload)
+                        window.open('/companyInfo/download?fileName='+res.payload)
                         // var downloadFileUrl=res.payload
                         // var elemIF=document.createElement('iframe')
                         // elemIF.src=downloadFileUrl
