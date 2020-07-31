@@ -204,8 +204,15 @@
                     <el-form-item :prop="'companyProductList.'+index+'.number'">
                         <el-input type="number" v-model="item.number"  class="input-with-select">
                             <el-select v-model="item.unit" slot="append">
-                                <el-option label="个" value="1"></el-option>
-                                <el-option label="吨" value="2"></el-option>
+                                <el-option label="只" value="1"></el-option>
+                                <el-option label="台" value="2"></el-option>
+                                <el-option label="套" value="3"></el-option>
+                                <el-option label="件" value="4"></el-option>
+                                <el-option label="个" value="5"></el-option>
+                                <el-option label="批" value="6"></el-option>
+                                <el-option label="吨" value="7"></el-option>
+                                <el-option label="米" value="8"></el-option>
+                                <el-option label="千克(公斤)" value="9"></el-option>
                                 <el-option label="其他" value="0"></el-option>
                             </el-select>
                             <el-input v-show="item.unit==0" v-model="item.unitOther" slot="append"></el-input>

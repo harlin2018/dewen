@@ -169,12 +169,21 @@
             <tr>
                 <td>企业预处理</td>
                 <td class="td75">
-                    <el-form-item prop="enterprisePretreatment">
-                        <el-radio-group v-model="mainForm.enterprisePretreatment">
-                            <el-radio label="1">有</el-radio>
-                            <el-radio label="2">无</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="enterprisePretreatment">
+                                <el-radio-group v-model="mainForm.enterprisePretreatment">
+                                    <el-radio label="1">有</el-radio>
+                                    <el-radio label="2">无</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="enterprisePretreatmentRemark">
+                                <el-input v-model="mainForm.enterprisePretreatmentRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
@@ -249,67 +258,121 @@
             <tr>
                 <td>环保应急预案情况</td>
                 <td class="td75">
-                    <el-form-item prop="environmentalProtectionPlan">
-                        <el-radio-group v-model="mainForm.environmentalProtectionPlan">
-                            <el-radio label="1">有</el-radio>
-                            <el-radio label="2">无</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="environmentalProtectionPlan">
+                                <el-radio-group v-model="mainForm.environmentalProtectionPlan">
+                                    <el-radio label="1">有</el-radio>
+                                    <el-radio label="2">无</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="environmentalProtectionPlanRemark">
+                                <el-input v-model="mainForm.environmentalProtectionPlanRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
                 <td>排污许可证</td>
                 <td class="td75">
-                    <el-form-item prop="emissionPermit">
-                        <el-radio-group v-model="mainForm.emissionPermit">
-                            <el-radio label="1">有</el-radio>
-                            <el-radio label="2">无</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="emissionPermit">
+                                <el-radio-group v-model="mainForm.emissionPermit">
+                                    <el-radio label="1">有</el-radio>
+                                    <el-radio label="2">无</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="emissionPermitRemark">
+                                <el-input v-model="mainForm.emissionPermitRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
                 <td>环评工艺</td>
                 <td class="td75">
-                    <el-form-item prop="eiaProcess">
-                        <el-radio-group v-model="mainForm.eiaProcess">
-                            <el-radio label="1">有增、改</el-radio>
-                            <el-radio label="2">无增、改</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="eiaProcess">
+                                <el-radio-group v-model="mainForm.eiaProcess">
+                                    <el-radio label="1">有增、改</el-radio>
+                                    <el-radio label="2">无增、改</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="eiaProcessRemark">
+                                <el-input v-model="mainForm.eiaProcessRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
                 <td>新环评</td>
                 <td class="td75">
-                    <el-form-item prop="newEia">
-                        <el-radio-group v-model="mainForm.newEia">
-                            <el-radio label="1">办理中</el-radio>
-                            <el-radio label="2">无</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="newEia">
+                                <el-radio-group v-model="mainForm.newEia">
+                                    <el-radio label="1">办理中</el-radio>
+                                    <el-radio label="2">无</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="newEiaRemark">
+                                <el-input v-model="mainForm.newEiaRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
                 <td>环保应急预案情况</td>
                 <td class="td75">
-                    <el-form-item prop="epep">
-                        <el-radio-group v-model="mainForm.epep">
-                            <el-radio label="1">有</el-radio>
-                            <el-radio label="2">无</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="epep">
+                                <el-radio-group v-model="mainForm.epep">
+                                    <el-radio label="1">有</el-radio>
+                                    <el-radio label="2">无</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="epepRemark">
+                                <el-input v-model="mainForm.epepRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
                 <td>监督性检测企业</td>
                 <td class="td75">
-                    <el-form-item prop="supervisoryInspectionEnterprise">
-                        <el-radio-group v-model="mainForm.supervisoryInspectionEnterprise">
-                            <el-radio label="1">是</el-radio>
-                            <el-radio label="2">不是</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
+                    <ul class="ul_flex_radio">
+                        <li class="left">
+                            <el-form-item prop="supervisoryInspectionEnterprise">
+                                <el-radio-group v-model="mainForm.supervisoryInspectionEnterprise">
+                                    <el-radio label="1">是</el-radio>
+                                    <el-radio label="2">不是</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </li>
+                        <li class="right">
+                            <el-form-item prop="supervisoryInspectionEnterpriseRemark">
+                                <el-input v-model="mainForm.supervisoryInspectionEnterpriseRemark"></el-input>
+                            </el-form-item>
+                        </li>
+                    </ul>
                 </td>
             </tr>
             <tr>
