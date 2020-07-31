@@ -4,7 +4,11 @@ package com.dewen.project.service;
 import com.dewen.project.domain.CompanyInfo;
 import com.dewen.project.domain.ExportParam;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -63,4 +67,5 @@ public interface ICompanyInfoService {
 
     List<Object> getListData(ExportParam exportParam);
 
+    ResponseEntity<byte[]> download(HttpServletRequest request, HttpServletResponse response, String fileName, String path) throws IOException;
 }

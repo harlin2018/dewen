@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +34,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -217,10 +220,14 @@ public class CompanyInfoController extends BaseController{
             throw new Exception("数据导出异常");
         }
     }
+
+    @Value("${fileDir.export}")
+    public String fileExport;
+
     @RequestMapping(value = "/download/exportExcel", method = RequestMethod.POST)
     public BaseResponse exportExcel(@RequestBody ExportParam exportParam, HttpServletRequest request) throws Exception {
         // String path = ResourceUtils.getURL("classpath:").getPath();
-        String path = "C:/dewen/vue2-manage-master/src/down/";
+        // String path = "E:/project/vue2-manage-master/src/down/";
         try {
             List<String> fieIds = exportParam.getFieIds();
             List<Integer> ids = exportParam.getIds();
@@ -241,7 +248,7 @@ public class CompanyInfoController extends BaseController{
                     rowsName.add(titelMap.get(fieIds.get(i)));
                 }
             }
-            exportParam.setPath(path);
+            exportParam.setPath(fileExport);
 
             List<Object> list = CompanyInfoService.getListData(exportParam);
 
@@ -262,11 +269,30 @@ public class CompanyInfoController extends BaseController{
             String fileName = exportParam.getTitle() + "-" + String.valueOf(System.currentTimeMillis()).substring(4, 13);
             String title = StringUtils.isEmpty(exportParam.getTitle())?"导出数据":exportParam.getTitle();
             ExportUtil.writeExcel(exportParam.getPath(), fileName, title, rowsName, title, objects, false);
-            return baseManager.composeSuccessBaseResponse(exportParam.getPath()+fileName+".xls");
+            return baseManager.composeSuccessBaseResponse(fileName+".xls");
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("数据导出异常");
         }
+    }
+
+    /**
+     * 根据文件名称下载导出文件
+     *
+     * @param request
+     * @param response
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/download")
+    public ResponseEntity<byte[]> download(HttpServletRequest request, HttpServletResponse response, @Param("fileName") String fileName) throws IOException {
+        if (StringUtils.isEmpty(fileName)) {
+            String msg = "文件名不能为空";
+            response.getOutputStream().write(msg.getBytes());
+            return null;
+        }
+        return CompanyInfoService.download(request, response, fileName, fileExport);
     }
 
 }

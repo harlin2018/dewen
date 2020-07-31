@@ -52,7 +52,7 @@ import headTop from '../components/headTop'
 import PiSearchBar from '../components/PiSearchBar'
 import PiTable from '../components/PiTable'
 
-import {getCompanyList,deleteCompanyData,exportList} from '@/api/common'
+import {getCompanyList,deleteCompanyData,exportList,exportDownload} from '@/api/common'
 
 import colKey from './tableForm/col'
 
@@ -152,7 +152,9 @@ export default {
                 }
                 exportList(params).then(res=>{
                     if(res.resultCode=='0'){
-                        window.open(res.payload)
+                        console.log(res.payload)
+                        exportDownload(res.payload)
+                        // window.open(res.payload)
                         // var downloadFileUrl=res.payload
                         // var elemIF=document.createElement('iframe')
                         // elemIF.src=downloadFileUrl

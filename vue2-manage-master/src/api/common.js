@@ -53,6 +53,13 @@ export function exportList(data) {   //导出
     })
 }
 
+export function exportDownload(param) {   //导出
+    return request({
+        url: '/companyInfo/download?fileName='+param,
+        method: 'get'
+    })
+}
+
 export function getCateHistory() {    //分类历史列表
     return request({
         url: '/companyInfo/record',
