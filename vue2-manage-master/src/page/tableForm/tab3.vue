@@ -3,7 +3,7 @@
         <table class="my_table_form">
             <tr>
                 <td>排污种类</td>
-                <td class="row_center" colspan="4">废水</td>
+                <td class="row_center" colspan="4">废气</td>
             </tr>
             <tr>
                 <td>名称或产品</td>

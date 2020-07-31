@@ -179,4 +179,7 @@ export default {
         margin:10px;
     }
 }
+.el-pagination{
+    text-align: center;
+}
 </style>

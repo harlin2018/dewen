@@ -17,7 +17,7 @@
                         <tab2 ref="tab2" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab2>
                     </el-tab-pane>
                     <el-tab-pane label="废气单元" name="tab3">
-                        <tab3 ref="tab3" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab3>
+                        <tab3 ref="tab3" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab3>
                     </el-tab-pane>
                     <el-tab-pane label="固废及危废单元" name="tab4">
                         <tab4 ref="tab4" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab4>
@@ -205,7 +205,8 @@ export default {
                         monitorProject:'',
                         monitorIndex:'',
                         testItem:'',
-                        testTime:''
+                        testTime:'',
+                        monitorFileId:null
                     }
                 ],
                 companyWasteList:[
@@ -261,7 +262,8 @@ export default {
                 monitorProject:'',
                 monitorIndex:'',
                 testItem:'',
-                testTime:''
+                testTime:'',
+                monitorFileId:null
             },
             companyWasteList:{
                 keyId:'companyWasteList_1',
@@ -335,7 +337,7 @@ export default {
         updateFile({data,prop,index}){   //更新附件信息
             if(prop=='officialReplyFileId'){
                 this.mainForm[prop]=data&&data.id?data:null
-            }else if(prop=='wasteWaterMonitorList'){
+            }else if(prop=='wasteWaterMonitorList'||prop=='wasteGasMonitorList'){
                 this.mainForm[prop][index].monitorFileId=data&&data.id?data:null
             }else{
                 this.mainForm[prop].push(data)
@@ -369,7 +371,10 @@ export default {
                     this.loading=false
                     if(res.resultCode==0){
                         this.$message({type:'success',message:'保存成功'})
-                        if(!flag) return
+                        if(!flag){
+                            this.mainForm.id=res.payload.id
+                            return
+                        }
                         setTimeout(()=>{
                             this.$router.push('/tableList')
                         },1000)
