@@ -1,6 +1,6 @@
 <template>
 	<div class="myUploadFile">
-        <input ref="myFileInput" accept="application/pdf" type="file" style="display:none" @change="selectedFile">
+        <input ref="myFileInput" accept="application/pdf,image/*" type="file" style="display:none" @change="selectedFile">
         <el-button type="text" @click="triggerFileChange">上传附件</el-button>
 	</div>
 </template>
@@ -8,6 +8,9 @@
 <script>
 import {uploadFileData} from '@/api/getData'
 import {uploadFile} from '@/api/common'
+
+const allowType=['pdf','jpg','jpeg','png']
+
 export default {
 	name:'uploadFile',
 	props:{
@@ -37,8 +40,9 @@ export default {
 				return
             }
             let arr=file.name.split('.')
-            if(arr[arr.length-1].toLowerCase()!='pdf'){
-				this.$message({message:'只允许上传pdf文件',type:'warning'})
+            let suffix=arr[arr.length-1].toLowerCase()
+            if(!allowType.includes(suffix)){
+				this.$message({message:'只允许上传pdf或图片文件',type:'warning'})
                 return
             }
             // this.$emit('selectedFile',file)

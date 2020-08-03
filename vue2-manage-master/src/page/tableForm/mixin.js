@@ -1,4 +1,4 @@
-
+const imageSuffix=['jepg','jpg','png','gif','bmp']
 export const mixin={
     props:{
         mainForm:{
@@ -52,6 +52,17 @@ export const mixin={
         },
         deleteFile(prop,index){
             this.$emit('updateFile',{prop,index})
-        }
+        },
+        previewFile(id){
+            this.$emit('previewFile',id)
+        },
+        checkIsImage(fileName){
+			let arr=fileName.split('.')
+			let str=arr[arr.length-1]
+			if(imageSuffix.includes(str.toLowerCase())){
+				return true
+			}
+			return false
+		},
     }
 }

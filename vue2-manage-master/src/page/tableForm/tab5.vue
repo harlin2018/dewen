@@ -35,6 +35,12 @@
                             <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
                                 <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                 <a v-else href="javascript:;">{{file.fileName}}</a>
+                                <span class="img" v-if="checkIsImage(file.fileName)">
+                                    <span class="see">预览</span>
+                                    <img :preview="file.id" :src="'/file/download/'+file.id" />
+                                </span>
+                                <span v-else class="see" @click="previewFile(file.id)">预览</span>
+                                ;
                             </span>
                         </td>
                         <td>{{formatDate(item.createDate)}}</td>
@@ -80,6 +86,12 @@
                             <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
                                 <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                 <a v-else href="javascript:;">{{file.fileName}}</a>
+                                <span class="img" v-if="checkIsImage(file.fileName)">
+                                    <span class="see">预览</span>
+                                    <img :preview="file.id" :src="'/file/download/'+file.id" />
+                                </span>
+                                <span v-else class="see" @click="previewFile(file.id)">预览</span>
+                                ;
                             </span>
                         </td>
                         <td>{{formatDate(item.createDate)}}</td>
@@ -128,6 +140,11 @@ export default {
         },
         addRowByFile(prop){
             this.$emit('updateFile',{prop,data:this[prop]})
+            this.$previewRefresh()
+            this[prop]={
+                content:'',
+                fileIdList:[]
+            }
         },
         // addRow(prop,val,src){
         //     if(!val&&!src) return
@@ -217,7 +234,7 @@ export default {
         text-overflow: ellipsis;
         margin: 6px 10px 0;
     }
-    span{
+    .del{
         display: block;
         width: 20px;
         height: 20px;
@@ -270,6 +287,36 @@ export default {
     margin: 2px 10px;
     a{
         text-decoration: underline;
+    }
+    .see{
+        font-size: 14px;
+        color: #409EFF;
+        cursor: pointer;
+        margin-left: 6px;
+    }
+    .del{
+        position: absolute;
+        right: -2px;
+        top: 0;
+        opacity: 0;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .img{
+        margin-left: 6px;
+        position: relative;
+        .see{
+            margin-left: 0px;
+        }
+        img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
     }
 }
 .file_del{
