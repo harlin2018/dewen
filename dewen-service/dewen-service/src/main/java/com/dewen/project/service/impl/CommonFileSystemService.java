@@ -350,9 +350,9 @@ public class CommonFileSystemService implements ICommonFileSystemService {
     public CommonFileSystem upload(InputStream inputStream, String fileName) {
         String filePath = null;
         try {
-            if (!checkType(fileName)) {
-                throw new DataException(String.format("文件格式错误，系统允许上传的附件格式：%s", fileTypes));
-            }
+//            if (!checkType(fileName)) {
+//                throw new DataException(String.format("文件格式错误，系统允许上传的附件格式：%s", fileTypes));
+//            }
 //            if ("pro".equals(activeProfile)) {
 //                String objectName = fileName + "_" + System.currentTimeMillis();
 //                filePath = objectName;
