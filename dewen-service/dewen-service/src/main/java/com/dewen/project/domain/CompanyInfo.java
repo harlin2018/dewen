@@ -41,6 +41,12 @@ public class CompanyInfo implements Serializable {
     private String address;
 
     /**
+     * 区域
+     */
+    @Column(name = "store_area")
+    private String storeArea;
+
+    /**
      * 法定代表人
      */
     @Column(name = "legal_representative")
