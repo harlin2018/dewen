@@ -217,9 +217,9 @@ public class CommonFileSystemService implements ICommonFileSystemService {
                     if (pos > -1) {
                         fileExtends = originalName.substring(pos + 1);
                     }
-                    if (!checkType(originalName)) {
-                        throw new DataException(String.format("文件格式错误，系统允许上传的附件格式：%s", fileTypes));
-                    }
+//                    if (!checkType(originalName)) {
+//                        throw new DataException(String.format("文件格式错误，系统允许上传的附件格式：%s", fileTypes));
+//                    }
                     File dest = new File(directory, originalName);
                     try {
                         if (dest.exists()) {
