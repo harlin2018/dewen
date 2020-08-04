@@ -1,5 +1,6 @@
 export default {
     name:'单位名称',
+    storeArea:'单位区域',
     address:'单位地址',
     legal_representative:'法定代表人',
     organization_code:'组织机构代码',

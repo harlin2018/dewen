@@ -336,26 +336,6 @@
                 </td>
             </tr>
             <tr>
-                <td>环保应急预案情况</td>
-                <td class="td75">
-                    <ul class="ul_flex_radio">
-                        <li class="left">
-                            <el-form-item prop="epep">
-                                <el-radio-group v-model="mainForm.epep">
-                                    <el-radio label="1">有</el-radio>
-                                    <el-radio label="2">无</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                        </li>
-                        <li class="right">
-                            <el-form-item prop="epepRemark">
-                                <el-input v-model="mainForm.epepRemark"></el-input>
-                            </el-form-item>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
                 <td>监督性检测企业</td>
                 <td class="td75">
                     <ul class="ul_flex_radio">

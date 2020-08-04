@@ -7,6 +7,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import './assets/iconfont/iconfont.css'
 
+/*图片预览 */
+import preview from 'vue-photo-preview'
+import 'vue-photo-preview/dist/vue-photo-preview'
+import 'vue-photo-preview/dist/skin.css'
+Vue.use(preview)
+/*图片预览 */
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)

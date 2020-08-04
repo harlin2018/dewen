@@ -49,6 +49,8 @@ module.exports = {
         '/companyInfo',
         '/commonRight',
         '/commonRole',
+        '/companyRecord',
+        '/customerNotice',
         '/file'
     ],
     // CSS Sourcemaps off by default because relative paths are "buggy"

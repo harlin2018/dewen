@@ -11,23 +11,33 @@
             <div class="my_main">
                 <el-tabs v-model="activeName">
                     <el-tab-pane label="基本资料单元" name="tab1">
-                        <tab1 ref="tab1" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab1>
+                        <tab1 ref="tab1" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile"></tab1>
                     </el-tab-pane>
                     <el-tab-pane label="废水单元" name="tab2">
-                        <tab2 ref="tab2" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab2>
+                        <tab2 ref="tab2" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile"></tab2>
                     </el-tab-pane>
                     <el-tab-pane label="废气单元" name="tab3">
-                        <tab3 ref="tab3" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab3>
+                        <tab3 ref="tab3" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile"></tab3>
                     </el-tab-pane>
                     <el-tab-pane label="固废及危废单元" name="tab4">
                         <tab4 ref="tab4" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab4>
                     </el-tab-pane>
                     <el-tab-pane label="巡查及处罚单元" name="tab5">
-                        <tab5 ref="tab5" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile"></tab5>
+                        <tab5 ref="tab5" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile" @updateRecord="updateRecord"></tab5>
                     </el-tab-pane>
                 </el-tabs>
             </div>
         </div>
+        <el-dialog
+            title="预览"
+            :visible.sync="dialogVisible"
+            fullscreen>
+            <pdf
+                v-if="pdfId"
+                ref="pdf"
+                :src="'file/download/'+pdfId">
+            </pdf>
+        </el-dialog>
     </div>
 </template>
 
@@ -81,15 +91,19 @@ const keyList={
 
 import {baseUrl} from '../../config/env'
 
+import pdf from 'vue-pdf'
+
 export default {
     name:'tableForm',
-    components: {headTop,PiSearchBar,tab1,tab2,tab3,tab4,tab5},
+    components: {headTop,PiSearchBar,tab1,tab2,tab3,tab4,tab5,pdf},
     data(){
         return {
             cid:'',
             loading:false,
             dblclick:false,
-            activeName:'tab1',
+            dialogVisible:false,
+            pdfId:'',
+            activeName:'tab5',
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
             ],
@@ -99,6 +113,7 @@ export default {
             mainForm:{
                 name:'',
                 address:'',
+                storeArea:'',
                 legalRepresentative:'',
                 organizationCode:'',
                 environmentalProtectionOfficer:'',
@@ -205,7 +220,8 @@ export default {
                         monitorProject:'',
                         monitorIndex:'',
                         testItem:'',
-                        testTime:''
+                        testTime:'',
+                        monitorFileId:null
                     }
                 ],
                 companyWasteList:[
@@ -261,7 +277,8 @@ export default {
                 monitorProject:'',
                 monitorIndex:'',
                 testItem:'',
-                testTime:''
+                testTime:'',
+                monitorFileId:null
             },
             companyWasteList:{
                 keyId:'companyWasteList_1',
@@ -288,19 +305,20 @@ export default {
     created(){
         this.cid=this.$route.query.id
         if(this.cid){
-            this.getCompanyData(this.cid)
+            this.getCompanyData()
         }else{
             // this.getCateHistory()
         }
     },
     methods: {
-        getCompanyData(id){ //获取详情
+        getCompanyData(){ //获取详情
             this.loading=true
-            getCompanyData(id).then(res=>{
+            getCompanyData(this.cid).then(res=>{
                 this.loading=false
                 if(res.resultCode==0){
                     this.setListKeyId(res.payload)
                     this.mainForm=res.payload
+				    this.$previewRefresh()
                 }
             }).catch(_=>{
                 this.loading=false
@@ -335,11 +353,12 @@ export default {
         updateFile({data,prop,index}){   //更新附件信息
             if(prop=='officialReplyFileId'){
                 this.mainForm[prop]=data&&data.id?data:null
-            }else if(prop=='wasteWaterMonitorList'){
+            }else if(prop=='wasteWaterMonitorList'||prop=='wasteGasMonitorList'){
                 this.mainForm[prop][index].monitorFileId=data&&data.id?data:null
             }else{
                 this.mainForm[prop].push(data)
             }
+            this.$previewRefresh()
         },
         submitData(flag){   //提交数据
             /* 调用子组件的检验方法 返回一个promise */
@@ -369,7 +388,11 @@ export default {
                     this.loading=false
                     if(res.resultCode==0){
                         this.$message({type:'success',message:'保存成功'})
-                        if(!flag) return
+                        if(!flag){
+                            this.mainForm.id=res.payload.id
+                            this.getCompanyData()
+                            return
+                        }
                         setTimeout(()=>{
                             this.$router.push('/tableList')
                         },1000)
@@ -396,6 +419,14 @@ export default {
         },
         removeRow({prop,index}){   //根据prop类型删除一行
             this.mainForm[prop].splice(index,1)
+        },
+        previewFile(id){
+            this.pdfId=id
+            this.dialogVisible=true
+        },
+        updateRecord(data){ //更新巡查记录等
+            this.mainForm[data.type]=data.list
+            this.$previewRefresh()
         },
 
         dealData(){ //导出前根式化数据

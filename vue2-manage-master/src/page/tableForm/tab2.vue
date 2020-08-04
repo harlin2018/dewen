@@ -8,7 +8,7 @@
             <tr>
                 <td>名称或产品</td>
                 <td>工艺</td>
-                <td>污源物</td>
+                <td>污染物</td>
                 <td>环保治理设施</td>
                 <td class="row_add">
                     排口
@@ -18,7 +18,7 @@
                     <table class="my_table_form my_table_inner my_table_inner_4">
                         <tr>
                             <td>工艺</td>
-                            <td>污源物</td>
+                            <td>污染物</td>
                             <td>环保治理设施</td>
                             <td class="row_add">
                                 排口
@@ -123,7 +123,12 @@
                     <div class="official_file" v-if="!!sitem.monitorFileId">
                         <a v-if="download" :href="'file/download/'+sitem.monitorFileId.id" download>{{sitem.monitorFileId.fileName}}</a>
                         <a v-else href="javascript:;">{{sitem.monitorFileId.fileName}}</a>
-                        <span @click="deleteFile('wasteWaterMonitorList',sindex)"><i class="iconfont icon-delete"></i></span>
+                        <span class="img" v-if="checkIsImage(sitem.monitorFileId.fileName)">
+                            <span class="see">预览</span>
+                            <img :preview="sitem.monitorFileId.id" :src="'/file/download/'+sitem.monitorFileId.id" />
+                        </span>
+                        <span v-else class="see" @click="previewFile(sitem.monitorFileId.id)">预览</span>
+                        <span class="del" @click="deleteFile('wasteWaterMonitorList',sindex)"><i class="iconfont icon-delete"></i></span>
                     </div>
                     <uploadFile v-show="!sitem.monitorFileId"  @success="updateFile($event,'wasteWaterMonitorList',sindex)"></uploadFile>
                     <span v-show="!disabled" class="td_btn" @click="removeRow('wasteWaterMonitorList',sindex)"><i class="iconfont icon-jian"></i></span>

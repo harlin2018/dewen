@@ -3,7 +3,7 @@
         <table class="my_table_form">
             <tr>
                 <td>单位名称</td>
-                <td colspan="3">
+                <td>
                     <el-form-item prop="name">
                         <!-- <el-input autocomplete v-model="mainForm.name"></el-input> -->
                         <el-autocomplete
@@ -15,10 +15,22 @@
                         </el-autocomplete>
                     </el-form-item>
                 </td>
+                <td>企业编码</td>
+                <td>
+                    <el-form-item prop="code">
+                        <el-input v-model="mainForm.code"></el-input>
+                    </el-form-item>
+                </td>
             </tr>
             <tr>
+                <td>单位区域</td>
+                <td>
+                    <el-form-item prop="storeArea">
+                        <el-input v-model="mainForm.storeArea"></el-input>
+                    </el-form-item>
+                </td>
                 <td>单位地址</td>
-                <td colspan="3">
+                <td>
                     <el-form-item prop="address">
                         <!-- <el-input v-model="mainForm.address"></el-input> -->
                         <el-autocomplete
@@ -162,7 +174,12 @@
                             <div class="official_file" v-if="!!mainForm.officialReplyFileId&&mainForm.officialReply==1">
                                 <a v-if="download" :href="'file/download/'+mainForm.officialReplyFileId.id" download>{{mainForm.officialReplyFileId.fileName}}</a>
                                 <a v-else href="javascript:;">{{mainForm.officialReplyFileId.fileName}}</a>
-                                <span @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
+                                <span class="img" v-if="checkIsImage(mainForm.officialReplyFileId.fileName)">
+                                    <span class="see">预览</span>
+                                    <img :preview="mainForm.officialReplyFileId.id" :src="'/file/download/'+mainForm.officialReplyFileId.id" />
+                                </span>
+                                <span v-else class="see" @click="previewFile(mainForm.officialReplyFileId.id)">预览</span>
+                                <span class="del" @click="deleteFile('officialReplyFileId')"><i class="iconfont icon-delete"></i></span>
                             </div>
                             <uploadFile v-show="!mainForm.officialReplyFileId&&mainForm.officialReply==1" @success="updateFile($event,'officialReplyFileId')"></uploadFile>
                         </li>
@@ -179,8 +196,15 @@
                         </el-date-picker>
                     </el-form-item>
                 </td>
-                <td></td>
-                <td></td>
+                <td>批复时间</td>
+                <td>
+                    <el-form-item prop="officialeplyDate">
+                        <el-date-picker
+                            v-model="mainForm.officialeplyDate"
+                            type="date">
+                        </el-date-picker>
+                    </el-form-item>
+                </td>
             </tr>
             <tr>
                 <td class="row_center" colspan="4">主要产品生产情况</td>
@@ -197,7 +221,7 @@
             <tr v-for="(item,index) in mainForm.companyProductList" :key="item.keyId">
                 <td>
                     <el-form-item :prop="'companyProductList.'+index+'.name'">
-                        <el-input v-model="item.name"></el-input>
+                        <el-input rows="1" type="textarea" v-model="item.name"></el-input>
                     </el-form-item>
                 </td>
                 <td>
@@ -221,12 +245,12 @@
                 </td>
                 <td>
                     <el-form-item :prop="'companyProductList.'+index+'.mainMaterialsName'">
-                        <el-input v-model="item.mainMaterialsName"></el-input>
+                        <el-input rows="1" type="textarea" v-model="item.mainMaterialsName"></el-input>
                     </el-form-item>
                 </td>
                 <td class="row_add">
                     <el-form-item :prop="'companyProductList.'+index+'.majorPollutants'">
-                        <el-input v-model="item.majorPollutants"></el-input>
+                        <el-input rows="1" type="textarea" v-model="item.majorPollutants"></el-input>
                     </el-form-item>
                     <span v-show="!disabled" class="td_btn" @click="removeRow('companyProductList',index)"><i class="iconfont icon-jian"></i></span>
                 </td>
@@ -354,13 +378,32 @@ export default {
         font-size:14px;
         text-decoration: underline;
     }
-    span{
+    .see{
+        font-size: 14px;
+        color: #409EFF;
+        cursor: pointer;
+        margin-left: 6px;
+    }
+    .del{
         position: absolute;
-        right: 0px;
+        right: -2px;
         top: 0;
         opacity: 0;
         transition: all 0.3s;
         cursor: pointer;
+    }
+    .img{
+        margin-left: 6px;
+        position: relative;
+        img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
     }
     .iconfont{
         font-size: 12px;
@@ -406,5 +449,8 @@ export default {
             height: 38px;
         }
     }
+}
+.el-textarea__inner{
+    min-height: 40px !important;
 }
 </style>

@@ -11,6 +11,7 @@ const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manag
 const userManager = r => require.ensure([], () => r(require('@/page/userManager')), 'userManager');
 const userAuth = r => require.ensure([], () => r(require('@/page/userAuth')), 'userAuth');
 const userRole = r => require.ensure([], () => r(require('@/page/userRole')), 'userRole');
+const notifyCenter = r => require.ensure([], () => r(require('@/page/notifyCenter')), 'notifyCenter');
 const tableList = r => require.ensure([], () => r(require('@/page/tableList')), 'tableList');
 const tableForm = r => require.ensure([], () => r(require('@/page/tableForm/tableForm')), 'tableForm');
 
@@ -57,6 +58,11 @@ const routes = [
                 path: '/userRole',
                 component: userRole,
                 name: 'userRole',
+            },
+            {
+                path: '/notifyCenter',
+                component: notifyCenter,
+                name: 'notifyCenter',
             }
         ]
 	}

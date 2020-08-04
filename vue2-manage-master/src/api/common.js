@@ -43,6 +43,20 @@ export function deleteCompanyData(data) {    //删除公司
         method: 'delete'
     })
 }
+export function approveRecord(data) {    //审批记录
+    return request({
+        url: '/companyRecord/approval',
+        method: 'post',
+        data
+    })
+}
+export function getRecordList(params) {    //审批记录
+    return request({
+        url: '/companyRecord/list',
+        method: 'post',
+        params
+    })
+}
 
 
 export function exportList(data) {   //导出
@@ -186,3 +200,23 @@ export function submitAuthRole(data) {    //提交角色关联权限数据
     })
 }
 
+
+export function getNotifyList(params) {    //消息列表
+    return request({
+        url: '/customerNotice/list',
+        method: 'post',
+        params
+    })
+}
+export function getUnreadNum() {    //未读信息数量
+    return request({
+        url: '/customerNotice/noReadCount',
+        method: 'get'
+    })
+}
+export function cleanUnreadNum() {    //表为已读
+    return request({
+        url: '/customerNotice/cleanNoRead',
+        method: 'get'
+    })
+}
