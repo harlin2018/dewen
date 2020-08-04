@@ -3,7 +3,7 @@
         <table class="my_table_form">
             <tr>
                 <td>单位名称</td>
-                <td colspan="3">
+                <td>
                     <el-form-item prop="name">
                         <!-- <el-input autocomplete v-model="mainForm.name"></el-input> -->
                         <el-autocomplete
@@ -13,6 +13,12 @@
                             :fetch-suggestions="(queryString,cb)=>{searchForAuto(queryString,cb,'name')}"
                             value-key="name">
                         </el-autocomplete>
+                    </el-form-item>
+                </td>
+                <td>企业编码</td>
+                <td>
+                    <el-form-item prop="code">
+                        <el-input v-model="mainForm.code"></el-input>
                     </el-form-item>
                 </td>
             </tr>
@@ -190,8 +196,15 @@
                         </el-date-picker>
                     </el-form-item>
                 </td>
-                <td></td>
-                <td></td>
+                <td>批复时间</td>
+                <td>
+                    <el-form-item prop="officialeplyDate">
+                        <el-date-picker
+                            v-model="mainForm.officialeplyDate"
+                            type="date">
+                        </el-date-picker>
+                    </el-form-item>
+                </td>
             </tr>
             <tr>
                 <td class="row_center" colspan="4">主要产品生产情况</td>
@@ -389,6 +402,7 @@ export default {
             left: 0;
             top: 0;
             opacity: 0;
+            cursor: pointer;
         }
     }
     .iconfont{

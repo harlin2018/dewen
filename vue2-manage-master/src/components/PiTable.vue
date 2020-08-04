@@ -27,7 +27,7 @@
                                 <el-form-item :label="item.label">
                                     <span v-if="item.format">{{handleFormat(item.format,props.row[item.prop])||'-'}}</span>
                                     <span v-else-if="item.transfer">{{item.transfer(props.row[item.prop]) || '-'}}</span>
-                                    <span v-else-if="item.date">{{props.row[item.prop] | parseTime('{y}-{m}-{d}')}}</span>
+                                    <span v-else-if="item.date">{{formatDate(props.row[item.prop])}}</span>
                                     <span v-else-if="item.prop1">{{scope.row[item.prop]?scope.row[item.prop][item.prop1]:'-'}}</span>
                                     <span v-else>{{props.row[item.prop]||'-'}}</span>
                                 </el-form-item>
@@ -56,7 +56,7 @@
                     </span>
                     <span v-else-if="item.format">{{handleFormat(item.format,scope.row[item.prop])||'-'}}</span>
                     <span v-else-if="item.transfer">{{item.transfer(scope.row[item.prop]) || '-'}}</span>
-                    <span v-else-if="item.date">{{scope.row[item.prop] | parseTime('{y}-{m}-{d}')}}</span>
+                    <span v-else-if="item.date">{{ formatDate(scope.row[item.prop])}}</span>
                     <span v-else-if="item.prop1">{{scope.row[item.prop]?scope.row[item.prop][item.prop1]:'-'}}</span>
                     <span v-else>{{scope.row[item.prop]||'-'}}</span>
                 </template>
@@ -131,6 +131,7 @@
 </template>
 
 <script>
+import {parseTime} from '@/utils'
 export default {
     name:'TableBase',
     components:{},
@@ -242,6 +243,13 @@ export default {
         }
 	},
 	methods:{
+        formatDate(date){   //格式化时间
+            if(date){
+                return parseTime(date,'{y}-{m}-{d}')
+            }else{
+                return ''
+            }
+        },
         rowClick(row){ //点击一行方法
             this.$emit('rowClick',row)
         },

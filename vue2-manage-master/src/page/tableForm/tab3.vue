@@ -8,7 +8,7 @@
             <tr>
                 <td>名称或产品</td>
                 <td>工艺</td>
-                <td>污源物</td>
+                <td>污染物</td>
                 <td>环保治理设施</td>
                 <td class="row_add">
                     排口
@@ -18,7 +18,7 @@
                     <table class="my_table_form my_table_inner my_table_inner_4">
                         <tr>
                             <td>工艺</td>
-                            <td>污源物</td>
+                            <td>污染物</td>
                             <td>环保治理设施</td>
                             <td class="row_add">
                                 排口

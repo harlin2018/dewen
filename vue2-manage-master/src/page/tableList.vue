@@ -56,6 +56,13 @@ import {getCompanyList,deleteCompanyData,exportList,exportDownload} from '@/api/
 
 import colKey from './tableForm/col'
 
+let monthOption=[
+    {value:'1',label:'1个月'},
+    {value:'2',label:'3个月'},
+    {value:'3',label:'6个月'},
+    {value:'4',label:'12个月'}
+]
+
 export default {
     name:'tableList',
     components: {headTop,PiSearchBar,PiTable},
@@ -65,21 +72,35 @@ export default {
             dialogVisible:false,
             mainList:[],
             searchItem:[
-                {label:'名称',prop:'name',type:'input'},
+                {label:'单位名称',prop:'name',type:'input'},
+                {label:'企业编码',prop:'code',type:'input'},
                 {label:'环评时间',prop:'officialTime',type:'date'},
-                {label:'录入时间',prop:'createDate',type:'date'}
+                {label:'录入时间',prop:'createDate',type:'date'},
+                {label:'废水监督性检测周期',prop:'sicfwwo',type:'data',
+                    data:[
+                        ...monthOption,
+                        {value:'5',label:'在线监控'}
+                    ]
+                },
+                {label:'废气监督性检测周期',prop:'sicfwwt',type:'data',data:monthOption},
+                {label:'土壤监督性检测周期',prop:'sicfwws',type:'data',data:monthOption}
             ],
             headers:[
                 {label:'企业名称',prop:'name'},
                 {label:'联系人',prop:'environmentalProtectionOfficer'},
                 {label:'电话',prop:'contactNumber'},
+                {label:'区域',prop:'storeArea'},
                 {label:'地址',prop:'address'},
                 {label:'状态',prop:'recordStatus'},
             ],
             mainQuery:{
                 name:'',
+                code:'',
                 officialTime:'',
                 createDate:'',
+                sicfwwo:'',
+                sicfwwt:'',
+                sicfwws:'',
                 limit:10,
                 page:1,
                 total:0

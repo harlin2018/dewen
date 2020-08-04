@@ -23,7 +23,7 @@
                         <tab4 ref="tab4" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow"></tab4>
                     </el-tab-pane>
                     <el-tab-pane label="巡查及处罚单元" name="tab5">
-                        <tab5 ref="tab5" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile"></tab5>
+                        <tab5 ref="tab5" :disabled="!authList.edit" :download="authList.download" :main-form.sync="mainForm" @addRow="addRow" @removeRow="removeRow" @updateFile="updateFile" @previewFile="previewFile" @updateRecord="updateRecord"></tab5>
                     </el-tab-pane>
                 </el-tabs>
             </div>
@@ -103,7 +103,7 @@ export default {
             dblclick:false,
             dialogVisible:false,
             pdfId:'',
-            activeName:'tab1',
+            activeName:'tab5',
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
             ],
@@ -113,6 +113,7 @@ export default {
             mainForm:{
                 name:'',
                 address:'',
+                storeArea:'',
                 legalRepresentative:'',
                 organizationCode:'',
                 environmentalProtectionOfficer:'',
@@ -304,15 +305,15 @@ export default {
     created(){
         this.cid=this.$route.query.id
         if(this.cid){
-            this.getCompanyData(this.cid)
+            this.getCompanyData()
         }else{
             // this.getCateHistory()
         }
     },
     methods: {
-        getCompanyData(id){ //获取详情
+        getCompanyData(){ //获取详情
             this.loading=true
-            getCompanyData(id).then(res=>{
+            getCompanyData(this.cid).then(res=>{
                 this.loading=false
                 if(res.resultCode==0){
                     this.setListKeyId(res.payload)
@@ -357,6 +358,7 @@ export default {
             }else{
                 this.mainForm[prop].push(data)
             }
+            this.$previewRefresh()
         },
         submitData(flag){   //提交数据
             /* 调用子组件的检验方法 返回一个promise */
@@ -388,6 +390,7 @@ export default {
                         this.$message({type:'success',message:'保存成功'})
                         if(!flag){
                             this.mainForm.id=res.payload.id
+                            this.getCompanyData()
                             return
                         }
                         setTimeout(()=>{
@@ -420,6 +423,10 @@ export default {
         previewFile(id){
             this.pdfId=id
             this.dialogVisible=true
+        },
+        updateRecord(data){ //更新巡查记录等
+            this.mainForm[data.type]=data.list
+            this.$previewRefresh()
         },
 
         dealData(){ //导出前根式化数据
