@@ -64,6 +64,30 @@ public class CompanyRecord implements Serializable {
     @Transient
     private List<CommonFileSystem> fileIdList;
 
+
+    @Column(name = "status")
+    private String status;
+
+    /**
+     * 完成时间
+     */
+    @Column(name = "complete_date")
+    private Date completeDate;
+
+    /**
+     * 完成 内容
+     */
+    @Column(name = "complete_content")
+    private String completeContent;
+
+    /**
+     * 完成附件
+     */
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "complete_file_id",referencedColumnName = "ID")
+    private CommonFileSystem completeFileId;
+
+
     public CompanyRecord() {
     }
 

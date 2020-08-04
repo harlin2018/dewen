@@ -1,5 +1,6 @@
 package com.dewen.project.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dewen.project.constants.Constants;
 import com.dewen.project.domain.CompanyRecord;
 import com.dewen.project.service.ICompanyRecordService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
 import javax.validation.Valid;
@@ -32,11 +34,27 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/project/companyRecord")
-public class CompanyRecordController {
+public class CompanyRecordController extends BaseController{
     @Autowired
     private IBaseManager baseManager;
     @Autowired
     private ICompanyRecordService CompanyRecordService;
+
+    @ApiOperation(value = "审批完成", notes = "审批完成")
+    @RequestMapping(value = "/approval", method = RequestMethod.POST)
+    @ResponseBody
+    public BaseResponse approvalData(@RequestBody JSONObject paramObj) {
+
+        int result = CompanyRecordService.approvalData(getJSONInteger(paramObj, "id"), getJSONString(paramObj, "completeContent"),  getJSONInteger(paramObj, "completeFileId"));
+        if(result == Constants.RETURN_STATUS_SUCCESS){
+
+            return baseManager.composeCommonSuccessResponse();
+        }else{
+            return baseManager.composeDBFailResponse();
+        }
+
+    }
+
 
     /**
      * Get all list for CompanyRecord

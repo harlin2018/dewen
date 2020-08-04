@@ -55,4 +55,5 @@ public interface ICompanyRecordService {
      */
     public Page<CompanyRecord> list(CompanyRecord CompanyRecord, int pageNumber, int pageSize, String sorts) ;
 
+    int approvalData(Integer id, String completeContent, Integer completeFileId);
 }

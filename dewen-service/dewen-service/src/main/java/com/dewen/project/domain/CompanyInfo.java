@@ -35,6 +35,12 @@ public class CompanyInfo implements Serializable {
     private String name;
 
     /**
+     * 企业编码
+     */
+    @Column(name = "code")
+    private String code;
+
+    /**
      * 单位地址
      */
     @Column(name = "address")
@@ -357,6 +363,12 @@ public class CompanyInfo implements Serializable {
      */
     @Column(name = "official_reply")
     private String officialReply;
+
+    /**
+     * 环评批复时间
+     */
+    @Column(name = "official_reply_date")
+    private Date officialeplyDate;
 
     /**
     * 环评批复文件Id

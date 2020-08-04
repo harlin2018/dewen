@@ -31,4 +31,7 @@ public interface CompanyRecordRepository extends JpaRepository<CompanyRecord, In
 
     @Query(value = "select * from company_record where record_type =:recordType group by content", nativeQuery = true)
     List<CompanyRecord> findAllByRecordTypeGroupByContent(String recordType);
+
+    @Query(value = "select * from company_record where record_type =1 and status = 0 and complete_date < NOW() and id not in (select record_id from customer_notice)", nativeQuery = true)
+    List<CompanyRecord> findRecord();
 }

@@ -1,10 +1,13 @@
 package com.dewen.project.service.impl;
 
+import java.util.Date;
 import java.util.Optional;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.repository.CommonFileSystemRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -32,25 +35,28 @@ public class CompanyRecordService implements ICompanyRecordService {
 
     @Autowired
     private CompanyRecordRepository CompanyRecordRepository;
+    @Autowired
+    private CommonFileSystemRepository commonFileSystemRepository;
 
     @Override
     @Transactional(value = "transactionManager")
     public int createCompanyRecord(CompanyRecord CompanyRecord) {
         queryFk(CompanyRecord);
+        CompanyRecord.setStatus("0");
         CompanyRecordRepository.save(CompanyRecord);
         return Constants.RETURN_STATUS_SUCCESS;
     }
 
     @Override
     @Transactional(value = "transactionManager")
-    public int updateCompanyRecord(CompanyRecord CompanyRecord,Integer id) {
+    public int updateCompanyRecord(CompanyRecord CompanyRecord, Integer id) {
         queryFk(CompanyRecord);
-        Optional<CompanyRecord> CompanyRecordRes= CompanyRecordRepository.findById(id);
-        if(CompanyRecordRes.isPresent()){
+        Optional<CompanyRecord> CompanyRecordRes = CompanyRecordRepository.findById(id);
+        if (CompanyRecordRes.isPresent()) {
             CompanyRecord = NullAwareBeanUtilsBean.copyExculdeList(CompanyRecordRes.get(), CompanyRecord);
             CompanyRecordRepository.save(CompanyRecord);
             return Constants.RETURN_STATUS_SUCCESS;
-        }else{
+        } else {
             return Constants.RETURN_STATUS_FAIL;
         }
 
@@ -58,6 +64,7 @@ public class CompanyRecordService implements ICompanyRecordService {
 
     /**
      * 处理外键对象
+     *
      * @param CompanyRecord
      */
     private void queryFk(CompanyRecord CompanyRecord) {
@@ -68,16 +75,16 @@ public class CompanyRecordService implements ICompanyRecordService {
     @Override
     @Transactional(value = "transactionManager")
     public int deleteCompanyRecord(Integer id) {
-        Optional<CompanyRecord> CompanyRecord= CompanyRecordRepository.findById(id);
-        if(CompanyRecord.isPresent()){
+        Optional<CompanyRecord> CompanyRecord = CompanyRecordRepository.findById(id);
+        if (CompanyRecord.isPresent()) {
             CompanyRecordRepository.deleteById(id);
-            Optional<CompanyRecord> CompanyRecordRes= CompanyRecordRepository.findById(id);
-            if(CompanyRecordRes.isPresent()){
+            Optional<CompanyRecord> CompanyRecordRes = CompanyRecordRepository.findById(id);
+            if (CompanyRecordRes.isPresent()) {
                 return Constants.RETURN_STATUS_FAIL;
-            }else{
+            } else {
                 return Constants.RETURN_STATUS_SUCCESS;
             }
-        }else{
+        } else {
             return Constants.RETURN_STATUS_FAIL;
         }
 
@@ -85,10 +92,10 @@ public class CompanyRecordService implements ICompanyRecordService {
 
     @Override
     public CompanyRecord findById(Integer id) {
-        Optional<CompanyRecord >  CompanyRecord = CompanyRecordRepository.findById(id);
-        if(CompanyRecord.isPresent()){
+        Optional<CompanyRecord> CompanyRecord = CompanyRecordRepository.findById(id);
+        if (CompanyRecord.isPresent()) {
             return CompanyRecord.get();
-        }else{
+        } else {
             return null;
         }
 
@@ -96,25 +103,40 @@ public class CompanyRecordService implements ICompanyRecordService {
     }
 
     @Override
-    public Page<CompanyRecord> list(CompanyRecord CompanyRecord,int pageNumber,int pageSize,String sorts)  {
+    public Page<CompanyRecord> list(CompanyRecord CompanyRecord, int pageNumber, int pageSize, String sorts) {
 
         //add sorts to query
-        Page<CompanyRecord> CompanyRecordPages =null;
+        Page<CompanyRecord> CompanyRecordPages = null;
         //Pageable
-        Pageable pageable =  PageUtils.pageable(pageNumber,pageSize,sorts);
+        Pageable pageable = PageUtils.pageable(pageNumber, pageSize, sorts);
 
-        if(CompanyRecord == null){
+        if (CompanyRecord==null) {
             CompanyRecordPages = CompanyRecordRepository.findAll(pageable);
-        }else{
+        } else {
             //create matcher ,if need ,please modify here
             ExampleMatcher matcher = ExampleMatcher.matchingAll();
-            matcher = matcher.withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains());
+            matcher = matcher.withMatcher("content", ExampleMatcher.GenericPropertyMatchers.contains());
             matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
+            matcher = matcher.withMatcher("title", ExampleMatcher.GenericPropertyMatchers.contains());
             //create instant
             Example<CompanyRecord> example = Example.of(CompanyRecord, matcher);
-            CompanyRecordPages  = CompanyRecordRepository.findAll(example, pageable);
+            CompanyRecordPages = CompanyRecordRepository.findAll(example, pageable);
         }
 
         return CompanyRecordPages;
+    }
+
+    @Override
+    public int approvalData(Integer id, String completeContent, Integer completeFileId) {
+        Optional<CompanyRecord> companyRecord = CompanyRecordRepository.findById(id);
+        if (!companyRecord.isPresent()) {
+            return Constants.RETURN_STATUS_FAIL;
+        }
+        companyRecord.get().setCompleteDate(new Date());
+        companyRecord.get().setCompleteContent(StringUtils.isEmpty(completeContent)?"":completeContent);
+        companyRecord.get().setCompleteFileId(completeFileId==null?null:commonFileSystemRepository.findById(completeFileId).get());
+        companyRecord.get().setStatus("1");
+        CompanyRecordRepository.save(companyRecord.get());
+        return Constants.RETURN_STATUS_SUCCESS;
     }
 }

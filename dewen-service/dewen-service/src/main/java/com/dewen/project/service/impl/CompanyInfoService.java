@@ -413,6 +413,12 @@ public class CompanyInfoService implements ICompanyInfoService {
                 if (!StringUtils.isNullOrEmpty(CompanyInfo.getName())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("name"), "%" + CompanyInfo.getName() + "%"));
                 }
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getCode())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("code"), "%" + CompanyInfo.getCode() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getCode())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("code"), "%" + CompanyInfo.getCode() + "%"));
+                }
                 if (!StringUtils.isNullOrEmpty(CompanyInfo.getAddress())) {
                     predicateAndList.add(criteriaBuilder.like(root.get("address"), "%" + CompanyInfo.getAddress() + "%"));
                 }
@@ -427,6 +433,21 @@ public class CompanyInfoService implements ICompanyInfoService {
                 }
                 if (CompanyInfo.getOfficialTime()!=null) {
                     predicateAndList.add(criteriaBuilder.equal(root.get("officialTime"), CompanyInfo.getOfficialTime()));
+                }
+                if (CompanyInfo.getCreateDate()!=null) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("createDate"), CompanyInfo.getCreateDate()));
+                }
+                // 废水监督性检测周期
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getSicfwwo())) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("sicfwwo"), "%" + CompanyInfo.getSicfwwo() + "%" ));
+                }
+                // 土壤监督性检测周期
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getSicfwws())) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("sicfwws"), "%" + CompanyInfo.getSicfwws() + "%" ));
+                }
+                // 废气监督性检测周期
+                if (!StringUtils.isNullOrEmpty(CompanyInfo.getSicfwwt())) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("sicfwwt"), "%" + CompanyInfo.getSicfwwt() + "%" ));
                 }
                 if (CompanyInfo.getCreateDate()!=null) {
                     predicateAndList.add(criteriaBuilder.equal(root.get("createDate"), CompanyInfo.getCreateDate()));
