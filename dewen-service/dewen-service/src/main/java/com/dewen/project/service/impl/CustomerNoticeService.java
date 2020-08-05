@@ -36,8 +36,6 @@ public class CustomerNoticeService implements ICustomerNoticeService {
     @Autowired
     private CustomerNoticeRepository CustomerNoticeRepository;
     @Autowired
-    private CompanyRecordRepository companyRecordRepository;
-    @Autowired
     private CustomerNoticeRepository customerNoticeRepository;
 
     @Override
@@ -135,7 +133,9 @@ public class CustomerNoticeService implements ICustomerNoticeService {
             Example<CustomerNotice> example = Example.of(CustomerNotice, matcher);
             CustomerNoticePages  = CustomerNoticeRepository.findAll(example, pageable);
         }
-
+//        CustomerNoticePages.getContent().forEach(customerNotice -> {
+//            customerNotice.setCompanyRecord(null);
+//        });
         return CustomerNoticePages;
     }
 

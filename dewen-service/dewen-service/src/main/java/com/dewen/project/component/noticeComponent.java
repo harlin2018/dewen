@@ -42,7 +42,7 @@ public class noticeComponent {
         CustomerNotice customerNotice;
         for (CompanyRecord companyRecord : companyRecords) {
             customerNotice = new CustomerNotice();
-            customerNotice.setCompanyRecord(companyRecord);
+            customerNotice.setCompanyRecord(companyRecord.getId());
             customerNotice.setContent("【"+companyRecord.getCompanyId().getName()+"】的巡查执法记录【"+companyRecord.getId()+"】已超过完成时间，请及时审批");
             customerNotice.setTitle("巡查记录审批完成提示");
             customerNotice.setCreateDate(new Date());
@@ -50,6 +50,7 @@ public class noticeComponent {
             customerNotice.setModifyDate(new Date());
             customerNotice.setReceiverUser("");
             customerNotice.setSendUser("");
+            customerNotice.setIsRead(0);
             customerNoticeRepository.save(customerNotice);
         }
     }

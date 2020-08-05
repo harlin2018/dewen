@@ -1,24 +1,32 @@
 package com.dewen.project.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dewen.project.constants.Constants;
+import com.dewen.project.domain.CommonModelFile;
 import com.dewen.project.repository.CommonFileSystemRepository;
+import com.dewen.project.repository.CommonModelFileRepository;
+import com.dewen.project.repository.CompanyInfoRepository;
+import com.mysql.jdbc.StringUtils;
+import com.dewen.project.repository.CustomerNoticeRepository;
 import com.dewen.project.utils.NullAwareBeanUtilsBean;
 import com.dewen.project.utils.PageUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.dewen.project.domain.CompanyRecord;
 import com.dewen.project.repository.CompanyRecordRepository;
 import com.dewen.project.service.ICompanyRecordService;
+
+import javax.persistence.criteria.Predicate;
 
 /**
  * 记录类型表
@@ -37,6 +45,12 @@ public class CompanyRecordService implements ICompanyRecordService {
     private CompanyRecordRepository CompanyRecordRepository;
     @Autowired
     private CommonFileSystemRepository commonFileSystemRepository;
+    @Autowired
+    private CustomerNoticeRepository customerNoticeRepository;
+    @Autowired
+    private CommonModelFileRepository commonModelFileRepository;
+    @Autowired
+    private CompanyInfoRepository companyInfoRepository;
 
     @Override
     @Transactional(value = "transactionManager")
@@ -77,6 +91,8 @@ public class CompanyRecordService implements ICompanyRecordService {
     public int deleteCompanyRecord(Integer id) {
         Optional<CompanyRecord> CompanyRecord = CompanyRecordRepository.findById(id);
         if (CompanyRecord.isPresent()) {
+            // 删除消息记录
+            customerNoticeRepository.deleteByCompanyRecord(CompanyRecord.get());
             CompanyRecordRepository.deleteById(id);
             Optional<CompanyRecord> CompanyRecordRes = CompanyRecordRepository.findById(id);
             if (CompanyRecordRes.isPresent()) {
@@ -113,16 +129,33 @@ public class CompanyRecordService implements ICompanyRecordService {
         if (CompanyRecord==null) {
             CompanyRecordPages = CompanyRecordRepository.findAll(pageable);
         } else {
-            //create matcher ,if need ,please modify here
-            ExampleMatcher matcher = ExampleMatcher.matchingAll();
-            matcher = matcher.withMatcher("content", ExampleMatcher.GenericPropertyMatchers.contains());
-            matcher = matcher.withMatcher("remark", ExampleMatcher.GenericPropertyMatchers.contains());
-            matcher = matcher.withMatcher("title", ExampleMatcher.GenericPropertyMatchers.contains());
-            //create instant
-            Example<CompanyRecord> example = Example.of(CompanyRecord, matcher);
-            CompanyRecordPages = CompanyRecordRepository.findAll(example, pageable);
-        }
+            Specification<CompanyRecord> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
+                List<Predicate> predicateAndList = new ArrayList<Predicate>();
+                if (!StringUtils.isNullOrEmpty(CompanyRecord.getCompleteContent())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("completeContent"), "%" +CompanyRecord.getCompleteContent() + "%"));
+                }
+                if (CompanyRecord.getCompanyId()!=null && CompanyRecord.getCompanyId().getId() != null ) {
+                    predicateAndList.add(criteriaBuilder.equal(root.get("companyId"), companyInfoRepository.findById( CompanyRecord.getCompanyId().getId()).get()));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyRecord.getRecordType())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("recordType"), "%" +CompanyRecord.getRecordType() + "%"));
+                }
+                if (!StringUtils.isNullOrEmpty(CompanyRecord.getContent())) {
+                    predicateAndList.add(criteriaBuilder.like(root.get("content"), "%" +CompanyRecord.getContent() + "%"));
+                }
+                if (predicateAndList.size() > 0) {
+                    return criteriaQuery.where(criteriaBuilder.and(predicateAndList.toArray(new Predicate[predicateAndList.size() - 1]))).getRestriction();
+                }
+                return criteriaQuery.getRestriction();
+            };
+
+            CompanyRecordPages = CompanyRecordRepository.findAll(specification, pageable);
+        }
+        CompanyRecordPages.getContent().forEach(companyRecord -> {
+            companyRecord.setFileIdList(commonModelFileRepository.findAllByCompanyRecord(companyRecord)
+                    .stream().map(CommonModelFile::getCompanyFileId).collect(Collectors.toList()));
+        });
         return CompanyRecordPages;
     }
 
@@ -133,7 +166,7 @@ public class CompanyRecordService implements ICompanyRecordService {
             return Constants.RETURN_STATUS_FAIL;
         }
         companyRecord.get().setCompleteDate(new Date());
-        companyRecord.get().setCompleteContent(StringUtils.isEmpty(completeContent)?"":completeContent);
+        companyRecord.get().setCompleteContent(StringUtils.isNullOrEmpty(completeContent)?"":completeContent);
         companyRecord.get().setCompleteFileId(completeFileId==null?null:commonFileSystemRepository.findById(completeFileId).get());
         companyRecord.get().setStatus("1");
         CompanyRecordRepository.save(companyRecord.get());

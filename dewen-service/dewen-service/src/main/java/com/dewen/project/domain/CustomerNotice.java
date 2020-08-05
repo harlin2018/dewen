@@ -76,9 +76,10 @@ public class CustomerNotice implements Serializable {
     @Column(name = "enabled")
     private Integer enabled;
 
-    @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name = "record_id",referencedColumnName = "ID")
-    private CompanyRecord companyRecord;
+//    @ManyToOne(fetch=FetchType.EAGER)
+//    @JoinColumn(name = "record_id",referencedColumnName = "ID")
+    @Column(name = "record_id")
+    private Integer companyRecord;
 
     /**
      * 是否已读 1为已读，0为未读

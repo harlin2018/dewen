@@ -64,9 +64,11 @@ public class CompanyRecord implements Serializable {
     @Transient
     private List<CommonFileSystem> fileIdList;
 
-
+    /**
+     * 默认状态为0
+     */
     @Column(name = "status")
-    private String status;
+    private String status ="0";
 
     /**
      * 完成时间

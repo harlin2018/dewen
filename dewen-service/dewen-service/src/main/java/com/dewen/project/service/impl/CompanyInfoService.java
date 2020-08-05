@@ -66,7 +66,8 @@ public class CompanyInfoService implements ICompanyInfoService {
     private CommonModelFileRepository commonModelFileRepository;
     @Value("${fileDir.workflow}")
     public String fileDir;
-
+    @Autowired
+    private CustomerNoticeRepository customerNoticeRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -264,6 +265,7 @@ public class CompanyInfoService implements ICompanyInfoService {
             // 巡查执法记录
             // 删除原有的资料
             companyRecordRepository.deleteByCompanyId(companyInfo);
+            customerNoticeRepository.deleteByCompanyId(companyInfo.getId());
             List<CompanyRecord> inspectRecordList = companyInfo.getInspectRecordList();
             if (inspectRecordList!=null) {
                 for (CompanyRecord companyRecord : inspectRecordList) {
@@ -332,6 +334,7 @@ public class CompanyInfoService implements ICompanyInfoService {
             companyProductRepository.deleteByCompanyId(CompanyInfo.get());
             companySewageWasteRepository.deleteByCompanyId(CompanyInfo.get());
             companyRecordRepository.deleteByCompanyId(CompanyInfo.get());
+            customerNoticeRepository.deleteByCompanyId(CompanyInfo.get().getId());
             companyWasteRepository.deleteByCompanyId(CompanyInfo.get());
             companyProjectRepository.deleteByCompanyId(CompanyInfo.get());
             Optional<CompanyInfo> CompanyInfoRes = CompanyInfoRepository.findById(id);
