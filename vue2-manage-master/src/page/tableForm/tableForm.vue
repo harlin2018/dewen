@@ -551,7 +551,7 @@ export default {
 .my_table_form{
     width: 100%;
     border-collapse: collapse;
-    td{
+    td,th{
         border: 1px solid #000;
         padding:14px 6px;
     }
@@ -617,16 +617,16 @@ export default {
     }
 }
 .my_table_inner_row{
-    tr:first-child td{
-        border-top: none;
+    tr:first-child td,tr:first-child th{
+        border-top: none !important;
     }
-    tr td:first-child{
+    tr td:first-child,tr th:first-child{
         border-left: none;
     }
-    tr:last-child td{
+    tr:last-child td,tr:last-child th{
         border-bottom: none;
     }
-    tr td:last-child{
+    tr td:last-child,tr th:last-child{
         border-right: none;
     }
 }

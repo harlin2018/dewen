@@ -3,6 +3,7 @@
 		<div class="page_search_bar">
 			<div class="pItem" v-for="(item,index) in searchItems" :key="index">
                 <el-input
+                    style="width:180px"
                     clearable
                     v-if="item.type=='input'"
                     v-model="query[item.prop]"
@@ -10,6 +11,7 @@
                     @keyup.enter.native="handleSearch">
 				</el-input>
                 <el-date-picker
+                    style="width:180px"
                     clearable
                     v-if="item.type=='date'"
                     v-model="query[item.prop]"
@@ -17,6 +19,7 @@
                     type="date">
                 </el-date-picker>
                 <el-select
+                    style="width:180px"
                     clearable
                     @change="handleSearch"
                     v-if="item.type=='data'"
@@ -30,6 +33,7 @@
                     </el-option>
                 </el-select>
                 <PiSelectByPage
+                    style="width:180px"
                     clearable
                     :placeholder="item.label"
                     v-if="item.type=='ref'"
@@ -141,14 +145,14 @@ export default {
         font-size: 14px;
         color: #303133;
     }
-    .el-input{
-        min-width: 200px;
-    }
+    // .el-input{
+    //     min-width: 200px;
+    // }
 }
 .page_search_bar{
-	.el-input{
-		width: 160px;
-	}
+	// .el-input{
+	// 	width: 160px;
+	// }
 	.el-button{
 		margin-top: 4px;
 	}

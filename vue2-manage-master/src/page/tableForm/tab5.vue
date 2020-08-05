@@ -6,44 +6,50 @@
                 <td class="row_table">
                     <div>
                         <el-form class="this_form" :model="inspectRecordList" label-width="80px" :disabled="disabled">
-                            <el-form-item label="描述">
-                                <el-input v-model="inspectRecordList.content"></el-input>
-                            </el-form-item>
-                            <el-form-item label="完成时间">
-                                <el-date-picker
-                                    v-model="inspectRecordList.completeDate"
-                                    type="date">
-                                </el-date-picker>
-                            </el-form-item>
-                            <el-form-item label="附件">
-                                <ul class="file_list">
-                                    <li v-for="(item,index) in inspectRecordList.fileIdList" :key="index">
-                                        <a :href="'file/download/'+item.id">{{item.fileName}}</a>
-                                        <span @click="removeFile(index,'inspectRecordList')"><i class="iconfont icon-closed"></i></span>
-                                    </li>
-                                </ul>
-                                <uploadFile @success="pushFile($event,'inspectRecordList')"></uploadFile>
-                            </el-form-item>
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-form-item label="描述">
+                                        <el-input type="textarea" rows="4" v-model="inspectRecordList.content"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-form-item label="完成时间">
+                                        <el-date-picker
+                                            style="max-width:340px"
+                                            v-model="inspectRecordList.completeDate"
+                                            type="date">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="附件">
+                                        <ul class="file_list">
+                                            <li v-for="(item,index) in inspectRecordList.fileIdList" :key="index">
+                                                <a :href="'file/download/'+item.id">{{item.fileName}}</a>
+                                                <span @click="removeFile(index,'inspectRecordList')"><i class="iconfont icon-closed"></i></span>
+                                            </li>
+                                        </ul>
+                                        <uploadFile @success="pushFile($event,'inspectRecordList')"></uploadFile>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
                             <el-form-item label="">
                                 <el-button type="primary" size="mini" @click="addRowByFile('inspectRecordList')">添加</el-button>
                             </el-form-item>
                         </el-form>
                     </div>
-                    <table class="my_table_form my_table_file">
-                        <tr>
-                            <td class="td0">ID</td>
-                            <td class="td1">描述</td>
-                            <td class="td2">附件</td>
-                            <td class="td3">完成日期</td>
-                            <td class="td4">审批描述</td>
-                            <td class="td5">审批附件</td>
-                            <td class="td6">操作</td>
-                        </tr>
-                        <tr v-for="(item,index) in mainForm.inspectRecordList" :key="index">
-                            <td class="td0">{{item.id}}</td>
-                            <td>{{item.content}}</td>
-                            <td>
-                                <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
+                     <el-table class="my_table_form my_table_file" :data="mainForm.inspectRecordList" style="width: 100%">
+                        <el-table-column label="ID" align="center" width="60">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.id}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="描述" show-overflow-tooltip>
+                            <template slot-scope="scope">
+                                <span>{{scope.row.content}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="附件">
+                            <template slot-scope="scope">
+                                <span class="file_a" v-for="file in scope.row.fileIdList" :key="file.id">
                                     <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                     <a v-else href="javascript:;">{{file.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(file.fileName)">
@@ -53,71 +59,94 @@
                                     <span v-else class="see" @click="previewFile(file.id)">预览</span>
                                     ;
                                 </span>
-                            </td>
-                            <td>{{formatDate(item.completeDate)}}</td>
-                            <td>{{item.completeContent}}</td>
-                            <td>
-                                <span class="file_a" v-if="item.completeFileId&&item.completeFileId.id">
-                                    <a v-if="download" :href="'file/download/'+item.completeFileId.id" download>{{item.completeFileId.fileName}}</a>
-                                    <a v-else href="javascript:;">{{item.completeFileId.fileName}}</a>
-                                    <span class="img" v-if="checkIsImage(item.completeFileId.fileName)">
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="完成日期" align="center">
+                            <template slot-scope="scope">
+                                <span>{{formatDate(scope.row.completeDate)}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="审批描述" show-overflow-tooltip>
+                            <template slot-scope="scope">
+                                <span>{{scope.row.completeContent}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="审批附件">
+                            <template slot-scope="scope">
+                                <span class="file_a" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
+                                    <a v-if="download" :href="'file/download/'+scope.row.completeFileId.id" download>{{scope.row.completeFileId.fileName}}</a>
+                                    <a v-else href="javascript:;">{{scope.row.completeFileId.fileName}}</a>
+                                    <span class="img" v-if="checkIsImage(scope.row.completeFileId.fileName)">
                                         <span class="see">预览</span>
-                                        <img :preview="item.completeFileId.id" :src="'/file/download/'+item.completeFileId.id" />
+                                        <img :preview="scope.row.completeFileId.id" :src="'/file/download/'+scope.row.completeFileId.id" />
                                     </span>
-                                    <span v-else class="see" @click="previewFile(item.completeFileId.id)">预览</span>
+                                    <span v-else class="see" @click="previewFile(scope.row.completeFileId.id)">预览</span>
                                 </span>
-                            </td>
-                            <td class="td6">
-                                <span v-show="item.status!=1" title="审批" class="file_btn file_approve" @click="approveShow(item)"><i class="iconfont icon-eyes"></i></span>
-                                <span title="删除" v-show="!disabled" class="file_btn file_del" @click="removeRow('inspectRecordList',index)"><i class="iconfont icon-delete"></i></span>
-                            </td>
-                        </tr>
-                    </table>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="80" align="center" class-name="t_btn">
+                            <template slot-scope="scope">
+                                <span v-show="scope.row.status!=1&&scope.row.id" title="审批" class="file_btn file_approve" @click="approveShow(scope.row)">
+                                    <i class="iconfont icon-eyes"></i>
+                                </span>
+                                <span title="删除" v-show="!disabled" class="file_btn file_del" @click="removeRow('inspectRecordList',scope.$index)">
+                                    <i class="iconfont icon-delete"></i>
+                                </span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </td>
             </tr>
+
             <tr>
-                <td valign="top">行政处罚记录</td>
+                <td valign="top" style="width:120px">行政处罚记录</td>
                 <td class="row_table">
                     <div>
                         <el-form class="this_form" :model="adminRecordList" label-width="80px" :disabled="disabled">
-                            <el-form-item label="描述">
-                                <el-input v-model="adminRecordList.content"></el-input>
-                            </el-form-item>
-                            <el-form-item label="完成时间">
-                                <el-date-picker
-                                    v-model="inspectRecordList.completeDate"
-                                    type="date">
-                                </el-date-picker>
-                            </el-form-item>
-                            <el-form-item label="附件">
-                                <ul class="file_list">
-                                    <li v-for="(item,index) in adminRecordList.fileIdList" :key="index">
-                                        <a :href="'file/download/'+item.id">{{item.fileName}}</a>
-                                        <span @click="removeFile(index,'adminRecordList')"><i class="iconfont icon-closed"></i></span>
-                                    </li>
-                                </ul>
-                                <uploadFile @success="pushFile($event,'adminRecordList')"></uploadFile>
-                            </el-form-item>
+                            <el-row>
+                                <el-col :span="12">
+                                    <el-form-item label="描述">
+                                        <el-input type="textarea" rows="4" v-model="adminRecordList.content"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-form-item label="完成时间">
+                                        <el-date-picker
+                                            style="max-width:340px"
+                                            v-model="adminRecordList.completeDate"
+                                            type="date">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="附件">
+                                        <ul class="file_list">
+                                            <li v-for="(item,index) in adminRecordList.fileIdList" :key="index">
+                                                <a :href="'file/download/'+item.id">{{item.fileName}}</a>
+                                                <span @click="removeFile(index,'adminRecordList')"><i class="iconfont icon-closed"></i></span>
+                                            </li>
+                                        </ul>
+                                        <uploadFile @success="pushFile($event,'adminRecordList')"></uploadFile>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
                             <el-form-item label="">
                                 <el-button type="primary" size="mini" @click="addRowByFile('adminRecordList')">添加</el-button>
                             </el-form-item>
                         </el-form>
                     </div>
-                    <table class="my_table_form my_table_file">
-                        <tr>
-                            <td class="td0">ID</td>
-                            <td class="td1">描述</td>
-                            <td class="td2">附件</td>
-                            <td class="td3">完成日期</td>
-                            <td class="td4">审批描述</td>
-                            <td class="td5">审批附件</td>
-                            <td class="td6">操作</td>
-                        </tr>
-                        <tr v-for="(item,index) in mainForm.adminRecordList" :key="index">
-                            <td class="td0">{{item.id}}</td>
-                            <td>{{item.content}}</td>
-                            <td>
-                                <span class="file_a" v-for="file in item.fileIdList" :key="file.id">
+                     <el-table class="my_table_form my_table_file" :data="mainForm.adminRecordList" style="width: 100%">
+                        <el-table-column label="ID" align="center" width="60">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.id}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="描述" show-overflow-tooltip>
+                            <template slot-scope="scope">
+                                <span>{{scope.row.content}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="附件">
+                            <template slot-scope="scope">
+                                <span class="file_a" v-for="file in scope.row.fileIdList" :key="file.id">
                                     <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                     <a v-else href="javascript:;">{{file.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(file.fileName)">
@@ -127,26 +156,42 @@
                                     <span v-else class="see" @click="previewFile(file.id)">预览</span>
                                     ;
                                 </span>
-                            </td>
-                            <td>{{formatDate(item.completeDate)}}</td>
-                            <td>{{item.completeContent}}</td>
-                            <td>
-                                <span class="file_a" v-if="item.completeFileId&&item.completeFileId.id">
-                                    <a v-if="download" :href="'file/download/'+item.completeFileId.id" download>{{item.completeFileId.fileName}}</a>
-                                    <a v-else href="javascript:;">{{item.completeFileId.fileName}}</a>
-                                    <span class="img" v-if="checkIsImage(item.completeFileId.fileName)">
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="完成日期" align="center">
+                            <template slot-scope="scope">
+                                <span>{{formatDate(scope.row.completeDate)}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="审批描述" show-overflow-tooltip>
+                            <template slot-scope="scope">
+                                <span>{{scope.row.completeContent}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="审批附件">
+                            <template slot-scope="scope">
+                                <span class="file_a" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
+                                    <a v-if="download" :href="'file/download/'+scope.row.completeFileId.id" download>{{scope.row.completeFileId.fileName}}</a>
+                                    <a v-else href="javascript:;">{{scope.row.completeFileId.fileName}}</a>
+                                    <span class="img" v-if="checkIsImage(scope.row.completeFileId.fileName)">
                                         <span class="see">预览</span>
-                                        <img :preview="item.completeFileId.id" :src="'/file/download/'+item.completeFileId.id" />
+                                        <img :preview="scope.row.completeFileId.id" :src="'/file/download/'+scope.row.completeFileId.id" />
                                     </span>
-                                    <span v-else class="see" @click="previewFile(item.completeFileId.id)">预览</span>
+                                    <span v-else class="see" @click="previewFile(scope.row.completeFileId.id)">预览</span>
                                 </span>
-                            </td>
-                            <td class="td6">
-                                <span v-show="item.status!=1" title="审批" class="file_btn file_approve" @click="approveShow(item)"><i class="iconfont icon-eyes"></i></span>
-                                <span title="删除" v-show="!disabled" class="file_btn file_del" @click="removeRow('adminRecordList',index)"><i class="iconfont icon-delete"></i></span>
-                            </td>
-                        </tr>
-                    </table>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" width="80" align="center" class-name="t_btn">
+                            <template slot-scope="scope">
+                                <span v-show="scope.row.status!=1&&scope.row.id" title="审批" class="file_btn file_approve" @click="approveShow(scope.row)">
+                                    <i class="iconfont icon-eyes"></i>
+                                </span>
+                                <span title="删除" v-show="!disabled" class="file_btn file_del" @click="removeRow('adminRecordList',scope.$index)">
+                                    <i class="iconfont icon-delete"></i>
+                                </span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
                 </td>
             </tr>
         </table>
@@ -252,6 +297,7 @@ export default {
             }
         },
         approveShow(item){  //显示审批框
+            this.approveForm.fileIdList=[]
             this.record=item
             this.approveForm.id=item.id
             this.dialogVisible=true
@@ -345,7 +391,6 @@ export default {
     }
 }
 .file_list{
-    padding-top: 6px;
     li{
         display: inline-block;
         max-width: 300px;
@@ -381,38 +426,23 @@ export default {
     }
 }
 .my_table_file{
-    td{
+    td,th{
         font-size: 14px;
+        border: none;
+        border-left: 1px solid #000;
+        border-bottom: 1px solid #000 !important;
     }
-    .td0{
-        width:50px;
-        text-align: center;
+    th{
+        border-top: 1px solid #000;
     }
-    .td1{
-    }
-    .td2{
-        width:150px;
-    }
-    .td3{
-        width:80px;
-    }
-    .td4{
-    }
-    .td5{
-        width:150px;
-    }
-    .td6{
-        width: 70px;
-        text-align: center;
-    }
-    tr td:first-child{
-        border-left: none;
+    tr td:first-child,tr th:first-child{
+        border-left: none !important;
     }
     tr:last-child td{
-        border-bottom: none;
+        border-bottom: none !important;
     }
-    tr td:last-child{
-        border-right: none;
+    tr td:last-child,tr th:last-child{
+        border-right: none !important;
     }
 }
 .my_table_file{
@@ -496,5 +526,14 @@ export default {
 }
 .pswp--open{
     z-index: 9999;
+}
+.t_btn{
+    padding:0 !important;
+    .cell{
+        padding:0;
+    }
+    .iconfont{
+        font-size: 14px;
+    }
 }
 </style>

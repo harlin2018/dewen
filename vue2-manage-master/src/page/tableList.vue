@@ -8,7 +8,7 @@
                     :search-items="searchItem"
                     :query.sync="mainQuery">
                     <el-button type="success" @click="redirect" :disabled="!authList.edit">添加</el-button>
-                    <el-button type="warning" @click="openDialog" :disabled="!authList.export">导出</el-button>
+                    <el-button type="warning" @click="openDialog" :disabled="!authList.export" style="margin-left:16px">导出</el-button>
                 </PiSearchBar>
 
                 <pi-table
