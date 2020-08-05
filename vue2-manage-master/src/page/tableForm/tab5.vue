@@ -2,18 +2,18 @@
     <div>
         <table class="my_table_form">
             <tr>
-                <td valign="top" style="width:120px">巡查执法记录</td>
+                <td valign="top" style="width:120px"><div style="width:120px">巡查执法记录</div></td>
                 <td class="row_table">
                     <div>
-                        <el-form class="this_form" :model="inspectRecordList" label-width="80px" :disabled="disabled">
-                            <el-row>
+                        <el-form class="this_form" :model="inspectRecordList" label-width="40px" :disabled="disabled">
+                            <el-row :gutter="30">
                                 <el-col :span="12">
                                     <el-form-item label="描述">
                                         <el-input type="textarea" rows="4" v-model="inspectRecordList.content"></el-input>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="完成时间">
+                                <el-col :span="12" class="col_btn">
+                                    <el-form-item label="时间">
                                         <el-date-picker
                                             style="max-width:340px"
                                             v-model="inspectRecordList.completeDate"
@@ -29,11 +29,9 @@
                                         </ul>
                                         <uploadFile @success="pushFile($event,'inspectRecordList')"></uploadFile>
                                     </el-form-item>
+                                    <el-button class="add_btn" type="primary" size="mini" @click="addRowByFile('inspectRecordList')">添加</el-button>
                                 </el-col>
                             </el-row>
-                            <el-form-item label="">
-                                <el-button type="primary" size="mini" @click="addRowByFile('inspectRecordList')">添加</el-button>
-                            </el-form-item>
                         </el-form>
                     </div>
                      <el-table class="my_table_form my_table_file" :data="mainForm.inspectRecordList" style="width: 100%">
@@ -49,7 +47,7 @@
                         </el-table-column>
                         <el-table-column label="附件">
                             <template slot-scope="scope">
-                                <span class="file_a" v-for="file in scope.row.fileIdList" :key="file.id">
+                                <span class="file_a file_ra" v-for="file in scope.row.fileIdList" :key="file.id">
                                     <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                     <a v-else href="javascript:;">{{file.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(file.fileName)">
@@ -73,7 +71,7 @@
                         </el-table-column>
                         <el-table-column label="审批附件">
                             <template slot-scope="scope">
-                                <span class="file_a" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
+                                <span class="file_a file_ra" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
                                     <a v-if="download" :href="'file/download/'+scope.row.completeFileId.id" download>{{scope.row.completeFileId.fileName}}</a>
                                     <a v-else href="javascript:;">{{scope.row.completeFileId.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(scope.row.completeFileId.fileName)">
@@ -102,15 +100,15 @@
                 <td valign="top" style="width:120px">行政处罚记录</td>
                 <td class="row_table">
                     <div>
-                        <el-form class="this_form" :model="adminRecordList" label-width="80px" :disabled="disabled">
-                            <el-row>
+                        <el-form class="this_form" :model="adminRecordList" label-width="40px" :disabled="disabled">
+                            <el-row :gutter="30">
                                 <el-col :span="12">
                                     <el-form-item label="描述">
                                         <el-input type="textarea" rows="4" v-model="adminRecordList.content"></el-input>
                                     </el-form-item>
                                 </el-col>
-                                <el-col :span="12">
-                                    <el-form-item label="完成时间">
+                                <el-col :span="12" class="col_btn">
+                                    <el-form-item label="时间">
                                         <el-date-picker
                                             style="max-width:340px"
                                             v-model="adminRecordList.completeDate"
@@ -126,11 +124,9 @@
                                         </ul>
                                         <uploadFile @success="pushFile($event,'adminRecordList')"></uploadFile>
                                     </el-form-item>
+                                    <el-button class="add_btn" type="primary" size="mini" @click="addRowByFile('adminRecordList')">添加</el-button>
                                 </el-col>
                             </el-row>
-                            <el-form-item label="">
-                                <el-button type="primary" size="mini" @click="addRowByFile('adminRecordList')">添加</el-button>
-                            </el-form-item>
                         </el-form>
                     </div>
                      <el-table class="my_table_form my_table_file" :data="mainForm.adminRecordList" style="width: 100%">
@@ -146,7 +142,7 @@
                         </el-table-column>
                         <el-table-column label="附件">
                             <template slot-scope="scope">
-                                <span class="file_a" v-for="file in scope.row.fileIdList" :key="file.id">
+                                <span class="file_a file_ra" v-for="file in scope.row.fileIdList" :key="file.id">
                                     <a v-if="download" :href="'file/download/'+file.id" download>{{file.fileName}}</a>
                                     <a v-else href="javascript:;">{{file.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(file.fileName)">
@@ -170,7 +166,7 @@
                         </el-table-column>
                         <el-table-column label="审批附件">
                             <template slot-scope="scope">
-                                <span class="file_a" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
+                                <span class="file_a file_ra" v-if="scope.row.completeFileId&&scope.row.completeFileId.id">
                                     <a v-if="download" :href="'file/download/'+scope.row.completeFileId.id" download>{{scope.row.completeFileId.fileName}}</a>
                                     <a v-else href="javascript:;">{{scope.row.completeFileId.fileName}}</a>
                                     <span class="img" v-if="checkIsImage(scope.row.completeFileId.fileName)">
@@ -252,22 +248,30 @@ export default {
                 content:'',
                 completeDate:'',
                 fileIdList:[],
-                query:{
-                    limit:1000,
-                    page:1,
-                    recordType:1
-                }
+            },
+            inspectRecordListQuery:{
+                limit:1000,
+                page:1,
+                recordType:1,
+                companyId:{id:''}
             },
             adminRecordList:{
                 content:'',
                 completeDate:'',
-                fileIdList:[],
-                query:{
-                    limit:1000,
-                    page:1,
-                    recordType:2
-                }
-            }
+                fileIdList:[]
+            },
+            adminRecordListQuery:{
+                limit:1000,
+                page:1,
+                recordType:2,
+                companyId:{id:''}
+            },
+        }
+    },
+    created(){
+        if(this.$route.query.id){
+            this.inspectRecordListQuery.companyId.id=this.$route.query.id
+            this.adminRecordListQuery.companyId.id=this.$route.query.id
         }
     },
     methods:{
@@ -308,7 +312,9 @@ export default {
         submitData(){   //提交审批数据
             this.$refs.approveForm.validate(valid=>{
                 if(valid){
-                    approveRecord(this.approveForm).then(res=>{
+                    let params=this.deepClone(this.approveForm)
+                    delete params.fileIdList
+                    approveRecord(params).then(res=>{
                         if(res.resultCode=='0'){
                             this.dialogVisible=false
                             this.getRecordList()
@@ -323,7 +329,7 @@ export default {
         },
         getRecordList(){    //获取记录列表
             let type=this.record.recordType==1?'inspectRecordList':'adminRecordList'
-            getRecordList(this[type].query).then(res=>{
+            getRecordList(this[type+'Query']).then(res=>{
                 if(res.resultCode=='0'){
                     this.$emit('updateRecord',{type,list:res.payload.content})
                 }
@@ -391,6 +397,7 @@ export default {
     }
 }
 .file_list{
+    padding-right: 90px;
     li{
         display: inline-block;
         max-width: 300px;
@@ -507,6 +514,12 @@ export default {
         }
     }
 }
+.file_ra{
+    .see{
+        position: relative;
+        top:-3px;
+    }
+}
 .file_a:hover .del2{
     opacity: 1;
 }
@@ -534,6 +547,14 @@ export default {
     }
     .iconfont{
         font-size: 14px;
+    }
+}
+.col_btn{
+    position: relative;
+    .add_btn{
+        position: absolute;
+        right:45px;
+        top:68px;
     }
 }
 </style>
