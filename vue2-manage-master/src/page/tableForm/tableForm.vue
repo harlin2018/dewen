@@ -103,7 +103,7 @@ export default {
             dblclick:false,
             dialogVisible:false,
             pdfId:'',
-            activeName:'tab5',
+            activeName:'tab1',
             searchItem:[
                 {label:'名称',prop:'name',type:'input'},
             ],

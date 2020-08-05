@@ -512,7 +512,50 @@ public class CompanyInfoService implements ICompanyInfoService {
         List<Integer> ids = exportParam.getIds();
         StringBuffer sql = new StringBuffer("select ");
         for (int i = 0; i < fieIds.size(); i++) {
-            sql.append(fieIds.get(i));
+            //查询字段
+            String fieId = fieIds.get(i);
+
+            if ("enterprise_size".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '大型' when 2 then '中型' when 3 then '小型' end ").append(fieId);
+            } else if ("pollution_source_management_level".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '国控' when 2 then '省控' when 3 then '市控' when 4 then '区控' when 5 then '一般' end ").append(fieId);
+            } else if ("eia".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '报告书' when 2 then '报告表' when 3 then '无' end ").append(fieId);
+            } else if ("water_balance".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '正常' when 2 then '异常' when 3 then '其它' end ").append(fieId);
+            } else if ("official_reply".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有' when 2 then '无' end ").append(fieId);
+            } else if ("row_to".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '三阳河' when 2 then '雷河' end ").append(fieId);
+            } else if ("disposal_way".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '第三方' when 2 then '回收' when 3 then '回用' when 4 then '垃圾回收站' end ").append(fieId);
+            } else if ("the_sewage_to".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '纳管（污水处理厂）' when 2 then '雨水管网' when 3 then '其他' end ").append(fieId);
+            } else if ("life_line_to".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '纳管（污水处理厂）' when 2 then '雨水管网' when 3 then '其他' end ").append(fieId);
+            } else if ("sicfwwo".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '1个月' when 2 then '3个月' when 3 then '6个月' when 4 then '12个月' end ").append(fieId);
+            } else if ("sicfwwt".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '1个月' when 2 then '3个月' when 3 then '6个月' when 4 then '12个月' end ").append(fieId);
+            } else if ("sicfwws".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '1个月' when 2 then '3个月' when 3 then '6个月' when 4 then '12个月' end ").append(fieId);
+            } else if ("sewerage_rain".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有' when 2 then '无' end ").append(fieId);
+            } else if ("enterprise_pretreatment".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有' when 2 then '无' end ").append(fieId);
+            } else if ("environmental_protection_plan".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有' when 2 then '无' end ").append(fieId);
+            } else if ("emission_permit".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有' when 2 then '无' end ").append(fieId);
+            } else if ("new_eia".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '办理中' when 2 then '无' end ").append(fieId);
+            } else if ("eia_process".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '有增、改' when 2 then '无增、改' end ").append(fieId);
+            } else if ("supervisory_inspection_enterprise".equals(fieId)){
+                sql.append(" case ").append(fieId).append(" when 1 then '是' when 2 then '不是' end ").append(fieId);
+            } else {
+                sql.append(fieId);
+            }
             if ((i+1) != fieIds.size()){
                 sql.append(", ");
             } else {
