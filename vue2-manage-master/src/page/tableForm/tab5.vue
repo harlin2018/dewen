@@ -302,6 +302,7 @@ export default {
         },
         approveShow(item){  //显示审批框
             this.approveForm.fileIdList=[]
+            this.approveForm.completeFileId=null
             this.record=item
             this.approveForm.id=item.id
             this.dialogVisible=true
@@ -493,11 +494,12 @@ export default {
         }
         img{
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 28px;
+            height: 20px;
             left: 0;
             top: 0;
             opacity: 0;
+            z-index:9;
             cursor: pointer;
         }
     }
