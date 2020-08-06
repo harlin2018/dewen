@@ -264,48 +264,77 @@ public class CompanyInfoService implements ICompanyInfoService {
             }
             // 巡查执法记录
             // 删除原有的资料
-            companyRecordRepository.deleteByCompanyId(companyInfo);
+//            companyRecordRepository.deleteByCompanyId(companyInfo);
             customerNoticeRepository.deleteByCompanyId(companyInfo.getId());
+            Map<Integer, CompanyRecord> recordMap = new HashMap<>();
+            List<CompanyRecord> dbList = companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.inspectRecord.getValue());
             List<CompanyRecord> inspectRecordList = companyInfo.getInspectRecordList();
+            dbList.forEach(companyRecord -> {
+                recordMap.put(companyRecord.getId(), companyRecord);
+            });
             if (inspectRecordList!=null) {
                 for (CompanyRecord companyRecord : inspectRecordList) {
-                    CompanyRecord newCompanyRecord = new CompanyRecord();
-                    BeanUtils.copyProperties(companyRecord, newCompanyRecord);
-                    newCompanyRecord.setCompanyId(companyInfo);
-                    newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
-                    newCompanyRecord.setCreateDate(new Date());
-                    companyRecordRepository.save(newCompanyRecord);
-                    List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
-                    if (fileIdList!=null && fileIdList.size() > 0) {
-                        for (CommonFileSystem commonFileSystem : fileIdList) {
-                            CommonModelFile commonModelFile = new CommonModelFile();
-                            commonModelFile.setCompanyFileId(commonFileSystem);
-                            commonModelFile.setCompanyRecord(newCompanyRecord);
-                            commonModelFileRepository.save(commonModelFile);
+                    if(companyRecord.getId()!=null){
+                        recordMap.remove(companyRecord.getId());
+                    }
+                    if(companyRecord.getId()==null){
+                        CompanyRecord newCompanyRecord = new CompanyRecord();
+                        BeanUtils.copyProperties(companyRecord, newCompanyRecord);
+                        newCompanyRecord.setCompanyId(companyInfo);
+                        newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.inspectRecord.getValue());
+                        newCompanyRecord.setCreateDate(new Date());
+                        companyRecordRepository.save(newCompanyRecord);
+                        List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                        if (fileIdList!=null && fileIdList.size() > 0) {
+                            for (CommonFileSystem commonFileSystem : fileIdList) {
+                                CommonModelFile commonModelFile = new CommonModelFile();
+                                commonModelFile.setCompanyFileId(commonFileSystem);
+                                commonModelFile.setCompanyRecord(newCompanyRecord);
+                                commonModelFileRepository.save(commonModelFile);
+                            }
                         }
                     }
                 }
+                // 移除已删除的
+                Set<Integer> removeSets = recordMap.keySet();
+                removeSets.forEach(it -> {
+                    CompanyRecord record = recordMap.get(it);
+                    companyRecordRepository.deleteById(record.getId());
+                });
             }
             // 行政执法记录
+            Map<Integer, CompanyRecord> adminRecordMap = new HashMap<>();
+            List<CompanyRecord> adminRecordDbList = companyRecordRepository.findAllByCompanyIdAndRecordType(companyInfo, CompanyInfoEnums.RecordType.adminRecord.getValue());
             List<CompanyRecord> adminRecordList = companyInfo.getAdminRecordList();
             if (adminRecordList!=null) {
                 for (CompanyRecord companyRecord : adminRecordList) {
-                    CompanyRecord newCompanyRecord = new CompanyRecord();
-                    BeanUtils.copyProperties(companyRecord, newCompanyRecord);
-                    newCompanyRecord.setCompanyId(companyInfo);
-                    newCompanyRecord.setCreateDate(new Date());
-                    newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
-                    companyRecordRepository.save(newCompanyRecord);
-                    List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
-                    if (fileIdList!=null && fileIdList.size() > 0) {
-                        for (CommonFileSystem commonFileSystem : fileIdList) {
-                            CommonModelFile commonModelFile = new CommonModelFile();
-                            commonModelFile.setCompanyFileId(commonFileSystem);
-                            commonModelFile.setCompanyRecord(newCompanyRecord);
-                            commonModelFileRepository.save(commonModelFile);
+                    if(companyRecord.getId()!=null){
+                        adminRecordMap.remove(companyRecord.getId());
+                    }
+                    if(companyRecord.getId()==null){
+                        CompanyRecord newCompanyRecord = new CompanyRecord();
+                        BeanUtils.copyProperties(companyRecord, newCompanyRecord);
+                        newCompanyRecord.setCompanyId(companyInfo);
+                        newCompanyRecord.setCreateDate(new Date());
+                        newCompanyRecord.setRecordType(CompanyInfoEnums.RecordType.adminRecord.getValue());
+                        companyRecordRepository.save(newCompanyRecord);
+                        List<CommonFileSystem> fileIdList = companyRecord.getFileIdList();
+                        if (fileIdList!=null && fileIdList.size() > 0) {
+                            for (CommonFileSystem commonFileSystem : fileIdList) {
+                                CommonModelFile commonModelFile = new CommonModelFile();
+                                commonModelFile.setCompanyFileId(commonFileSystem);
+                                commonModelFile.setCompanyRecord(newCompanyRecord);
+                                commonModelFileRepository.save(commonModelFile);
+                            }
                         }
                     }
                 }
+                // 移除已删除的
+                Set<Integer> removeSets = adminRecordMap.keySet();
+                removeSets.forEach(it -> {
+                    CompanyRecord record = adminRecordMap.get(it);
+                    companyRecordRepository.deleteById(record.getId());
+                });
             }
             return Constants.RETURN_STATUS_SUCCESS;
         } else {
