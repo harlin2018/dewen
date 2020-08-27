@@ -70,7 +70,7 @@ export default {
         return {
             loading:false,
             dialogVisible:false,
-            mainList:[],
+            mainList:[{name:'aaa',address:'bbbb'},{name:'aaa',address:'bbbb'},{name:'aaa',address:'bbbb'},{name:'aaa',address:'bbbb'},{name:'aaa',address:'bbbb'},{name:'aaa',address:'bbbb'}],
             searchItem:[
                 {label:'单位名称',prop:'name',type:'input'},
                 {label:'企业编码',prop:'code',type:'input'},
@@ -122,7 +122,7 @@ export default {
         }
     },
     mounted(){
-        this.getMainList()
+        // this.getMainList()
     },
     methods: {
         redirect(){ //重定向
