@@ -1,6 +1,7 @@
 package com.dewen.project.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,6 +230,19 @@ public class CommonUserService implements ICommonUserService {
             rightInfos.add(rightInfo);
         }
         return rightInfos;
+    }
+
+    @Override
+    public boolean isExpir(Integer userId) {
+       Optional<CommonUser> commonUser =  commonUserRepository.findById(userId);
+        if(commonUser.isPresent()){
+            if (commonUser.get().getExpirDate()!=null) {
+                Date newdate = new Date();
+                long cha = newdate.getTime() - commonUser.get().getExpirDate().getTime();
+                return cha > 0;
+            }
+        }
+        return false;
     }
 
 

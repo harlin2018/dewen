@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import java.sql.ParameterMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -225,4 +226,18 @@ public class CommonUserController extends BaseController {
         }
 
     }
+
+
+    @RequestMapping(value = "/isExpir", method = RequestMethod.POST)
+    public BaseResponse assignRole(@RequestBody JSONObject paramObj) {
+
+        boolean result = CommonUserService.isExpir(getJSONInteger(paramObj, "userId"));
+        if (result) {
+            return baseManager.composeSuccessBaseResponse(true);
+        } else {
+            return baseManager.composeSuccessBaseResponse(false);
+        }
+
+    }
+
 }

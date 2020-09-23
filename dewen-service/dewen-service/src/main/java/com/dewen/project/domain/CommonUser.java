@@ -213,6 +213,12 @@ public class CommonUser implements Serializable {
     @Column(name = "status")
     private String status;
 
+    /**
+     * 过期时间
+     */
+    @Column(name = "expir_date")
+    private Date expirDate;
+
 
     public CommonUser() {
     }

@@ -66,4 +66,6 @@ public interface ICommonUserService {
     boolean assignRole(Integer userId, List<Integer> roleIds);
 
     List<UserInfo.RightInfo> findRight(Integer id);
+
+    boolean isExpir(Integer userId);
 }
