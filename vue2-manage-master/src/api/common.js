@@ -97,6 +97,13 @@ export function approveUser(data) {   //用户审批
         data
     })
 }
+export function checkDate(userId) {   //判断用户是否过期
+    return request({
+        url: '/commonUser/isExpir',
+        method: 'post',
+        data:{userId}
+    })
+}
 
 
 export function uploadFile(data) {  //上传

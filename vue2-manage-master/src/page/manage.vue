@@ -40,7 +40,13 @@
 </template>
 
 <script>
+    import {checkDate} from '@/api/common'
     export default {
+        data(){
+            return {
+                isCheck:false
+            }
+        },
 		computed: {
 			defaultActive: function(){
 				return this.$route.path.replace('/', '');
@@ -50,6 +56,37 @@
             let store=this.$store.state
             if(!store.adminInfo||!store.adminInfo.id){
                 this.$router.push('/login')
+            }
+            this.loading=true
+
+            setInterval(_=>{
+                this.checkDate()
+            },10000)
+        },
+        methods:{
+            checkDate(){
+                let user=localStorage.getItem('userInfo')
+                let userId=''
+                if(user) userId=JSON.parse(user).id
+                if(!userId) return
+                checkDate(userId).then(res=>{
+                    this.loading=false
+                    if(res.resultCode=='0'){
+                        if(res.payload){
+                            if(!this.isCheck){
+                                this.$alert('试用期已过，请联系IT Support', '提示', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        this.isCheck=false
+                                    }
+                                })
+                            }
+                            this.isCheck=true
+                        }else{
+                            this.isCheck=false
+                        }
+                    }
+                })
             }
         }
     }
